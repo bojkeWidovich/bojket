@@ -1,0 +1,1546 @@
+# =============================================================================
+#  pages.py  --  All page layouts + UI component builders
+#  Sections: landing, login, onboarding, pricing, dashboard
+# =============================================================================
+
+from dash import dcc, html
+import dash_bootstrap_components as dbc
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
+
+from config import (
+    PURPLE, PURPLE_LIGHT, PURPLE_GLOW, BG_DARK, BG_CARD, BG_CARD2, BORDER,
+    BULL, BEAR, NEUTRAL, TEXT_MAIN, TEXT_DIM, TEXT_MUTED, MA50_COLOR, MA20_COLOR,
+    ADMIN_EMAIL, BETA_ACCOUNTS, PLAN_LIMITS, REGISTERED_USERS,
+    SYMBOLS, LABELS, ASSET_ICONS, CATEGORY_ICONS, ALL_OPTIONS,
+    ALL_PATTERNS, PAT_COLOR, PAT_ABBR, SEN_EMOJI, SEN_LABEL, MAX_IND, DESCS,
+)
+
+def _review_card(initials, name, country_flag, plan, quote, accent=PURPLE, avatar_url=None):
+    # Avatar: photo if URL provided, else coloured initials circle
+    if avatar_url:
+        avatar = html.Img(src=avatar_url, style={
+            "width":"44px","height":"44px","borderRadius":"50%",
+            "objectFit":"cover","border":f"2px solid {accent}60","flexShrink":"0"})
+    else:
+        avatar = html.Div(initials, style={
+            "width":"44px","height":"44px","borderRadius":"50%",
+            "backgroundColor":f"{accent}30","border":f"1px solid {accent}50",
+            "color":accent,"fontWeight":"800","fontSize":"0.88em",
+            "display":"flex","alignItems":"center","justifyContent":"center","flexShrink":"0"})
+    return html.Div([
+        html.Div([
+            avatar,
+            html.Div([
+                html.Div(f"{name}  {country_flag}", style={"color":TEXT_MAIN,"fontWeight":"700","fontSize":"0.82em"}),
+                html.Div([html.Span(plan, style={"color":TEXT_MUTED,"fontSize":"0.6em","border":f"1px solid {BORDER}",
+                    "borderRadius":"20px","padding":"1px 8px"})],style={"marginTop":"2px"}),
+            ]),
+            html.Div("★★★★★", style={"color":"#facc15","fontSize":"0.75em","marginLeft":"auto","letterSpacing":"1px"}),
+        ], style={"display":"flex","alignItems":"center","gap":"12px","marginBottom":"12px"}),
+        html.Div(f'"{quote}"', style={"color":"rgba(255,255,255,0.6)","fontSize":"0.84em","lineHeight":"1.65","fontStyle":"italic"}),
+    ], style={"backgroundColor":"rgba(255,255,255,0.03)","border":"1px solid rgba(255,255,255,0.07)",
+              "borderRadius":"16px","padding":"22px"})
+
+
+def landing_page():
+    def tr(k):
+        # Hardcoded English strings
+        strings = {
+            "tagline": "The future of trading.",
+            "signin": "Sign In",
+            "lp_badge": "EXCLUSIVE ACCESS",
+            "lp_badge_sub": "Not for everyone",
+            "lp_h1a": "The future of",
+            "lp_h1b": "trading is here.",
+            "lp_desc1": "An advanced AI-powered trading machine that predicts, adapts, and simplifies every decision.",
+            "lp_desc2": "Built for serious traders who want an edge. Not for everyone.",
+            "lp_cta": "Get Access →",
+            "lp_trust": ["Know your exact entry", "Defined risk on every trade", "Learn while you trade"],
+            "lp_stats": [("60+", "Assets tracked"), ("10", "Signal factors"), ("24/7", "Market monitoring"), ("< 5s", "Signal refresh")],
+            "built_tag": "THE MACHINE THAT CHANGES THE GAME",
+            "built_h2": "Trade smarter. Learn faster. Risk less.",
+            "built_sub": "An advanced futuristic trading machine — AI signals, live ML predictions, and pattern recognition that completely changes how you trade. Less guesswork, more precision.",
+            "feat": [("📊", "Multi-Timeframe Analysis", "See what the bigger trend is doing before you enter. Stop getting caught on the wrong side of the market."),
+                     ("🧠", "XGBoost ML Engine", "Trained on 2 years of real data. Learns which market conditions actually produce winning trades."),
+                     ("⚡", "Defined Entry, TP & SL", "Every signal comes with a precise entry, take profit, and stop loss. No more making it up as you go."),
+                     ("🤖", "AI Trading Mentor", "Ask anything about trading — patterns, risk, psychology, strategy. Available 24/7. Answers like a trader, not a textbook."),
+                     ("🔬", "Backtesting Engine", "Test your strategy against 2 years of history. Know what works before you risk real money."),
+                     ("📓", "Smart Trade Journal", "Every trade logged automatically. Streaks, patterns, performance. Watch your edge sharpen over time.")],
+            "test_tag": "EARLY ACCESS FEEDBACK",
+            "test_h2": "What our prototype testers say.",
+            "join_badge": "LIMITED ACCESS",
+            "join_h2a": "The future of trading ",
+            "join_h2b": "starts here",
+            "join_h2c": ".",
+            "join_d1": "Full access to every tool — AI signals, ML engine, AI mentor, backtesting, trade journal.",
+            "join_d2": "Built for serious, hungry traders who want a real edge. Not for everyone.",
+            "join_trust": ["Every feature included", "Cancel anytime", "24/7 AI mentor"],
+            "join_cta": "Get Access →",
+            "footer_copy": "© 2025 Bojket  ·  Not financial advice.",
+            "footer_sub": "The future of trading.",
+        }
+        return strings.get(k, k)
+
+    # ── Testimonials data: (initials, name, flag, plan, quote, accent, avatar_url)
+    # Avatar mix: realistic photo (pravatar.cc), discord/cartoon (dicebear), realistic portrait
+    reviews = [
+        ("LB","Lukas B.","🇩🇪","Early Access",
+         "honestly didn't expect much from a beta but the signals were scarily accurate on BTC and ETH. "
+         "missed a few entries before i found this, not missing them anymore lol. waiting for full launch.",
+         BULL, "https://i.pravatar.cc/80?img=11"),
+
+        ("SM","Sophia M.","🇦🇹","Early Access",
+         "was already paying for two other tools when i got into the prototype group. cancelled both within a week. "
+         "the HTF alignment alone saves me so much second-guessing.",
+         NEUTRAL, "https://i.pravatar.cc/80?img=47"),
+
+        ("DK","David K.","🇨🇭","Early Access",
+         "i trade part time around my job so i don't have hours to stare at charts. this thing does the reading "
+         "for me and i just check in when i have 10 min. works way better than i thought a prototype would.",
+         PURPLE_LIGHT,
+         "https://api.dicebear.com/7.x/avataaars/svg?seed=DavidK&backgroundColor=b6e3f4"),
+
+        ("JO","James O.","🇮🇪","Early Access",
+         "the TP and SL levels were the first thing i tested against my own manual analysis. they were tighter "
+         "and more consistent than what i was drawing. hard to argue with that after a few weeks of data.",
+         BULL,
+         "https://api.dicebear.com/7.x/avataaars/svg?seed=JamesOIE&backgroundColor=d1f4d6"),
+
+        ("TB","Tyler B.","🇺🇸","Early Access",
+         "asked the AI a dumb question about divergence at like 2am and got a proper answer. no fluff, "
+         "no 'consult a financial advisor'. just actual explanation. that alone made the early access worth it.",
+         "#facc15", "https://i.pravatar.cc/80?img=52"),
+
+        ("CE","Charlotte E.","🇬🇧","Early Access",
+         "i've tried a lot of these platforms and most look good in demos then fall apart in real use. "
+         "this one actually held up. the journal is the feature i didn't know i needed until i started using it.",
+         NEUTRAL, "https://i.pravatar.cc/80?img=44"),
+    ]
+
+    return html.Div([
+        html.Div(className="hero-glow"),
+        # ── Navbar ─────────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"5px"}),
+                    html.Span("BETA", style={
+                        "color":"white","fontWeight":"800","fontSize":"0.48em","letterSpacing":"1.5px",
+                        "backgroundColor":"#e11d48","borderRadius":"5px","padding":"3px 8px",
+                        "marginLeft":"10px","verticalAlign":"middle","lineHeight":"1",
+                    }),
+                ], style={"display":"flex","alignItems":"center"}),
+                html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.62em","letterSpacing":"1px","fontStyle":"italic","marginTop":"3px"}),
+            ]),
+            html.Div([
+                html.A(tr("signin"),href="/login",className="cta-secondary",
+                    style={"padding":"9px 24px","fontSize":"0.85em","textDecoration":"none","display":"inline-block"}),
+            ],style={"display":"flex","alignItems":"center"}),
+        ],style={"display":"flex","justifyContent":"space-between","alignItems":"center",
+                 "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
+                 "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
+                 "zIndex":"100","backdropFilter":"blur(20px)"}),
+        # ── Intro Video ────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div("BOJKET EXPLAINED", style={
+                    "color": PURPLE_LIGHT, "fontSize": "1.05em", "fontWeight": "900",
+                    "letterSpacing": "5px", "textAlign": "center", "marginBottom": "14px",
+                    "textTransform": "uppercase",
+                }),
+                html.H2("See everything in 1:30 minutes.", style={
+                    "color": "white", "fontWeight": "900", "fontSize": "3em",
+                    "textAlign": "center", "margin": "0 0 36px 0", "letterSpacing": "-1.5px",
+                    "lineHeight": "1.1",
+                }),
+            ]),
+            html.Div(
+                html.Iframe(
+                    src="https://www.youtube.com/embed/ChICDNSkdGo?rel=0&modestbranding=1",
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen",
+                    style={
+                        "width": "100%", "aspectRatio": "16/9",
+                        "border": "none", "borderRadius": "18px", "display": "block",
+                    },
+                ),
+                style={
+                    "maxWidth": "960px", "margin": "0 auto",
+                    "borderRadius": "22px",
+                    "padding": "5px",
+                    "background": "linear-gradient(135deg, rgba(147,51,234,0.3), rgba(147,51,234,0.06))",
+                    "boxShadow": "0 24px 80px rgba(0,0,0,0.75), 0 0 60px rgba(147,51,234,0.18)",
+                },
+            ),
+        ], style={
+            "padding": "64px 64px 72px 64px",
+            "borderBottom": "1px solid rgba(255,255,255,0.05)",
+            "backgroundColor": "#060608",
+        }),
+
+        # ── Hero ───────────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.Span(tr("lp_badge"), style={"color":"white","fontWeight":"800","fontSize":"0.68em","letterSpacing":"3px"}),
+                    html.Span(" · ", style={"color":"rgba(255,255,255,0.25)","margin":"0 8px"}),
+                    html.Span(tr("lp_badge_sub"), style={"color":"rgba(255,255,255,0.5)","fontWeight":"600","fontSize":"0.68em","letterSpacing":"1px"}),
+                ], style={"display":"inline-flex","alignItems":"center","whiteSpace":"nowrap","backgroundColor":"rgba(147,51,234,0.12)","border":"1px solid rgba(147,51,234,0.4)","borderRadius":"100px","padding":"8px 20px","marginBottom":"30px"}),
+                html.H1([
+                    html.Span(tr("lp_h1a"), style={"color":"white"}), html.Br(),
+                    html.Span(tr("lp_h1b"), style={"background":"linear-gradient(135deg,#A855F7,#9333EA)","-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text"}),
+                ], style={"fontWeight":"900","fontSize":"4.5em","lineHeight":"1.05","margin":"0 0 24px 0","letterSpacing":"-2px"}),
+                html.Div([
+                    html.Div(tr("lp_desc1"), style={"color":"rgba(255,255,255,0.90)","fontWeight":"500","fontSize":"1.0em","marginBottom":"6px","letterSpacing":"0.1px"}),
+                    html.Div(tr("lp_desc2"), style={"color":"rgba(255,255,255,0.52)","fontWeight":"500","fontSize":"0.88em","fontStyle":"italic"}),
+                ], style={"marginBottom":"40px","lineHeight":"1.65","maxWidth":"420px"}),
+                html.Div([
+                    html.A(tr("lp_cta"), href="/login", style={
+                        "backgroundColor":PURPLE,"color":"white","padding":"15px 34px","borderRadius":"10px",
+                        "fontWeight":"700","fontSize":"0.96em","textDecoration":"none","display":"inline-block",
+                        "letterSpacing":"0.2px","boxShadow":"0 4px 28px rgba(147,51,234,0.45)",
+                        "whiteSpace":"nowrap","border":"1px solid rgba(168,85,247,0.6)",
+                    }),
+                    html.A(tr("signin"), href="/login", style={
+                        "color":"white","padding":"15px 30px","borderRadius":"10px","fontWeight":"600",
+                        "fontSize":"0.96em","textDecoration":"none","display":"inline-block",
+                        "border":"1px solid rgba(255,255,255,0.15)","backgroundColor":"rgba(255,255,255,0.05)",
+                        "whiteSpace":"nowrap","letterSpacing":"0.2px",
+                    }),
+                ], style={"display":"flex","alignItems":"center","gap":"14px"}),
+                html.Div([
+                    *[html.Span([
+                        html.Span("✓ ", style={"color":BULL,"fontWeight":"800"}),
+                        html.Span(item, style={"color":"rgba(255,255,255,0.45)","fontWeight":"600","letterSpacing":"0.2px"}),
+                    ], style={"fontSize":"0.76em","whiteSpace":"nowrap"})
+                    for item in tr("lp_trust")],
+                ], style={"display":"flex","alignItems":"center","gap":"22px","marginTop":"22px","flexWrap":"nowrap"}),
+            ], style={"flex":"1","maxWidth":"600px"}),
+            html.Div([
+                html.Img(src="/assets/logo.png",style={"width":"290px","height":"auto","display":"block","marginBottom":"0px","alignSelf":"center","position":"relative","zIndex":"0","mixBlendMode":"screen","filter":"blur(0.45px) contrast(18) brightness(1.2)","imageRendering":"auto"}),
+                html.Div([
+                    html.Div("₿  Bitcoin",style={"color":TEXT_MUTED,"fontSize":"0.7em","letterSpacing":"1px","marginBottom":"12px"}),
+                    html.Div("BUY",style={"color":BULL,"fontWeight":"900","fontSize":"2.8em","letterSpacing":"-1px","lineHeight":"1"}),
+                    html.Div("84% engine score",style={"color":TEXT_MUTED,"fontSize":"0.7em","marginTop":"4px","marginBottom":"10px"}),
+                    html.Div(html.Div(style={"width":"84%","background":"linear-gradient(90deg,#34d399,#10b981)","height":"4px","borderRadius":"4px"}),style={"backgroundColor":"#1e1a2e","borderRadius":"4px","height":"4px","marginBottom":"12px"}),
+                    html.Div([html.Span("🧠",style={"fontSize":"0.7em","marginRight":"6px"}),html.Span("ML Model:",style={"color":TEXT_MUTED,"fontSize":"0.68em","marginRight":"4px"}),html.Span("Bull 79%",style={"color":BULL,"fontSize":"0.68em","fontWeight":"700"})],style={"marginBottom":"16px"}),
+                    *[html.Div([html.Span(ic,style={"color":BULL,"fontSize":"0.7em","marginRight":"8px"}),html.Span(lb,style={"color":"rgba(255,255,255,0.5)","fontSize":"0.7em","marginRight":"6px"}),html.Span(vl,style={"color":BULL,"fontSize":"0.7em","fontWeight":"600"})],style={"marginBottom":"7px","display":"flex"})
+                      for ic,lb,vl in [("✅","EMA Trend","Bullish"),("✅","Higher TF","Aligned"),("✅","VWAP","Above"),("🔥","Divergence","Bullish"),("✅","Volume","High")]],
+                    html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.06)","margin":"16px 0"}),
+                    html.Div([
+                        html.Div([html.Div("TP 🎯",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginBottom":"3px"}),html.Div("94,820",style={"color":BULL,"fontWeight":"800"})],style={"flex":"1"}),
+                        html.Div([html.Div("SL 🛑",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginBottom":"3px"}),html.Div("91,200",style={"color":BEAR,"fontWeight":"800"})],style={"flex":"1"}),
+                    ],style={"display":"flex"}),
+                ],style={"background":"linear-gradient(135deg,#0f0e18,#13101f)","border":"1px solid rgba(147,51,234,0.3)","borderRadius":"20px","padding":"28px","width":"260px","flexShrink":"0","boxShadow":"0 20px 60px rgba(0,0,0,0.6)","position":"relative","zIndex":"1"}),
+            ], style={"display":"flex","flexDirection":"column","alignItems":"center","flexShrink":"0"}),
+        ],style={"display":"flex","justifyContent":"space-between","alignItems":"flex-start","gap":"60px","padding":"50px 64px 80px 64px","maxWidth":"1200px","margin":"0 auto","position":"relative"}),
+
+        # ── Stats bar ──────────────────────────────────────────────────────────
+        html.Div([html.Div([
+            *[html.Div([html.Div(num,style={"color":"white","fontWeight":"800","fontSize":"2em","letterSpacing":"-1px","marginBottom":"4px"}),html.Div(lbl,style={"color":TEXT_MUTED,"fontSize":"0.78em"})],style={"textAlign":"center","flex":"1"})
+              for num,lbl in tr("lp_stats")],
+        ],style={"display":"flex","maxWidth":"800px","margin":"0 auto","width":"100%"})],
+        style={"borderTop":"1px solid rgba(255,255,255,0.05)","borderBottom":"1px solid rgba(255,255,255,0.05)","padding":"40px 64px","backgroundColor":"rgba(147,51,234,0.04)"}),
+
+        # ── Features ───────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div(tr("built_tag"),style={"color":PURPLE_LIGHT,"fontSize":"0.72em","fontWeight":"700","letterSpacing":"3px","textAlign":"center","marginBottom":"14px"}),
+                html.H2(tr("built_h2"),style={"color":"white","fontWeight":"800","fontSize":"2.6em","textAlign":"center","margin":"0 0 16px 0","letterSpacing":"-1px","lineHeight":"1.2"}),
+                html.P(tr("built_sub"),style={"color":"rgba(255,255,255,0.5)","textAlign":"center","fontSize":"1.05em","margin":"0 auto 56px auto","maxWidth":"480px"}),
+            ]),
+            html.Div([_feature_card(ic,ti,de) for ic,ti,de in tr("feat")],
+                style={"display":"grid","gridTemplateColumns":"repeat(3,1fr)","gap":"20px","maxWidth":"1100px","margin":"0 auto"}),
+        ],style={"padding":"80px 64px","backgroundColor":"#050507","borderTop":"1px solid rgba(255,255,255,0.04)"}),
+
+        # ── Testimonials ───────────────────────────────────────────────────────
+        html.Div([
+            html.Div(tr("test_tag"),style={"color":PURPLE_LIGHT,"fontSize":"0.72em","fontWeight":"700","letterSpacing":"3px","textAlign":"center","marginBottom":"14px"}),
+            html.H2(tr("test_h2"),style={"color":"white","fontWeight":"800","fontSize":"2.4em","textAlign":"center","margin":"0 0 52px 0","letterSpacing":"-1px"}),
+            html.Div([
+                _review_card(ini,name,flag,plan,quote,accent,avatar)
+                for ini,name,flag,plan,quote,accent,avatar in reviews
+            ], style={"display":"grid","gridTemplateColumns":"repeat(3,1fr)","gap":"20px","maxWidth":"1100px","margin":"0 auto"}),
+        ], style={"padding":"80px 64px","borderTop":"1px solid rgba(255,255,255,0.04)","backgroundColor":"rgba(147,51,234,0.02)"}),
+
+        # ── Discord Community Section ──────────────────────────────────────────
+        html.Div([
+            html.Div([
+                # Left — text
+                html.Div([
+                    html.Div("PRIVATE COMMUNITY", style={
+                        "color":"rgba(88,101,242,0.9)","fontSize":"0.7em","fontWeight":"800",
+                        "letterSpacing":"3px","marginBottom":"16px",
+                    }),
+                    html.H2("A community built on\nexclusive access.", style={
+                        "color":"white","fontWeight":"900","fontSize":"2.4em",
+                        "letterSpacing":"-1px","lineHeight":"1.15","margin":"0 0 18px 0",
+                        "whiteSpace":"pre-line",
+                    }),
+                    html.P(
+                        "When you get a Bojket membership you also get access to a private Discord community "
+                        "filled with real traders — market insights, live events, trade reviews, and "
+                        "information you won't find anywhere else.",
+                        style={"color":"rgba(255,255,255,0.55)","fontSize":"0.97em",
+                               "lineHeight":"1.75","maxWidth":"440px","margin":"0 0 28px 0"},
+                    ),
+                    html.Div([
+                        html.Span("🔒", style={"marginRight":"8px","fontSize":"0.9em"}),
+                        html.Span("Members only — no public access",
+                            style={"color":"rgba(255,255,255,0.4)","fontSize":"0.82em","fontStyle":"italic"}),
+                    ]),
+                ], style={"flex":"1","paddingRight":"48px"}),
+                # Right — visual card
+                html.Div([
+                    html.Div([
+                        html.Div([
+                            html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
+                                style={"width":"36px","height":"36px","opacity":"0.9"}),
+                        ], style={"marginBottom":"20px"}),
+                        html.Div("Bojket Community", style={
+                            "color":"white","fontWeight":"800","fontSize":"1.15em",
+                            "letterSpacing":"0.3px","marginBottom":"8px",
+                        }),
+                        html.Div("Private · Members only", style={
+                            "color":"rgba(255,255,255,0.4)","fontSize":"0.78em",
+                            "marginBottom":"24px","letterSpacing":"0.5px",
+                        }),
+                        *[html.Div([
+                            html.Span(icon, style={"marginRight":"10px","fontSize":"0.95em"}),
+                            html.Span(text, style={"color":"rgba(255,255,255,0.72)","fontSize":"0.84em"}),
+                        ], style={"marginBottom":"11px","display":"flex","alignItems":"center"})
+                        for icon, text in [
+                            ("📊", "Live market insights & analysis"),
+                            ("🎯", "Trade setups from real members"),
+                            ("📅", "Exclusive events & live sessions"),
+                            ("🧠", "Educational content & strategies"),
+                            ("🔔", "Early signals & alerts"),
+                        ]],
+                        html.Div([
+                            html.Span("🔒  Accessible from your dashboard after joining",
+                                style={"color":"rgba(255,255,255,0.3)","fontSize":"0.72em","fontStyle":"italic"}),
+                        ], style={"marginTop":"22px","paddingTop":"18px",
+                                  "borderTop":"1px solid rgba(255,255,255,0.06)"}),
+                    ], style={
+                        "backgroundColor":"rgba(88,101,242,0.07)",
+                        "border":"1px solid rgba(88,101,242,0.25)",
+                        "borderRadius":"18px","padding":"32px",
+                        "backdropFilter":"blur(10px)",
+                    }),
+                ], style={"flex":"1","maxWidth":"360px"}),
+            ], style={
+                "display":"flex","alignItems":"center","maxWidth":"1000px",
+                "margin":"0 auto","gap":"24px",
+            }),
+        ], style={
+            "padding":"90px 64px",
+            "borderTop":"1px solid rgba(255,255,255,0.04)",
+            "background":"linear-gradient(180deg, rgba(88,101,242,0.04) 0%, transparent 100%)",
+        }),
+
+        # ── Bottom CTA ─────────────────────────────────────────────────────────
+        html.Div([html.Div([
+            html.Div([
+                html.Span(tr("join_badge"), style={"color":"white","fontWeight":"800","fontSize":"0.68em","letterSpacing":"3px"}),
+            ], style={"display":"inline-flex","alignItems":"center","backgroundColor":"rgba(147,51,234,0.12)","border":"1px solid rgba(147,51,234,0.4)","borderRadius":"100px","padding":"8px 20px","marginBottom":"28px"}),
+            html.H2([
+                html.Span(tr("join_h2a"), style={"color":"white"}),
+                html.Span(tr("join_h2b"), style={"background":"linear-gradient(135deg,#A855F7,#9333EA)","-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text"}),
+                html.Span(tr("join_h2c"), style={"color":"white"}),
+            ], style={"fontWeight":"900","fontSize":"3.2em","margin":"0 0 20px 0","letterSpacing":"-1.5px","lineHeight":"1.05"}),
+            html.Div([
+                html.Div(tr("join_d1"), style={"color":"rgba(255,255,255,0.75)","fontWeight":"500","fontSize":"1.05em","marginBottom":"6px"}),
+                html.Div(tr("join_d2"), style={"color":"rgba(255,255,255,0.35)","fontWeight":"500","fontSize":"0.95em","fontStyle":"italic"}),
+            ], style={"marginBottom":"38px","lineHeight":"1.7"}),
+            html.A(tr("join_cta"), href="/login", style={
+                "backgroundColor":PURPLE,"color":"white","padding":"16px 40px","borderRadius":"10px",
+                "fontWeight":"700","fontSize":"1em","textDecoration":"none","display":"inline-block",
+                "letterSpacing":"0.2px","boxShadow":"0 4px 28px rgba(147,51,234,0.45)",
+                "whiteSpace":"nowrap","border":"1px solid rgba(168,85,247,0.6)",
+            }),
+            html.Div([
+                *[html.Span([
+                    html.Span("✓ ", style={"color":BULL,"fontWeight":"800"}),
+                    html.Span(item, style={"color":"rgba(255,255,255,0.45)","fontWeight":"600","letterSpacing":"0.2px"}),
+                ], style={"fontSize":"0.76em","whiteSpace":"nowrap"})
+                for item in tr("join_trust")],
+            ], style={"display":"flex","alignItems":"center","justifyContent":"center","gap":"22px","marginTop":"22px","flexWrap":"nowrap"}),
+        ],style={"textAlign":"center"})],style={"padding":"100px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+
+        # ── Footer ─────────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div("BOJKET",style={"color":"white","fontWeight":"900","fontSize":"1.1em","letterSpacing":"4px","marginBottom":"4px"}),
+                html.Div(tr("footer_sub"),style={"color":TEXT_MUTED,"fontSize":"0.8em","fontStyle":"italic"}),
+            ], style={"flex":"1"}),
+            html.Div([
+                html.Span("\U0001f4cd", style={"fontSize":"1em","marginRight":"7px"}),
+                html.Span("BASED IN VIENNA, AUSTRIA", style={
+                    "color":"white","fontWeight":"700","fontSize":"0.75em",
+                    "letterSpacing":"2px",
+                }),
+            ], style={"flex":"1","display":"flex","alignItems":"center","justifyContent":"center"}),
+            html.Div(tr("footer_copy"),style={"color":TEXT_MUTED,"fontSize":"0.75em","fontStyle":"italic","flex":"1","textAlign":"right"}),
+        ],style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"28px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+    ],style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
+
+def _feature_card(icon,title,desc):
+    return html.Div([
+        html.Div(icon,style={"fontSize":"2em","marginBottom":"14px"}),
+        html.Div(title,style={"color":"white","fontWeight":"700","fontSize":"0.98em","marginBottom":"8px"}),
+        html.Div(desc,style={"color":"rgba(255,255,255,0.5)","fontSize":"0.84em","lineHeight":"1.65"}),
+    ],className="feature-card",style={"backgroundColor":"rgba(147,51,234,0.06)","border":"1px solid rgba(255,255,255,0.07)","borderRadius":"16px","padding":"28px"})
+
+def login_page():
+    def tr(k):
+        strings = {
+            "login_h": "Welcome back.",
+            "login_sub": "Sign in to your Bojket account.",
+            "login_email": "Email address",
+            "login_pass": "Password",
+            "login_btn": "Sign In →",
+            "login_new": "NO ACCOUNT YET?",
+            "login_new_lnk": "🚀  View Plans & Pricing",
+            "login_incl": "What's included",
+            "login_features": ["Real-time signals across 60+ assets", "10-factor engine + XGBoost ML model",
+                              "Backtesting over 2 years of history", "Personalised TP & SL calculation",
+                              "Bojket AI mentor available 24/7", "Full trade journal & streak tracking"],
+        }
+        return strings.get(k, k)
+    return html.Div([
+        html.Div([
+            html.Span("←",id="lv-back",style={"color":TEXT_MUTED,"cursor":"pointer","fontSize":"1em","marginRight":"10px"}),
+            html.Span("BOJKET",id="lv-logo",style={"color":PURPLE_LIGHT,"fontWeight":"900","fontSize":"1.1em","letterSpacing":"4px","cursor":"pointer"}),
+        ],style={"padding":"22px 48px","borderBottom":"1px solid rgba(255,255,255,0.06)"}),
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.Div(tr("login_h"),style={"color":"white","fontWeight":"800","fontSize":"2.2em","marginBottom":"6px","letterSpacing":"-1px"}),
+                    html.Div(tr("login_sub"),style={"color":"rgba(255,255,255,0.45)","fontSize":"0.92em","marginBottom":"36px"}),
+                    html.Div(tr("login_email"),style={"color":"rgba(255,255,255,0.7)","fontSize":"0.75em","fontWeight":"600","letterSpacing":"0.8px","marginBottom":"8px","textTransform":"uppercase"}),
+                    dcc.Input(id="lv-email",type="email",placeholder="you@example.com",className="inp",style={"marginBottom":"18px"}),
+                    html.Div(tr("login_pass"),style={"color":"rgba(255,255,255,0.7)","fontSize":"0.75em","fontWeight":"600","letterSpacing":"0.8px","marginBottom":"8px","textTransform":"uppercase"}),
+                    dcc.Input(id="lv-password",type="password",placeholder="••••••••",className="inp",style={"marginBottom":"10px"}),
+                    html.Div(id="lv-error",style={"color":BEAR,"fontSize":"0.82em","marginBottom":"18px","minHeight":"22px"}),
+                    html.Button(tr("login_btn"),id="lv-submit",className="cta-primary",style={"padding":"14px","fontSize":"0.95em","width":"100%","marginBottom":"16px"}),
+                    # ── OR divider ─────────────────────────────────────────
+                    html.Div([
+                        html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","flex":"1"}),
+                        html.Span("or",style={"color":"rgba(255,255,255,0.22)","fontSize":"0.72em","padding":"0 14px","flexShrink":"0"}),
+                        html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","flex":"1"}),
+                    ],style={"display":"flex","alignItems":"center","marginBottom":"14px"}),
+                    # ── View plans CTA ─────────────────────────────────────
+                    html.Span(tr("login_new_lnk"),id="lv-signup",style={
+                        "display":"block","width":"100%","padding":"13px",
+                        "textAlign":"center","border":f"1px solid {PURPLE}",
+                        "borderRadius":"10px","cursor":"pointer","color":PURPLE_LIGHT,
+                        "fontWeight":"700","fontSize":"0.97em",
+                        "background":f"linear-gradient(135deg,rgba(147,51,234,0.07),rgba(147,51,234,0.17))",
+                        "boxShadow":f"0 0 22px rgba(147,51,234,0.25)",
+                        "letterSpacing":"0.2px","marginBottom":"12px",
+                    }),
+                    html.Div(tr("login_new"),style={"color":"rgba(255,255,255,0.85)","fontSize":"0.72em","textAlign":"center","fontWeight":"700","letterSpacing":"1px"}),
+                ],style={"width":"380px"}),
+                html.Div([
+                    html.Div(tr("login_incl"),style={"color":"white","fontWeight":"700","fontSize":"0.95em","marginBottom":"20px"}),
+                    *[html.Div([html.Div("✦",style={"color":PURPLE_LIGHT,"marginRight":"10px","flexShrink":"0"}),html.Div(feat,style={"color":"rgba(255,255,255,0.6)","fontSize":"0.85em","lineHeight":"1.5"})],style={"display":"flex","alignItems":"flex-start","marginBottom":"14px"})
+                    for feat in tr("login_features")],
+                    html.Div([
+                        html.Div("✓  Full access · Cancel anytime",
+                            style={"color":BULL,"fontWeight":"700","fontSize":"0.82em","marginBottom":"3px"}),
+                        html.Div("No setup fee.",
+                            style={"color":TEXT_MUTED,"fontSize":"0.75em"}),
+                    ], style={"backgroundColor":"rgba(52,211,153,0.08)","border":"1px solid rgba(52,211,153,0.2)","borderRadius":"10px","padding":"12px 14px","marginTop":"20px"}),
+                ],style={"background":"linear-gradient(135deg,#0f0e18,#13101f)","border":"1px solid rgba(255,255,255,0.07)","borderRadius":"16px","padding":"28px","width":"270px","alignSelf":"flex-start","marginLeft":"56px"}),
+            ],style={"display":"flex","alignItems":"center","justifyContent":"center"}),
+        ],style={"display":"flex","alignItems":"center","justifyContent":"center","minHeight":"calc(100vh - 65px)","padding":"40px"}),
+    ],style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN})
+
+def email_sent_page(email):
+    return html.Div([html.Div([
+        html.Div("✉️",style={"fontSize":"3.5em","marginBottom":"20px"}),
+        html.Div("Check your inbox.",style={"color":"white","fontWeight":"800","fontSize":"2em","marginBottom":"10px","letterSpacing":"-1px"}),
+        html.Div("We sent a confirmation link to",style={"color":"rgba(255,255,255,0.5)","fontSize":"0.95em","marginBottom":"6px"}),
+        html.Div(email,style={"color":PURPLE_LIGHT,"fontWeight":"700","fontSize":"1em","marginBottom":"28px"}),
+        html.Div([
+            html.Span("Didn't receive it? ",style={"color":TEXT_MUTED,"fontSize":"0.82em"}),
+            html.Span("Skip verification (demo mode)",id="skip-verify-btn",n_clicks=0,style={"color":PURPLE_LIGHT,"fontSize":"0.82em","cursor":"pointer","fontWeight":"600"}),
+        ]),
+    ],style={"textAlign":"center","maxWidth":"500px"})],
+    style={"display":"flex","justifyContent":"center","alignItems":"center","minHeight":"100vh","backgroundColor":BG_DARK,"color":TEXT_MAIN})
+
+ONBOARDING_QUESTIONS = [
+    {"q":"How would you describe your trading experience?","answers":[("A","Complete beginner — just getting started"),("B","Intermediate — I know the basics"),("C","Experienced — I've been trading for years")],"response":"Bojket is built for every level — whether you're placing your first trade or your thousandth. The engine handles the heavy analysis so you can focus on the decision."},
+    {"q":"What is your main goal with trading?","answers":[("A","Build a side income part-time"),("B","Trade full-time as my main income"),("C","Grow my savings long-term")],"response":"Bojket is designed to be your personal trading assistant at all times — helping you make high-probability decisions and stay disciplined, whatever your goal is."},
+    {"q":"What matters most to you when entering a trade?","answers":[("A","Clear entry and exit levels — I want structure"),("B","High confidence signals — best setups only"),("C","Understanding why — I want to learn as I trade")],"response":"Bojket gives you all three — precise TP & SL levels, a confidence score for every signal, and a full breakdown of exactly why the engine fired."},
+]
+
+def onboarding_page(step=0,answers=None):
+    if answers is None: answers=[]
+    total=len(ONBOARDING_QUESTIONS)
+    if step>=total:
+        return html.Div([html.Div([
+            html.Div("✦",style={"color":PURPLE_LIGHT,"fontSize":"2.8em","marginBottom":"18px"}),
+            html.Div("You're all set.",style={"color":"white","fontWeight":"800","fontSize":"2.2em","marginBottom":"10px","letterSpacing":"-1px"}),
+            html.Div("Bojket is ready to trade alongside you.",style={"color":"rgba(255,255,255,0.5)","fontSize":"0.95em","marginBottom":"36px"}),
+            html.Button("Choose Your Plan →",id="ob-done-btn",n_clicks=0,className="cta-primary",style={"padding":"15px 36px","fontSize":"0.95em"}),
+        ],style={"textAlign":"center","maxWidth":"480px"})],style={"display":"flex","justifyContent":"center","alignItems":"center","minHeight":"100vh","backgroundColor":BG_DARK})
+    q=ONBOARDING_QUESTIONS[step]; prev_response=ONBOARDING_QUESTIONS[step-1]["response"] if step>0 else None
+    return html.Div([
+        html.Div([html.Div(style={"width":f"{(step/total)*100}%","backgroundColor":PURPLE,"height":"3px","borderRadius":"3px","transition":"width 0.4s"})],style={"backgroundColor":"#1e1a2e","height":"3px","width":"100%","position":"fixed","top":"0","left":"0","zIndex":"200"}),
+        html.Div([html.Div([
+            html.Div("BOJKET",style={"color":PURPLE_LIGHT,"fontWeight":"900","fontSize":"1.1em","letterSpacing":"4px","marginBottom":"44px","textAlign":"center"}),
+            *([html.Div([html.Span("✦ ",style={"color":PURPLE_LIGHT}),html.Span(prev_response,style={"color":"rgba(255,255,255,0.65)","fontSize":"0.88em","lineHeight":"1.65","fontStyle":"italic"})],style={"background":"rgba(147,51,234,0.08)","border":"1px solid rgba(147,51,234,0.2)","borderRadius":"12px","padding":"16px 18px","marginBottom":"32px","maxWidth":"500px"},className="fade-in")] if prev_response else []),
+            html.Div(f"Question {step+1} of {total}",style={"color":TEXT_MUTED,"fontSize":"0.7em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"14px","textAlign":"center","textTransform":"uppercase"}),
+            html.Div(q["q"],style={"color":"white","fontWeight":"700","fontSize":"1.4em","marginBottom":"28px","textAlign":"center","maxWidth":"500px","lineHeight":"1.35","letterSpacing":"-0.5px"}),
+            html.Div([html.Button([html.Span(letter,style={"color":PURPLE_LIGHT,"fontWeight":"800","fontSize":"0.8em","marginRight":"14px","border":f"1px solid {PURPLE_LIGHT}","borderRadius":"5px","padding":"2px 8px","flexShrink":"0"}),html.Span(text,style={"color":"rgba(255,255,255,0.75)","fontSize":"0.9em"})],id={"type":"ob-answer","index":i},n_clicks=0,className="ob-btn",style={"background":"rgba(255,255,255,0.03)","border":"1px solid rgba(255,255,255,0.1)","borderRadius":"12px","padding":"16px 20px","marginBottom":"12px","cursor":"pointer","width":"100%","display":"flex","alignItems":"center","textAlign":"left"}) for i,(letter,text) in enumerate(q["answers"])],style={"width":"100%","maxWidth":"500px"}),
+        ],style={"display":"flex","flexDirection":"column","alignItems":"center","width":"100%","maxWidth":"580px"})],style={"display":"flex","justifyContent":"center","alignItems":"center","minHeight":"100vh","padding":"40px 20px","backgroundColor":BG_DARK}),
+    ])
+
+def pricing_page(billing="monthly"):
+    is_annual = billing == "annual"
+
+    # ── Prices & savings ──────────────────────────────────────────────────────
+    hustler_price   = "€290"   if is_annual else "€29.99"
+    veteran_price   = "€500"   if is_annual else "€49.99"
+    hustler_orig    = "€359.88"   # 29.99 × 12  (crossed out in annual mode)
+    veteran_orig    = "€599.88"   # 49.99 × 12
+
+    # ── Billing toggle ────────────────────────────────────────────────────────
+    mo_tab = dcc.Link("MONTHLY", href="/pricing", style={
+        "backgroundColor": PURPLE if not is_annual else "transparent",
+        "border": f"1px solid {PURPLE if not is_annual else 'rgba(255,255,255,0.15)'}",
+        "color": "white" if not is_annual else "rgba(255,255,255,0.4)",
+        "padding": "12px 32px", "borderRadius": "12px 0 0 12px",
+        "fontSize": "1.02em", "cursor": "pointer",
+        "fontWeight": "700" if not is_annual else "500",
+        "letterSpacing": "1px",
+        "textDecoration": "none", "display": "inline-flex", "alignItems": "center",
+    })
+    yr_tab = dcc.Link([
+        html.Span("ANNUAL", style={"marginRight": "10px", "letterSpacing": "1px"}),
+        html.Span("SAVE UP TO €100", style={
+            "fontSize": "0.72em", "fontWeight": "800", "letterSpacing": "0.5px",
+            "backgroundColor": f"{BULL}30", "color": BULL,
+            "border": f"1px solid {BULL}70", "borderRadius": "5px",
+            "padding": "3px 10px",
+            "boxShadow": f"0 0 8px {BULL}40",
+        }),
+    ], href="/pricing?billing=annual", style={
+        "backgroundColor": PURPLE if is_annual else "rgba(147,51,234,0.08)",
+        "border": f"2px solid {PURPLE if is_annual else 'rgba(147,51,234,0.4)'}",
+        "color": "white" if is_annual else "rgba(255,255,255,0.65)",
+        "padding": "12px 26px", "borderRadius": "0 12px 12px 0",
+        "fontSize": "1.02em",
+        "cursor": "pointer", "fontWeight": "700" if is_annual else "600",
+        "textDecoration": "none", "display": "inline-flex", "alignItems": "center", "gap": "0",
+        "boxShadow": f"0 0 30px rgba(147,51,234,0.55)" if is_annual else "0 0 16px rgba(147,51,234,0.25)",
+    })
+
+    # (timer removed — no urgency banner)
+
+    # ── Price block builders ──────────────────────────────────────────────────
+    def price_block_annual(orig, price, save_label):
+        return html.Div([
+            html.Div([
+                html.Span("was ", style={"color":"rgba(255,255,255,0.38)","fontSize":"0.74em","marginRight":"5px"}),
+                html.Span(orig + "/yr", style={
+                    "textDecoration": "line-through",
+                    "textDecorationColor": "#f87171",
+                    "textDecorationThickness": "2px",
+                    "color": "rgba(248,113,113,0.65)",
+                    "fontSize": "0.9em", "fontWeight": "600",
+                }),
+            ], style={"marginBottom": "5px"}),
+            html.Div(price, style={
+                "color": "white", "fontWeight": "900", "fontSize": "3.1em",
+                "letterSpacing": "-1.5px", "lineHeight": "1",
+            }),
+            html.Div([
+                html.Span("/year  ", style={"color": TEXT_MUTED, "fontSize": "0.76em"}),
+                html.Span(f"✓  Save {save_label}", style={
+                    "color": BULL, "fontSize": "0.68em", "fontWeight": "800",
+                    "backgroundColor": f"{BULL}18", "border": f"1px solid {BULL}45",
+                    "borderRadius": "5px", "padding": "2px 8px",
+                }),
+            ], style={"marginTop": "7px", "marginBottom": "28px", "display": "flex", "alignItems": "center", "gap": "6px"}),
+        ])
+
+    def price_block_monthly(price, sub):
+        return html.Div([
+            html.Div(price, style={"color":"white","fontWeight":"900","fontSize":"2.8em","marginBottom":"4px","letterSpacing":"-1px"}),
+            html.Div(sub,   style={"color":TEXT_MUTED,"fontSize":"0.75em","marginBottom":"28px"}),
+        ])
+
+    # ── Card styles ───────────────────────────────────────────────────────────
+    hustler_style = {
+        "background": "linear-gradient(135deg,#0f0e18,#13101f)",
+        "border": f"1px solid {'rgba(52,211,153,0.25)' if is_annual else 'rgba(255,255,255,0.08)'}",
+        "borderRadius": "18px", "padding": "32px", "flex": "1", "maxWidth": "360px",
+        **({"boxShadow": "0 0 28px rgba(52,211,153,0.06)"} if is_annual else {}),
+    }
+    veteran_style = {
+        "background": "linear-gradient(135deg,#12102a,#1a1238)",
+        "border": f"2px solid {PURPLE}",
+        "borderRadius": "18px", "padding": "32px", "flex": "1", "maxWidth": "360px",
+        "boxShadow": f"0 0 {'60px rgba(147,51,234,0.35)' if is_annual else '50px rgba(147,51,234,0.2)'}",
+    }
+
+    return html.Div([
+        html.Div([
+            html.A("← Sign In", href="/login", style={
+                "color":"rgba(255,255,255,0.5)","fontSize":"0.82em","fontWeight":"600",
+                "textDecoration":"none","letterSpacing":"0.3px",
+                "transition":"color 0.15s",
+            }),
+            html.Div("BOJKET", style={"color":PURPLE_LIGHT,"fontWeight":"900","fontSize":"1.1em","letterSpacing":"4px","textAlign":"center"}),
+            html.Div(style={"width":"80px"}),  # spacer to keep BOJKET centred
+        ], style={"padding":"22px 48px","borderBottom":"1px solid rgba(255,255,255,0.06)",
+                  "display":"flex","justifyContent":"space-between","alignItems":"center"}),
+
+        html.Div([
+            html.Div("Simple pricing.", style={"color":"white","fontWeight":"800","fontSize":"2.8em","textAlign":"center","marginBottom":"10px","letterSpacing":"-1px"}),
+            html.Div("Professional tools for serious traders. Choose your plan.", style={"color":"rgba(255,255,255,0.65)","fontSize":"0.98em","textAlign":"center","marginBottom":"28px"}),
+
+            # ── Billing toggle ──────────────────────────────────────────────
+            html.Div([mo_tab, yr_tab], style={"display":"flex","justifyContent":"center","marginBottom":"22px"}),
+
+            # ── Plan cards ─────────────────────────────────────────────────
+            html.Div([
+                # Hustler
+                html.Div([
+                    html.Div("HUSTLER", style={"color":NEUTRAL,"fontSize":"0.64em","fontWeight":"800","letterSpacing":"2.5px","marginBottom":"14px"}),
+                    price_block_annual(hustler_orig, hustler_price, "~€70") if is_annual else price_block_monthly(hustler_price, "per month"),
+                    html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.06)","marginBottom":"22px"}),
+                    *[_plan_feature(t,c) for t,c in [
+                        ("Real-time BUY/SELL/WAIT signals",True),("Up to 4 pattern indicators",True),
+                        ("TP & SL auto-calculation",True),("Trade journal & streak tracker",True),
+                        ("Price alerts",True),("Global market news",True),
+                        ("7 Bojket AI messages / day (resets 24h)",True),("ML model (AI Lab)",True),
+                        ("Backtesting engine",True),("Higher timeframe analysis",False),
+                        ("RSI divergence detection",False),("Signal breakdown panel",False),
+                    ]],
+                    html.Button("Start with Hustler →", id="buy-hustler-btn", n_clicks=0, style={
+                        "backgroundColor": "transparent",
+                        "border": f"1px solid {'rgba(52,211,153,0.5)' if is_annual else 'rgba(192,132,252,0.4)'}",
+                        "color": BULL if is_annual else NEUTRAL,
+                        "padding": "13px", "borderRadius": "10px", "fontSize": "0.88em",
+                        "cursor": "pointer", "fontWeight": "600", "width": "100%", "marginTop": "28px",
+                    }),
+                ], className="plan-card", style=hustler_style),
+
+                # Veteran
+                html.Div([
+                    html.Div([
+                        html.Span("PROFITABLE VETERAN", style={"color":BULL,"fontSize":"0.64em","fontWeight":"800","letterSpacing":"2px"}),
+                        html.Span("BEST VALUE", style={"color":"white","fontSize":"0.58em","background":PURPLE,"padding":"3px 10px","borderRadius":"20px","marginLeft":"10px","fontWeight":"700"}),
+                        *([] if not is_annual else [
+                            html.Span("🔥 ANNUAL DEAL", style={
+                                "color": BULL, "fontSize": "0.55em", "fontWeight": "800",
+                                "background": f"{BULL}22", "border": f"1px solid {BULL}55",
+                                "padding": "2px 8px", "borderRadius": "20px", "marginLeft": "6px",
+                            })
+                        ]),
+                    ], style={"marginBottom":"14px","display":"flex","alignItems":"center","flexWrap":"wrap","gap":"4px"}),
+                    price_block_annual(veteran_orig, veteran_price, "~€100") if is_annual else price_block_monthly(veteran_price, "per month"),
+                    html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.08)","marginBottom":"22px"}),
+                    *[_plan_feature(t,True) for t in [
+                        "Everything in Hustler","All 8 pattern indicators",
+                        "Higher timeframe bias analysis","RSI divergence detection",
+                        "Full signal breakdown panel","Unlimited Bojket AI usage",
+                        "XGBoost ML model + backtesting","Early access to new features",
+                    ]],
+                    html.Button("Go Veteran →", id="buy-veteran-btn", n_clicks=0, className="cta-primary", style={
+                        "padding": "13px", "fontSize": "0.88em", "width": "100%", "marginTop": "28px",
+                    }),
+                ], className="plan-card", style=veteran_style),
+            ], style={"display":"flex","gap":"24px","justifyContent":"center","maxWidth":"800px","margin":"0 auto"}),
+
+            html.Div(id="payment-msg", style={"color":TEXT_MUTED,"fontSize":"0.78em","textAlign":"center","marginTop":"24px","fontStyle":"italic"}),
+            html.Div("🔒  Secure checkout  ·  Cancel anytime  ·  Not financial advice.", style={"color":"rgba(255,255,255,0.25)","fontSize":"0.72em","textAlign":"center","marginTop":"14px"}),
+        ], style={"padding":"56px 24px","maxWidth":"920px","margin":"0 auto"}),
+    ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN})
+
+def _plan_feature(text,included):
+    return html.Div([
+        html.Span("✓  " if included else "✗  ", style={
+            "color": BULL if included else "#f87171",
+            "fontWeight": "700",
+            "fontSize": "0.92em",
+            "marginRight": "5px",
+            "flexShrink": "0",
+        }),
+        html.Span(text, style={
+            "color": "rgba(255,255,255,0.92)" if included else "rgba(255,255,255,0.55)",
+            "fontSize": "0.92em",
+            "lineHeight": "1.4",
+        }),
+    ], style={"marginBottom": "11px", "display": "flex", "alignItems": "flex-start"})
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  DASHBOARD DATA & SIGNAL ENGINE
+# ══════════════════════════════════════════════════════════════════════════════
+
+
+# =============================================================================
+#  DASHBOARD UI HELPERS
+# =============================================================================
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  DASHBOARD UI HELPERS
+# ══════════════════════════════════════════════════════════════════════════════
+
+def make_toggles(active,max_pat=8):
+    """Compact abbreviation chips — 3 columns, color-coded by sentiment, hover = full name."""
+    chips=[]
+    for pname,sentiment in ALL_PATTERNS:
+        color=PAT_COLOR.get(sentiment,NEUTRAL); on=pname in active
+        abbr=PAT_ABBR.get(pname,pname[:3].upper())
+        chips.append(
+            html.Span(abbr,
+                id={"type":"pat-toggle","index":pname},
+                n_clicks=0,
+                title=pname,           # native hover tooltip → full name
+                style={
+                    "cursor":"pointer","userSelect":"none","display":"inline-flex",
+                    "alignItems":"center","justifyContent":"center",
+                    "width":"42px","height":"30px","margin":"3px",
+                    "borderRadius":"6px","fontSize":"0.68em","fontWeight":"700",
+                    "letterSpacing":"0.5px","transition":"all 0.12s ease",
+                    "border":f"1px solid {color if on else '#2a2040'}",
+                    "color":color if on else "#4a4468",
+                    "backgroundColor":f"{color}22" if on else "transparent",
+                    "boxShadow":f"0 0 6px {color}55" if on else "none",
+                }
+            )
+        )
+    return html.Div(chips,style={"display":"flex","flexWrap":"wrap","padding":"4px 0"})
+
+def make_active_list(active):
+    if not active:
+        return [html.Div("None",style={"color":TEXT_MUTED,"fontSize":"0.7em","fontStyle":"italic","marginTop":"4px"})]
+    sent_map={n:s for n,s in ALL_PATTERNS}
+    items=[]
+    for p in active:
+        s=sent_map.get(p,"neutral"); color=PAT_COLOR.get(s,NEUTRAL)
+        abbr=PAT_ABBR.get(p,p[:3].upper())
+        items.append(html.Div([
+            html.Span(abbr,title=p,style={"display":"inline-block","width":"34px","backgroundColor":f"{color}20",
+                "border":f"1px solid {color}60","borderRadius":"4px","color":color,
+                "fontSize":"0.62em","fontWeight":"700","textAlign":"center","padding":"1px 0","marginRight":"7px"}),
+            html.Span(p,style={"color":TEXT_DIM,"fontSize":"0.68em","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
+        ],style={"display":"flex","alignItems":"center","marginBottom":"5px","maxWidth":"150px"}))
+    items.append(html.Div(f"{len(active)} / {MAX_IND}",
+        style={"color":PURPLE,"fontSize":"0.6em","marginTop":"6px","fontWeight":"600","letterSpacing":"1px"}))
+    return items
+
+def lbl(text):
+    return html.Div(text,style={"color":TEXT_MAIN,"fontSize":"0.6em","fontWeight":"600","letterSpacing":"1.2px","textTransform":"uppercase","marginBottom":"3px","opacity":"0.85"})
+
+def tbtn(label,bid,active=False,tip=""):
+    return dbc.Button(label,id=bid,color="dark",outline=True,title=tip,
+        style={"border":f"1px solid {PURPLE if active else 'rgba(255,255,255,0.22)'}",
+               "color":PURPLE_LIGHT if active else "rgba(255,255,255,0.72)",
+               "padding":"5px 11px","fontSize":"0.85em","borderRadius":"6px","minWidth":"0"})
+
+TUTORIAL_CHIPS = [
+    ("🎯 How do the signals work?",    "Explain how BUY, SELL and WAIT signals work on the dashboard, what the score means, and how to act on them."),
+    ("🧠 What is the AI Lab?",          "Explain the AI Lab in simple terms — what ML training does, how it improves my signals, and what backtesting shows me."),
+    ("🛠️ What tools do I have?",        "Give me a quick tour of all the tools in the dashboard — Patterns, Journal, News, Alerts, AI Lab — what each one does in one sentence."),
+    ("📓 How do I use the journal?",    "Explain how the trade journal works, how trades get logged, and how it helps me improve over time."),
+]
+
+def _typing_bubble():
+    """Three bouncing dots shown while AI is generating a response."""
+    return html.Div([
+        html.Span(className="typing-dot"),
+        html.Span(className="typing-dot"),
+        html.Span(className="typing-dot"),
+    ], style={"padding":"12px 18px","borderRadius":"14px 14px 14px 3px","maxWidth":"80px",
+              "backgroundColor":"#1a1a2e","alignSelf":"flex-start","display":"flex",
+              "alignItems":"center","gap":"0"})
+
+def render_chat_messages(messages):
+    if not messages:
+        chips = html.Div([
+            html.Div("Quick questions — tap to ask:",style={"color":TEXT_MUTED,"fontSize":"0.68em","marginBottom":"6px","fontStyle":"italic"}),
+            *[html.Button(label,id={"type":"quick-chip","index":msg},n_clicks=0,style={
+                "backgroundColor":"transparent","border":f"1px solid {PURPLE}50","color":PURPLE_LIGHT,
+                "borderRadius":"20px","padding":"4px 12px","fontSize":"0.68em","cursor":"pointer",
+                "margin":"2px 3px 2px 0","display":"inline-block"})
+              for label,msg in TUTORIAL_CHIPS],
+        ],style={"marginTop":"10px"})
+        return [
+            html.Div([
+                html.Div("✦",style={"color":PURPLE,"fontSize":"1.2em","marginBottom":"6px"}),
+                html.Div("Hey — I'm Bojket, your AI trading co-pilot.",style={"color":TEXT_MAIN,"fontWeight":"700","fontSize":"0.85em","marginBottom":"5px"}),
+                html.Div("I'll walk you through everything, help you read signals, understand the tools, and get the most out of every trade. Just ask.",style={"color":TEXT_DIM,"fontSize":"0.77em","lineHeight":"1.55","marginBottom":"2px"}),
+                chips,
+            ],style={"backgroundColor":f"{PURPLE}12","border":f"1px solid {PURPLE}25","borderRadius":"12px 12px 12px 3px","padding":"12px 14px","maxWidth":"96%"}),
+        ]
+    els = []
+    last_i = len(messages) - 1
+    for i, msg in enumerate(messages):
+        is_user = msg["role"] == "user"
+        is_last = i == last_i
+        els.append(html.Div(
+            msg["content"],
+            className="fade-in" if is_last else "",
+            style={"padding":"9px 13px",
+                   "borderRadius":"14px 14px 3px 14px" if is_user else "14px 14px 14px 3px",
+                   "maxWidth":"88%","fontSize":"0.8em","lineHeight":"1.55",
+                   "alignSelf":"flex-end" if is_user else "flex-start",
+                   "backgroundColor":PURPLE if is_user else "#1a1a2e",
+                   "color":"white","wordBreak":"break-word","whiteSpace":"pre-wrap"}
+        ))
+    return els
+
+def render_breakdown(reasons,signal,confidence):
+    if not reasons: return html.Div("No data yet.",style={"color":TEXT_MUTED,"fontSize":"0.75em","fontStyle":"italic"})
+    bar_color=BULL if signal=="BUY" else BEAR if signal=="SELL" else NEUTRAL
+    items=[html.Div([html.Div([html.Span(f"{confidence}",style={"color":bar_color,"fontWeight":"700","fontSize":"1.4em"}),html.Span("/100",style={"color":TEXT_MUTED,"fontSize":"0.7em","marginLeft":"3px"})]),html.Div(html.Div(style={"width":f"{confidence}%","backgroundColor":bar_color,"height":"4px","borderRadius":"4px","transition":"width 0.4s"}),style={"backgroundColor":"#1e1a2e","borderRadius":"4px","height":"4px","marginTop":"6px","marginBottom":"14px"})])]
+    for k,v in reasons.items():
+        is_good=v.startswith("✅") or v.startswith("🔥"); is_warn=v.startswith("⚠️") or v.startswith("💤") or v.startswith("⚡")
+        color=BULL if is_good else "#facc15" if is_warn else PURPLE_LIGHT if v.startswith("🧠") else TEXT_MUTED
+        items.append(html.Div([html.Div(k,style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"600","letterSpacing":"0.5px","marginBottom":"2px","textTransform":"uppercase"}),html.Div(v,style={"color":color,"fontSize":"0.72em","lineHeight":"1.3"})],style={"padding":"7px 0","borderBottom":f"1px solid {BORDER}33"}))
+    return html.Div([html.Div("ENGINE ANALYSIS",style={"color":TEXT_MUTED,"fontSize":"0.58em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px"}),html.Div(items)])
+
+def trade_entry_modal(signal,entry_price,default_tp,default_sl,atr):
+    sig_color=BULL if signal=="BUY" else BEAR; sig_label="I Bought" if signal=="BUY" else "I Sold"
+    return html.Div([html.Div([html.Div([
+        html.Div(f"✅  {sig_label} — Set Trade Details",style={"color":sig_color,"fontWeight":"700","fontSize":"0.9em","marginBottom":"16px"}),
+        html.Div([html.Div("Position Size",style={"color":TEXT_MUTED,"fontSize":"0.62em","letterSpacing":"1px","marginBottom":"4px","fontWeight":"500"}),html.Div([dcc.Input(id="pos-size-input",type="number",placeholder="e.g. 0.01",value="",className="inp",style={"flex":"1"}),html.Div("units",style={"color":TEXT_MUTED,"fontSize":"0.72em","marginLeft":"8px","alignSelf":"center","whiteSpace":"nowrap"})],style={"display":"flex","alignItems":"center"}),html.Div("How much? (BTC: 0.001, stocks: 10, etc.)",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginTop":"3px","fontStyle":"italic"})],style={"marginBottom":"14px"}),
+        html.Div([html.Div([html.Span("Take Profit 🎯",style={"color":TEXT_MUTED,"fontSize":"0.62em","letterSpacing":"1px","fontWeight":"500"}),html.Span(f"  ·  default: {default_tp}",style={"color":TEXT_MUTED,"fontSize":"0.58em","fontStyle":"italic"})],style={"marginBottom":"4px"}),dcc.Input(id="custom-tp-input",type="number",placeholder=str(default_tp),value="",className="inp")],style={"marginBottom":"14px"}),
+        html.Div([html.Div([html.Span("Stop Loss 🛑",style={"color":TEXT_MUTED,"fontSize":"0.62em","letterSpacing":"1px","fontWeight":"500"}),html.Span(f"  ·  default: {default_sl}",style={"color":TEXT_MUTED,"fontSize":"0.58em","fontStyle":"italic"})],style={"marginBottom":"4px"}),dcc.Input(id="custom-sl-input",type="number",placeholder=str(default_sl),value="",className="inp")],style={"marginBottom":"18px"}),
+        html.Div(f"ATR: {atr}  ·  Entry: {entry_price}",style={"color":TEXT_MUTED,"fontSize":"0.62em","marginBottom":"16px","fontStyle":"italic"}),
+        html.Div([html.Button("Confirm Trade",id="confirm-trade-btn",n_clicks=0,style={"backgroundColor":f"{sig_color}15","border":f"1px solid {sig_color}50","color":sig_color,"padding":"8px 20px","borderRadius":"7px","fontSize":"0.8em","cursor":"pointer","fontWeight":"600","flex":"1"}),html.Div(style={"width":"8px"}),html.Button("Cancel",id="cancel-trade-btn",n_clicks=0,style={"backgroundColor":"transparent","border":f"1px solid {BORDER}","color":TEXT_MUTED,"padding":"8px 16px","borderRadius":"7px","fontSize":"0.8em","cursor":"pointer"})],style={"display":"flex","alignItems":"center"}),
+    ],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"12px","padding":"22px"})],style={"maxWidth":"420px","margin":"0 auto"})],
+    style={"position":"fixed","top":"0","left":"0","width":"100%","height":"100%","backgroundColor":"rgba(0,0,0,0.75)","zIndex":"500","display":"flex","alignItems":"center","justifyContent":"center","padding":"20px"})
+
+NEWS_PANEL_HIDDEN={"position":"fixed","top":"0","right":"0","width":"380px","height":"100vh","backgroundColor":"#06050f","borderLeft":f"1px solid {BORDER}","zIndex":"150","display":"none","boxShadow":"-8px 0 40px rgba(0,0,0,0.6)"}
+NEWS_PANEL_SHOWN={**NEWS_PANEL_HIDDEN,"display":"block"}
+BREAKDOWN_HIDDEN={"display":"none","width":"240px","flexShrink":"0","backgroundColor":BG_CARD,"borderLeft":f"1px solid {BORDER}","padding":"14px","overflowY":"auto","height":"640px"}
+BREAKDOWN_SHOWN={**BREAKDOWN_HIDDEN,"display":"block"}
+AILAB_PANEL_HIDDEN={"position":"fixed","top":"0","right":"0","width":"400px","height":"100vh","backgroundColor":"#06050f","borderLeft":f"1px solid {BORDER}","zIndex":"160","display":"none","boxShadow":"-8px 0 40px rgba(0,0,0,0.7)","overflowY":"auto"}
+AILAB_PANEL_SHOWN={**AILAB_PANEL_HIDDEN,"display":"block"}
+ADMIN_PANEL_HIDDEN={"position":"fixed","top":"0","left":"0","width":"720px","height":"100vh","backgroundColor":"#07060f","borderRight":f"1px solid {BORDER}","zIndex":"170","display":"none","boxShadow":"10px 0 60px rgba(0,0,0,0.8)","overflowY":"auto"}
+ADMIN_PANEL_SHOWN={**ADMIN_PANEL_HIDDEN,"display":"block"}
+
+
+# ── SHORT-TERM FORECAST ENGINE ────────────────────────────────────────────────
+
+def compute_short_term_forecast(df, interval="5m"):
+    """
+    Predict the likely price direction and level over the next ~10 minutes.
+    Combines linear regression, RSI, MACD histogram, recent momentum,
+    volume confirmation, and Bollinger Band position.
+    Returns a dict or None if not enough data.
+    """
+    if df is None or len(df) < 22:
+        return None
+    try:
+        close  = df["close"].values.astype(float)
+        last   = close[-1]
+
+        signals = []   # +1 = bullish signal, -1 = bearish, 0 = neutral
+        drivers = []   # human-readable reason strings
+
+        # 1. Linear regression on last 20 candles — extrapolate 2 candles ahead
+        x      = np.arange(20, dtype=float)
+        y      = close[-20:]
+        coeffs = np.polyfit(x, y, 1)           # slope, intercept
+        slope  = coeffs[0]
+        slope_pct = slope / last * 100
+        lr_target = last + slope * 2            # extrapolated price
+
+        if   slope_pct >  0.015: signals.append(1);  drivers.append(f"LR trend rising ({slope_pct:+.3f}%/candle)")
+        elif slope_pct < -0.015: signals.append(-1); drivers.append(f"LR trend falling ({slope_pct:+.3f}%/candle)")
+        else:                    signals.append(0);  drivers.append("LR trend flat")
+
+        # 2. RSI momentum
+        try:
+            rsi_s  = ta.momentum.RSIIndicator(pd.Series(close), window=14).rsi()
+            rsi_v  = rsi_s.iloc[-1]; rsi_p = rsi_s.iloc[-2]
+            if   rsi_v < 30:                        signals.append(1);  drivers.append(f"RSI oversold ({rsi_v:.0f}) — bounce expected")
+            elif rsi_v > 70:                        signals.append(-1); drivers.append(f"RSI overbought ({rsi_v:.0f}) — pullback risk")
+            elif rsi_v > 55 and rsi_v > rsi_p:     signals.append(1);  drivers.append(f"RSI rising ({rsi_v:.0f})")
+            elif rsi_v < 45 and rsi_v < rsi_p:     signals.append(-1); drivers.append(f"RSI falling ({rsi_v:.0f})")
+            else:                                   signals.append(0)
+        except: pass
+
+        # 3. MACD histogram direction and expansion
+        try:
+            hist = ta.trend.MACD(pd.Series(close)).macd_diff().dropna()
+            if len(hist) >= 2:
+                h1, h0 = hist.iloc[-1], hist.iloc[-2]
+                if   h1 > 0 and h1 > h0:  signals.append(1);  drivers.append("MACD histogram expanding bullish")
+                elif h1 < 0 and h1 < h0:  signals.append(-1); drivers.append("MACD histogram expanding bearish")
+                elif h1 > 0:              signals.append(1)
+                elif h1 < 0:              signals.append(-1)
+                else:                     signals.append(0)
+        except: pass
+
+        # 4. Recent 3-candle momentum
+        if len(close) >= 4:
+            rets     = [(close[-i] - close[-i-1]) / close[-i-1] for i in range(1, 4)]
+            avg_ret  = float(np.mean(rets))
+            if   avg_ret >  0.0002: signals.append(1);  drivers.append(f"Positive short momentum ({avg_ret*100:+.3f}%/candle)")
+            elif avg_ret < -0.0002: signals.append(-1); drivers.append(f"Negative short momentum ({avg_ret*100:+.3f}%/candle)")
+            else:                   signals.append(0)
+
+        # 5. Volume confirmation
+        if "volume" in df.columns:
+            try:
+                avg_vol   = df["volume"].iloc[-20:].mean()
+                last_vol  = df["volume"].iloc[-1]
+                vol_ratio = last_vol / avg_vol if avg_vol > 0 else 1.0
+                last_dir  = 1 if close[-1] >= df["open"].iloc[-1] else -1
+                if vol_ratio > 1.3:
+                    signals.append(last_dir)
+                    direction_word = "upward" if last_dir > 0 else "downward"
+                    drivers.append(f"High volume confirms {direction_word} move ({vol_ratio:.1f}× avg)")
+            except: pass
+
+        # 6. Bollinger Band position
+        try:
+            bb       = ta.volatility.BollingerBands(pd.Series(close), window=20, window_dev=2)
+            bb_up    = bb.bollinger_hband().iloc[-1]
+            bb_lo    = bb.bollinger_lband().iloc[-1]
+            bb_range = bb_up - bb_lo
+            if bb_range > 0:
+                bb_pct = (last - bb_lo) / bb_range
+                if   bb_pct > 0.85: signals.append(-1); drivers.append("Near Bollinger upper — mean-reversion risk")
+                elif bb_pct < 0.15: signals.append(1);  drivers.append("Near Bollinger lower — bounce opportunity")
+                else:               signals.append(0)
+        except: pass
+
+        if not signals:
+            return None
+
+        net = sum(signals)
+        n   = len(signals)
+
+        # Confidence: how many signals agree, scaled to 35–92 range
+        agreement = abs(net) / n                            # 0.0 – 1.0
+        confidence = int(35 + agreement * 57)
+
+        # ATR for price range
+        try:
+            atr = ta.volatility.AverageTrueRange(df["high"], df["low"], df["close"], window=14).average_true_range().iloc[-1]
+        except:
+            atr = last * 0.005
+
+        # Price target: LR extrapolation nudged by net sentiment × ATR
+        nudge = atr * 0.35 * (net / n)
+        price_target = lr_target + nudge
+        pct_change   = (price_target - last) / last * 100
+
+        direction = "UP" if net > 0 else "DOWN" if net < 0 else "FLAT"
+
+        return {
+            "direction":  direction,
+            "price":      round(price_target, 6),
+            "low":        round(price_target - atr * 0.5, 6),
+            "high":       round(price_target + atr * 0.5, 6),
+            "pct_change": round(pct_change, 4),
+            "confidence": confidence,
+            "drivers":    drivers[:3],
+        }
+    except:
+        return None
+
+
+def render_forecast_card(forecast):
+    """Render the 10-minute forecast as a styled card row."""
+    if not forecast:
+        return html.Div()
+
+    direction = forecast["direction"]
+    price     = forecast["price"]
+    pct       = forecast["pct_change"]
+    conf      = forecast["confidence"]
+    drivers   = forecast["drivers"]
+    low_est   = forecast["low"]
+    high_est  = forecast["high"]
+
+    dir_color = BULL if direction == "UP" else BEAR if direction == "DOWN" else NEUTRAL
+    dir_arrow = "▲" if direction == "UP" else "▼" if direction == "DOWN" else "→"
+    pct_str   = f"+{pct:.4f}%" if pct >= 0 else f"{pct:.4f}%"
+
+    # Price formatted nicely
+    if price >= 100:  price_fmt = f"{price:,.2f}"
+    elif price >= 1:  price_fmt = f"{price:,.4f}"
+    else:             price_fmt = f"{price:.6f}"
+
+    if low_est >= 100:  lo_fmt, hi_fmt = f"{low_est:,.2f}", f"{high_est:,.2f}"
+    elif low_est >= 1:  lo_fmt, hi_fmt = f"{low_est:,.4f}", f"{high_est:,.4f}"
+    else:               lo_fmt, hi_fmt = f"{low_est:.6f}", f"{high_est:.6f}"
+
+    return html.Div([
+        # ── Title row ────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Span("⏱  ", style={"color": dir_color, "fontSize":"1em"}),
+                html.Span("~10-MIN FORECAST", style={"color":TEXT_MUTED,"fontSize":"0.72em","letterSpacing":"1.5px","fontWeight":"700"}),
+            ], style={"display":"flex","alignItems":"center","flex":"1"}),
+            html.Span("AI projection", style={"color":TEXT_MUTED,"fontSize":"0.68em","fontStyle":"italic","opacity":"0.65"}),
+        ], style={"display":"flex","alignItems":"center","marginBottom":"10px"}),
+
+        # ── Main figures row ─────────────────────────────────────────────────
+        html.Div([
+            # Direction + price
+            html.Div([
+                html.Span(dir_arrow, style={"color":dir_color,"fontWeight":"900","fontSize":"2.6em","lineHeight":"1","marginRight":"10px"}),
+                html.Div([
+                    html.Div(price_fmt, style={"color":TEXT_MAIN,"fontWeight":"700","fontSize":"1.4em","lineHeight":"1"}),
+                    html.Div(pct_str,   style={"color":dir_color,"fontSize":"0.9em","fontWeight":"600","marginTop":"4px"}),
+                ]),
+            ], style={"display":"flex","alignItems":"center","flex":"1"}),
+
+            # Confidence
+            html.Div([
+                html.Div([
+                    html.Span("Confidence  ", style={"color":TEXT_MUTED,"fontSize":"0.75em"}),
+                    html.Span(f"{conf}%", style={"color":dir_color,"fontSize":"0.78em","fontWeight":"700"}),
+                ], style={"marginBottom":"5px","textAlign":"right"}),
+                html.Div(
+                    html.Div(style={"width":f"{conf}%","backgroundColor":dir_color,"height":"4px","borderRadius":"4px"}),
+                    style={"backgroundColor":"#1e1a2e","borderRadius":"4px","height":"4px","width":"110px"}
+                ),
+                html.Div([
+                    html.Span("Range: ", style={"color":TEXT_MUTED,"fontSize":"0.72em"}),
+                    html.Span(f"{lo_fmt} – {hi_fmt}", style={"color":TEXT_DIM,"fontSize":"0.72em","fontWeight":"600"}),
+                ], style={"marginTop":"5px","textAlign":"right"}),
+            ], style={"textAlign":"right"}),
+        ], style={"display":"flex","alignItems":"center","marginBottom":"12px"}),
+
+        # ── Key drivers ──────────────────────────────────────────────────────
+        *[html.Div([
+            html.Span("·  ", style={"color":dir_color,"fontWeight":"700","fontSize":"0.76em"}),
+            html.Span(d, style={"color":TEXT_DIM,"fontSize":"0.76em"}),
+        ], style={"marginBottom":"3px"}) for d in drivers],
+
+        # ── Disclaimer ───────────────────────────────────────────────────────
+        html.Div([
+            html.Span("⚠ ", style={"color":"#facc15","fontSize":"0.68em"}),
+            html.Span(
+                "Statistical projection only — markets are unpredictable. Combine this with your own read of the chart before acting.",
+                style={"color":TEXT_MUTED,"fontSize":"0.66em","fontStyle":"italic","lineHeight":"1.5"}
+            ),
+        ], style={"marginTop":"10px","paddingTop":"8px","borderTop":f"1px solid {BORDER}"}),
+
+    ], style={
+        "backgroundColor": BG_CARD2,
+        "border":         f"1px solid {BORDER}",
+        "borderLeft":     f"3px solid {dir_color}",
+        "borderRadius":   "10px",
+        "padding":        "12px 16px",
+        "marginBottom":   "7px",
+    })
+
+
+def build_admin_content():
+    """Render the admin members table grouped by plan."""
+    users  = list(REGISTERED_USERS.values())
+    hustlers         = [u for u in users if u.get("plan")=="hustler"]
+    veterans         = [u for u in users if u.get("plan")=="veteran"]
+    hustlers_monthly = [u for u in hustlers if u.get("billing")!="annual"]
+    hustlers_annual  = [u for u in hustlers if u.get("billing")=="annual"]
+    veterans_monthly = [u for u in veterans if u.get("billing")!="annual"]
+    veterans_annual  = [u for u in veterans if u.get("billing")=="annual"]
+
+    # ── stat card ──────────────────────────────────────────────────────────────
+    def stat(num, label, color, sublabel=None):
+        return html.Div([
+            html.Div(str(num), style={"color":color,"fontWeight":"800","fontSize":"2.2em","letterSpacing":"-1px","lineHeight":"1"}),
+            html.Div(label,   style={"color":TEXT_MUTED,"fontSize":"0.6em","letterSpacing":"2px","marginTop":"4px","fontWeight":"600"}),
+            *([html.Div(sublabel, style={"color":color,"fontSize":"0.58em","marginTop":"2px","opacity":"0.7"})] if sublabel else []),
+        ], style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 20px","flex":"1","textAlign":"center"})
+
+    stats_row = html.Div([
+        stat(len(users),             "TOTAL MEMBERS",    TEXT_MAIN),
+        stat(len(hustlers_monthly),  "HUSTLER / MO",     "#facc15"),
+        stat(len(hustlers_annual),   "HUSTLER / ANNUAL", "#facc15", "€290 / yr"),
+        stat(len(veterans_monthly),  "VETERAN / MO",     BULL),
+        stat(len(veterans_annual),   "VETERAN / ANNUAL", BULL,     "€500 / yr"),
+    ], style={"display":"flex","gap":"10px","marginBottom":"28px"})
+
+    # ── table header ───────────────────────────────────────────────────────────
+    def tbl_header():
+        cols = ["USERNAME","EMAIL","PLAN","BILLING","JOINED"]
+        return html.Div([
+            html.Div(c, style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"1.5px","flex":w})
+            for c,w in zip(cols,["1","2","1","1","1.2"])
+        ], style={"display":"flex","padding":"8px 14px","borderBottom":f"1px solid {BORDER}","marginBottom":"4px"})
+
+    # ── single user row ────────────────────────────────────────────────────────
+    def user_row(u, accent):
+        billing_txt = ("Annual 🔁" if u.get("billing")=="annual" else "Monthly")
+        plan_labels = {"hustler":"Hustler","veteran":"Veteran"}
+        return html.Div([
+            html.Div(u.get("username","—"),          style={"color":TEXT_MAIN,"fontSize":"0.82em","fontWeight":"600","flex":"1","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
+            html.Div(u.get("email","—"),              style={"color":TEXT_DIM, "fontSize":"0.78em","flex":"2","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
+            html.Div([
+                html.Span(plan_labels.get(u.get("plan",""),"—"),
+                          style={"backgroundColor":f"{accent}18","border":f"1px solid {accent}40","color":accent,"borderRadius":"20px","padding":"2px 10px","fontSize":"0.65em","fontWeight":"700","letterSpacing":"0.5px"})
+            ], style={"flex":"1"}),
+            html.Div(billing_txt,                    style={"color":TEXT_MUTED,"fontSize":"0.75em","flex":"1"}),
+            html.Div(u.get("joined","—"),             style={"color":TEXT_MUTED,"fontSize":"0.72em","flex":"1.2"}),
+        ], style={"display":"flex","alignItems":"center","padding":"10px 14px","borderBottom":f"1px solid rgba(30,26,46,0.5)","gap":"8px"})
+
+    # ── plan section ───────────────────────────────────────────────────────────
+    def plan_section(icon, title, price, user_list, accent):
+        sec_header = html.Div([
+            html.Span(icon, style={"fontSize":"1em","marginRight":"8px"}),
+            html.Span(title, style={"color":"white","fontWeight":"700","fontSize":"0.78em","letterSpacing":"2px"}),
+            html.Span(f"  {price}", style={"color":TEXT_MUTED,"fontSize":"0.7em","fontStyle":"italic","marginLeft":"6px"}),
+            html.Span(f"  ·  {len(user_list)} member{'s' if len(user_list)!=1 else ''}",
+                      style={"color":accent,"fontSize":"0.68em","fontWeight":"600","marginLeft":"8px"}),
+        ], style={"display":"flex","alignItems":"center","padding":"10px 14px","backgroundColor":f"{accent}08","border":f"1px solid {accent}20"})
+        # Build children list imperatively — avoids starred-expression syntax errors
+        sec_children = [sec_header]
+        if user_list:
+            sec_children.append(tbl_header())
+            for u in user_list:
+                sec_children.append(user_row(u, accent))
+        else:
+            sec_children.append(html.Div("No members yet.",
+                style={"color":TEXT_MUTED,"fontSize":"0.78em","fontStyle":"italic","padding":"12px 14px"}))
+        return html.Div(sec_children,
+            style={"marginBottom":"24px","backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"12px","overflow":"hidden"})
+
+    return html.Div([
+        stats_row,
+        plan_section("⚡","HUSTLER — MONTHLY",  "€29.99 / mo",  hustlers_monthly, "#facc15"),
+        plan_section("⚡","HUSTLER — ANNUAL",   "€290 / yr",    hustlers_annual,  "#f59e0b"),
+        plan_section("🏆","VETERAN — MONTHLY",  "€49.99 / mo",  veterans_monthly, BULL),
+        plan_section("🏆","VETERAN — ANNUAL",   "€500 / yr",    veterans_annual,  "#10b981"),
+    ], style={"padding":"20px 22px 40px 22px"})
+
+
+def build_admin_analytics():
+    """Render per-user trading analytics in the admin panel."""
+    users = list(REGISTERED_USERS.values())
+
+    # ── Global aggregates ──────────────────────────────────────────────────────
+    all_trades  = [t for u in users for t in u.get("trades", [])]
+    total_trades = len(all_trades)
+    sys_wins     = sum(1 for t in all_trades if "TP" in str(t.get("result","")))
+    sys_wr       = f"{100*sys_wins//total_trades}%" if total_trades else "—"
+    active_traders = len([u for u in users if u.get("trades")])
+    most_active_u  = max(users, key=lambda u: len(u.get("trades",[])), default=None)
+    most_active_name = most_active_u["username"] if most_active_u and most_active_u.get("trades") else "—"
+
+    # ── Stat card ──────────────────────────────────────────────────────────────
+    def stat(val, label, color):
+        return html.Div([
+            html.Div(str(val), style={"color":color,"fontWeight":"800","fontSize":"2.2em","letterSpacing":"-1px","lineHeight":"1"}),
+            html.Div(label,    style={"color":TEXT_MUTED,"fontSize":"0.6em","letterSpacing":"2px","marginTop":"4px","fontWeight":"600"}),
+        ], style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 20px","flex":"1","textAlign":"center"})
+
+    stats_row = html.Div([
+        stat(total_trades,    "TOTAL TRADES",    TEXT_MAIN),
+        stat(sys_wr,          "SYSTEM WIN RATE", BULL),
+        stat(active_traders,  "ACTIVE TRADERS",  NEUTRAL),
+        stat(most_active_name,"MOST ACTIVE",     "#facc15"),
+    ], style={"display":"flex","gap":"10px","marginBottom":"28px"})
+
+    # ── Per-user table ─────────────────────────────────────────────────────────
+    PLAN_COLORS  = {"hustler":"#facc15","veteran":BULL,"admin":PURPLE}
+    PLAN_LABELS  = {"hustler":"Hustler","veteran":"Veteran","admin":"Admin"}
+    COL_NAMES    = ["USER","PLAN","TRADES","WINS","LOSSES","WIN RATE","STREAK","TOP ASSET","LAST TRADE"]
+    COL_WIDTHS   = ["1","0.9","0.7","0.6","0.7","0.8","0.7","1","1.3"]
+
+    tbl_header = html.Div([
+        html.Div(c, style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"1.5px","flex":w})
+        for c,w in zip(COL_NAMES, COL_WIDTHS)
+    ], style={"display":"flex","padding":"8px 14px","borderBottom":f"1px solid {BORDER}","marginBottom":"4px"})
+
+    rows = []
+    for u in users:
+        trades   = u.get("trades", [])
+        total    = len(trades)
+        wins     = sum(1 for t in trades if "TP" in str(t.get("result","")))
+        losses   = sum(1 for t in trades if "SL" in str(t.get("result","")))
+        wr_val   = (100*wins//total) if total else None
+        wr_str   = f"{wr_val}%" if wr_val is not None else "—"
+        wr_color = (BULL if wr_val >= 50 else BEAR) if wr_val is not None else TEXT_MUTED
+
+        # Consecutive TP streak from most recent trades
+        streak = 0
+        for t in reversed(trades):
+            if "TP" in str(t.get("result","")): streak += 1
+            else: break
+        streak_txt = (f"🔥 {streak}" if streak >= 2 else (f"✅ {streak}" if streak == 1 else "—"))
+
+        # Most-traded asset
+        top_asset_c = Counter(t.get("symbol","") for t in trades if t.get("symbol"))
+        top_asset   = top_asset_c.most_common(1)[0][0] if top_asset_c else "—"
+
+        plan_color = PLAN_COLORS.get(u.get("plan",""), TEXT_MUTED)
+        plan_label = PLAN_LABELS.get(u.get("plan",""), "—")
+
+        rows.append(html.Div([
+            html.Div(u.get("username","—"),  style={"color":TEXT_MAIN,"fontSize":"0.78em","fontWeight":"600","flex":"1","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
+            html.Div(html.Span(plan_label,   style={"backgroundColor":f"{plan_color}18","border":f"1px solid {plan_color}40","color":plan_color,"borderRadius":"20px","padding":"2px 8px","fontSize":"0.64em","fontWeight":"700"}), style={"flex":"0.9"}),
+            html.Div(str(total) if total else "—",   style={"color":TEXT_DIM,"fontSize":"0.78em","flex":"0.7"}),
+            html.Div(str(wins)  if total else "—",   style={"color":BULL,    "fontSize":"0.78em","flex":"0.6","fontWeight":"600" if wins   else "400"}),
+            html.Div(str(losses)if total else "—",   style={"color":BEAR,    "fontSize":"0.78em","flex":"0.7","fontWeight":"600" if losses else "400"}),
+            html.Div(wr_str,                         style={"color":wr_color, "fontSize":"0.78em","flex":"0.8","fontWeight":"700"}),
+            html.Div(streak_txt,                     style={"color":BULL if streak else TEXT_MUTED,"fontSize":"0.75em","flex":"0.7"}),
+            html.Div(top_asset,                      style={"color":NEUTRAL,  "fontSize":"0.75em","flex":"1"}),
+            html.Div(u.get("last_trade","—"),         style={"color":TEXT_MUTED,"fontSize":"0.68em","flex":"1.3"}),
+        ], style={"display":"flex","alignItems":"center","padding":"10px 14px","borderBottom":f"1px solid rgba(30,26,46,0.5)","gap":"8px"}))
+
+    if not rows:
+        table_body = html.Div("No users registered yet.",
+            style={"color":TEXT_MUTED,"fontSize":"0.78em","fontStyle":"italic","padding":"14px"})
+    else:
+        table_body = html.Div([tbl_header]+rows,
+            style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"12px","overflow":"hidden"})
+
+    return html.Div([
+        stats_row,
+        html.Div("PER-USER TRADING ANALYTICS", style={"color":TEXT_MUTED,"fontSize":"0.6em","letterSpacing":"2px","fontWeight":"700","marginBottom":"12px"}),
+        table_body,
+    ], style={"padding":"20px 22px 40px 22px"})
+
+
+def dashboard_page(plan="admin"):
+    limits=PLAN_LIMITS.get(plan,PLAN_LIMITS[None])
+    plan_badge_color=BULL if plan in ["admin","veteran"] else "#facc15"
+    plan_label={"admin":"Admin","veteran":"Profitable Veteran","hustler":"Hustler"}.get(plan,"Hustler")
+
+    return html.Div([
+        # ── TOPBAR ─────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Span("BOJKET",style={"color":"white","fontWeight":"700","fontSize":"1.05em","letterSpacing":"3px"}),
+                html.Div("Zero bullshit.",style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"1px","marginTop":"1px","fontStyle":"italic"}),
+            ],style={"minWidth":"140px"}),
+            html.Div([
+                # Asset + timeframe
+                tbtn("☰","market-btn",tip="Browse all markets"),
+                html.Div(style={"width":"6px"}),
+                dcc.Dropdown(id="symbol-input",options=ALL_OPTIONS,value="BTC-USD",searchable=True,clearable=False,placeholder="Search...",style={"width":"170px","backgroundColor":BG_CARD,"color":"black","border":f"1px solid {BORDER}","borderRadius":"6px","fontSize":"0.82em"}),
+                html.Div(style={"width":"5px"}),
+                dcc.Dropdown(id="interval-dropdown",options=[{"label":l,"value":v} for l,v in [("1m","1m"),("5m","5m"),("15m","15m"),("30m","30m"),("1h","1h"),("2h","2h"),("3h","3h"),("4h","4h"),("1D","1d")]],value="5m",clearable=False,style={"width":"72px","backgroundColor":BG_CARD,"color":"black","border":f"1px solid {BORDER}","borderRadius":"6px","fontSize":"0.82em"}),
+                # Divider
+                html.Div(style={"width":"1px","height":"22px","backgroundColor":BORDER,"margin":"0 10px","flexShrink":"0"}),
+                # General tool buttons
+                tbtn("📓","journal-btn",tip="Trade Journal — log & review your trades"),html.Div(style={"width":"4px"}),
+                tbtn("📰","news-btn",tip="Market News — live global headlines"),html.Div(style={"width":"4px"}),
+                html.Div([
+                    html.Button("🔔", id="alert-btn", n_clicks=0, title="Notifications",
+                        style={"border":"1px solid rgba(255,255,255,0.22)","color":"rgba(255,255,255,0.72)",
+                               "backgroundColor":"transparent","padding":"5px 11px","fontSize":"0.85em",
+                               "borderRadius":"6px","cursor":"pointer","minWidth":"0"}),
+                    html.Div([
+                        html.Button([html.Span("🔔",style={"marginRight":"8px"}),"Set Price Alert"],
+                            id="alert-dropdown-price-btn", n_clicks=0,
+                            style={"display":"flex","alignItems":"center","width":"100%","background":"transparent",
+                                   "border":"none","color":"rgba(255,255,255,0.82)","padding":"8px 12px",
+                                   "fontSize":"0.8em","borderRadius":"7px","cursor":"pointer","textAlign":"left",
+                                   "fontWeight":"500","whiteSpace":"nowrap"}),
+                        html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.07)","margin":"2px 6px"}),
+                        html.Button([html.Span("🔕",style={"marginRight":"8px"}),"Mute Notifications"],
+                            id="alert-dropdown-mute-btn", n_clicks=0,
+                            style={"display":"flex","alignItems":"center","width":"100%","background":"transparent",
+                                   "border":"none","color":"rgba(255,255,255,0.82)","padding":"8px 12px",
+                                   "fontSize":"0.8em","borderRadius":"7px","cursor":"pointer","textAlign":"left",
+                                   "fontWeight":"500","whiteSpace":"nowrap"}),
+                    ], id="alert-dropdown",
+                    style={"display":"none","position":"absolute","top":"calc(100% + 8px)","left":"0",
+                           "backgroundColor":"#0f0e18","border":"1px solid rgba(255,255,255,0.14)",
+                           "borderRadius":"10px","padding":"5px","minWidth":"188px","zIndex":"600",
+                           "boxShadow":"0 8px 32px rgba(0,0,0,0.7)"}),
+                ], style={"position":"relative"}),
+                html.Div(style={"width":"4px"}),
+                # Divider
+                html.Div(style={"width":"1px","height":"22px","backgroundColor":BORDER,"margin":"0 10px","flexShrink":"0"}),
+                tbtn("🧠  AI Lab","ailab-btn",tip="AI Lab — ML training, backtesting & insights"),html.Div(style={"width":"4px"}),
+                html.Div(style={"width":"4px"}),
+            ],style={"display":"flex","alignItems":"center"}),
+            html.Div([
+                html.Span(plan_label,style={"color":plan_badge_color,"fontSize":"0.62em","fontWeight":"600","border":f"1px solid {plan_badge_color}40","padding":"3px 10px","borderRadius":"20px","marginRight":"10px"}),
+                html.A([
+                    html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
+                             style={"width":"13px","height":"13px","marginRight":"5px","verticalAlign":"middle","opacity":"0.8"}),
+                    html.Span("Discord", style={"verticalAlign":"middle"}),
+                ], href="https://discord.gg/BtpK96fM", target="_blank", style={
+                    "color":"rgba(255,255,255,0.65)","fontSize":"0.68em","fontWeight":"600",
+                    "textDecoration":"none","display":"inline-flex","alignItems":"center",
+                    "border":"1px solid rgba(88,101,242,0.45)","borderRadius":"6px",
+                    "padding":"4px 10px","backgroundColor":"rgba(88,101,242,0.08)","marginRight":"10px",
+                }),
+                html.Span("Sign Out",id="signout-btn",n_clicks=0,title="Log out of your account",style={"color":TEXT_MUTED,"fontSize":"0.68em","cursor":"pointer","marginRight":"10px"}),
+                # Admin button — only visible to the admin account
+                dbc.Button("⚙  Admin",id="admin-btn",n_clicks=0,color="dark",outline=True,title="Open Admin Panel",
+                           style={"border":f"1px solid {PURPLE}50","color":PURPLE,"padding":"5px 14px","fontSize":"0.76em","borderRadius":"6px","marginRight":"8px","fontWeight":"700","letterSpacing":"0.8px",
+                                  "display":"inline-block" if plan=="admin" else "none"}),
+                dbc.Button("🌙",id="theme-btn",color="dark",outline=True,title="Toggle chart theme (dark / light)",style={"border":f"1px solid {BORDER}","color":TEXT_DIM,"padding":"5px 10px","fontSize":"0.82em","borderRadius":"6px","marginRight":"6px"}),
+                dbc.Button("↺",id="refresh-btn",color="dark",outline=True,title="Refresh chart data now",style={"border":f"1px solid {BORDER}","color":PURPLE,"padding":"5px 10px","fontSize":"0.88em","borderRadius":"6px"}),
+            ],style={"display":"flex","alignItems":"center"}),
+        ],style={"display":"flex","alignItems":"center","justifyContent":"space-between","padding":"11px 24px","borderBottom":f"1px solid {BORDER}","backgroundColor":"#050508","position":"sticky","top":"0","zIndex":"100"}),
+
+        # ── PANEL AREA (market / journal / alert — NOT pattern, that's beside the chart) ──
+        html.Div([
+            html.Div(id="market-panel",style={"display":"none"},children=[html.Div([html.Div([html.Div(f"{CATEGORY_ICONS.get(cat,'')}  {cat.upper()}",style={"color":TEXT_MUTED,"fontSize":"0.58em","letterSpacing":"1.5px","marginBottom":"7px","fontWeight":"500"}),html.Div([html.Span(LABELS.get(s,s),id={"type":"sym-btn","index":s},n_clicks=0,className="sym-pill",style={"cursor":"pointer","display":"inline-block","color":TEXT_DIM,"fontSize":"0.76em","padding":"3px 12px","margin":"2px 3px 2px 0","borderRadius":"20px","border":f"1px solid {BORDER}","transition":"all 0.15s ease"}) for s in syms])],style={"marginBottom":"12px"}) for cat,syms in SYMBOLS.items()],style={"display":"flex","flexWrap":"wrap","gap":"0 28px"})]),
+            html.Div(id="journal-panel",style={"display":"none"},children=[html.Div([html.Div(id="streak-display",style={"marginBottom":"8px"}),html.Div("TRADE JOURNAL",style={"color":TEXT_MUTED,"fontSize":"0.58em","letterSpacing":"1.5px","marginBottom":"10px","fontWeight":"500"}),html.Div(id="journal-table")])]),
+        ],id="panel-area",style={"borderBottom":f"1px solid {BORDER}","backgroundColor":"#050508"}),
+
+        # ── PRICE ALERT FLOATING CARD (near bell, top-right) ───────────────────
+        html.Div([
+            # Header
+            html.Div([
+                html.Div([
+                    html.Span("🔔", style={"fontSize":"1.1em","marginRight":"9px"}),
+                    html.Div([
+                        html.Div("PRICE ALERT", style={"color":"white","fontWeight":"800","fontSize":"0.78em","letterSpacing":"2px"}),
+                        html.Div("Get notified when price hits your target", style={"color":TEXT_MUTED,"fontSize":"0.62em","marginTop":"1px"}),
+                    ]),
+                ], style={"display":"flex","alignItems":"center","flex":"1"}),
+                html.Button("✕", id="alert-close-btn", n_clicks=0, style={
+                    "backgroundColor":"transparent","border":f"1px solid rgba(248,113,113,0.35)",
+                    "color":"#f87171","padding":"3px 9px","borderRadius":"5px","fontSize":"0.8em","cursor":"pointer",
+                }),
+            ], style={"display":"flex","alignItems":"center","marginBottom":"18px"}),
+            # Input row
+            html.Div([
+                dcc.Input(id="alert-input", type="number", placeholder="Enter target price...",
+                    style={"backgroundColor":"#0a0910","border":f"1px solid rgba(147,51,234,0.4)",
+                           "color":"white","padding":"10px 14px","borderRadius":"8px","fontSize":"0.85em",
+                           "width":"100%","outline":"none","boxSizing":"border-box",
+                           "boxShadow":"0 0 0 0px rgba(147,51,234,0)","transition":"box-shadow 0.2s"}),
+            ], style={"marginBottom":"12px"}),
+            # Buttons
+            html.Div([
+                html.Button("Set Alert", id="set-alert-btn", n_clicks=0, style={
+                    "flex":"1","backgroundColor":PURPLE,"border":"none","color":"white",
+                    "padding":"10px 0","borderRadius":"8px","fontSize":"0.82em","cursor":"pointer",
+                    "fontWeight":"700","letterSpacing":"0.4px",
+                    "boxShadow":"0 4px 16px rgba(147,51,234,0.4)",
+                }),
+                html.Button("Clear", id="clear-alert-btn", n_clicks=0, style={
+                    "backgroundColor":"transparent","border":f"1px solid rgba(255,255,255,0.12)",
+                    "color":TEXT_MUTED,"padding":"10px 18px","borderRadius":"8px","fontSize":"0.82em","cursor":"pointer",
+                }),
+            ], style={"display":"flex","gap":"8px","marginBottom":"10px"}),
+            # Status
+            html.Div(id="alert-status", style={"fontSize":"0.74em","color":BULL,"minHeight":"16px","textAlign":"center","fontWeight":"600"}),
+        ], id="alert-panel", style={
+            "display":"none","position":"fixed","top":"62px","right":"230px",
+            "width":"280px","backgroundColor":"#0d0c1a",
+            "border":f"1px solid rgba(147,51,234,0.45)",
+            "borderRadius":"14px","padding":"18px 20px","zIndex":"500",
+            "boxShadow":"0 16px 48px rgba(0,0,0,0.75), 0 0 0 1px rgba(147,51,234,0.1)",
+        }),
+
+        # ── ADMIN PANEL (fixed overlay, z=170, left side) ───────────────────
+        html.Div(id="admin-panel",style=ADMIN_PANEL_HIDDEN,children=[
+            # Sticky header with tab switcher
+            html.Div([
+                html.Div([
+                    html.Span("⚙",style={"fontSize":"1.1em","marginRight":"10px"}),
+                    html.Div([
+                        html.Div("ADMIN PANEL",style={"color":TEXT_MAIN,"fontWeight":"800","fontSize":"0.76em","letterSpacing":"3px"}),
+                        html.Div("Bojket command center",style={"color":TEXT_MUTED,"fontSize":"0.58em","marginTop":"1px"}),
+                    ]),
+                ],style={"display":"flex","alignItems":"center","flex":"1"}),
+                # Tab buttons
+                html.Div([
+                    html.Button("MEMBERS", id="admin-tab-members-btn", n_clicks=0,
+                        style={"backgroundColor":f"{PURPLE}20","border":f"1px solid {PURPLE}50","color":NEUTRAL,
+                               "padding":"4px 14px","borderRadius":"5px","fontSize":"0.65em","cursor":"pointer",
+                               "fontWeight":"700","letterSpacing":"1px","marginRight":"6px"}),
+                    html.Button("ANALYTICS", id="admin-tab-analytics-btn", n_clicks=0,
+                        style={"backgroundColor":"transparent","border":f"1px solid {BORDER}","color":TEXT_MUTED,
+                               "padding":"4px 14px","borderRadius":"5px","fontSize":"0.65em","cursor":"pointer",
+                               "fontWeight":"700","letterSpacing":"1px","marginRight":"12px"}),
+                ],style={"display":"flex","alignItems":"center"}),
+                html.Button("✕",id="admin-close-btn",n_clicks=0,
+                            style={"backgroundColor":"transparent","border":f"1px solid {BEAR}40","color":BEAR,"padding":"4px 10px","borderRadius":"5px","fontSize":"0.8em","cursor":"pointer"}),
+            ],style={"display":"flex","alignItems":"center","padding":"14px 18px","borderBottom":f"1px solid {BORDER}",
+                     "backgroundColor":"#0a0818","position":"sticky","top":"0","zIndex":"10"}),
+            # Dynamic content filled by callback
+            html.Div(id="admin-panel-content",children=[
+                html.Div("Loading…",style={"color":TEXT_MUTED,"fontSize":"0.8em","padding":"20px"})
+            ]),
+        ]),
+
+        # ── NEWS PANEL (fixed overlay) ──────────────────────────────────────
+        html.Div(id="news-panel",style=NEWS_PANEL_HIDDEN,children=[
+            html.Div([html.Div([html.Div("📡",style={"fontSize":"1.1em","marginRight":"8px"}),html.Div([html.Div("GLOBAL MARKET PULSE",style={"color":TEXT_MAIN,"fontWeight":"700","fontSize":"0.72em","letterSpacing":"2px"}),html.Div(id="news-last-updated",style={"color":TEXT_MUTED,"fontSize":"0.58em","marginTop":"1px"})])],style={"display":"flex","alignItems":"center","flex":"1"}),html.Div([html.Button("↺",id="news-refresh-btn",n_clicks=0,style={"backgroundColor":"transparent","border":f"1px solid {BORDER}","color":TEXT_DIM,"padding":"4px 10px","borderRadius":"5px","fontSize":"0.8em","cursor":"pointer","marginRight":"6px"}),html.Button("✕",id="news-close-btn",n_clicks=0,style={"backgroundColor":"transparent","border":f"1px solid {BEAR}40","color":BEAR,"padding":"4px 10px","borderRadius":"5px","fontSize":"0.8em","cursor":"pointer"})],style={"display":"flex","alignItems":"center"})],style={"display":"flex","alignItems":"center","padding":"14px 16px","borderBottom":f"1px solid {BORDER}","backgroundColor":"#060510","position":"sticky","top":"0","zIndex":"10"}),
+            html.Div(id="news-content",className="news-panel-scroll",style={"overflowY":"auto","height":"calc(100vh - 60px)","padding":"0 14px 20px 14px"}),
+        ]),
+
+        # ── AI LAB PANEL (fixed overlay, z=160) ────────────────────────────
+        html.Div(id="ailab-panel",style=AILAB_PANEL_HIDDEN,children=[
+            # Header
+            html.Div([
+                html.Div([
+                    html.Span("🧠",style={"fontSize":"1.1em","marginRight":"8px"}),
+                    html.Div([
+                        html.Div("AI LAB",style={"color":TEXT_MAIN,"fontWeight":"700","fontSize":"0.72em","letterSpacing":"2px"}),
+                        html.Div("Backtesting · ML Model · Insights",style={"color":TEXT_MUTED,"fontSize":"0.58em","marginTop":"1px"}),
+                    ]),
+                ],style={"display":"flex","alignItems":"center","flex":"1"}),
+                html.Button("✕",id="ailab-close-btn",n_clicks=0,style={"backgroundColor":"transparent","border":f"1px solid {BEAR}40","color":BEAR,"padding":"4px 10px","borderRadius":"5px","fontSize":"0.8em","cursor":"pointer"}),
+            ],style={"display":"flex","alignItems":"center","padding":"14px 16px","borderBottom":f"1px solid {BORDER}","backgroundColor":"#060510","position":"sticky","top":"0","zIndex":"10"}),
+
+            html.Div(id="ailab-content",className="ailab-scroll",
+                     style={"padding":"14px 16px 40px 16px"},
+                     children=[html.Div("Loading…",style={"color":TEXT_MUTED,"fontSize":"0.8em"})]),
+        ]),
+
+        # ── TRADE MODAL ─────────────────────────────────────────────────────
+        html.Div(id="trade-modal",style={"display":"none"}),
+        # ── MAIN CONTENT ────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.Div(id="signal-text",style={"fontSize":"3.2em","fontWeight":"700","letterSpacing":"-2px","lineHeight":"1"}),
+                    html.Div(id="confidence-div",style={"marginTop":"6px"}),
+                    html.Div(id="ml-score-div",style={"marginTop":"5px"}),
+                    html.Div(id="signal-sub",style={"color":TEXT_DIM,"fontSize":"0.7em","marginTop":"4px"}),
+                    html.Div(id="buy-btn-div",style={"marginTop":"10px"}),
+                    html.Div([
+                        html.Span("⚡ ", style={"color":NEUTRAL,"fontSize":"0.55em"}),
+                        html.Span("Engine is a guide, not a guarantee. Your intuition counts.", style={"color":TEXT_MUTED,"fontSize":"0.55em","fontStyle":"italic","lineHeight":"1.5"}),
+                    ], style={"marginTop":"10px","paddingTop":"8px","borderTop":f"1px solid {BORDER}","lineHeight":"1.5"}),
+                ],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"18px 20px","minWidth":"165px","boxShadow":PURPLE_GLOW}),
+                html.Div([
+                    html.Div([lbl("Trend"),html.Div(id="trend-text",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"1.05em"})],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"13px 16px","flex":"1"}),
+                    html.Div([lbl("RSI  14"),html.Div(id="rsi-text",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"1.05em"}),html.Div(id="rsi-hint",style={"color":TEXT_DIM,"fontSize":"0.68em","marginTop":"1px"})],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"13px 16px","flex":"1"}),
+                    html.Div([lbl("MACD"),html.Div(id="macd-text",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"1.05em"}),html.Div(id="macd-hint",style={"fontSize":"0.68em","marginTop":"1px"})],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"13px 16px","flex":"1"}),
+                    html.Div([html.Div(id="market-summary",style={"fontFamily":"'Georgia',serif","fontSize":"0.86em","color":TEXT_DIM,"fontStyle":"italic","lineHeight":"1.7"})],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"13px 16px","flex":"2.2"}),
+                ],style={"display":"flex","gap":"7px","flex":"1"}),
+            ],style={"display":"flex","gap":"7px","marginBottom":"7px"}),
+
+            html.Div(id="forecast-div"),
+            html.Div(id="trade-panel",style={"display":"none"},children=[html.Div([
+                html.Div([lbl("Entry Price"),html.Div(id="entry-text",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"1.08em"}),html.Div(id="position-size-display",style={"color":TEXT_MUTED,"fontSize":"0.65em"})],style={"backgroundColor":BG_CARD2,"border":"1px solid #1e3a5f","borderRadius":"8px","padding":"11px 15px","flex":"1"}),
+                html.Div([
+                    html.Div([lbl("Take Profit  🎯"),
+                        html.Button("\u29c9",id="copy-tp-btn",n_clicks=0,title="Copy TP",
+                            style={"background":"transparent","border":f"1px solid {BULL}40","color":BULL,
+                                   "borderRadius":"4px","padding":"1px 6px","fontSize":"0.7em","cursor":"pointer",
+                                   "marginLeft":"6px","verticalAlign":"middle"})],
+                        style={"display":"flex","alignItems":"center","marginBottom":"2px"}),
+                    html.Div(id="tp-text",style={"color":BULL,"fontWeight":"600","fontSize":"1.08em"}),
+                    html.Div(id="tp-pnl-preview",style={"color":BULL,"fontSize":"0.65em"}),
+                ],style={"backgroundColor":BG_CARD2,"border":"1px solid rgba(52,211,153,0.2)","borderRadius":"8px","padding":"11px 15px","flex":"1"}),
+                html.Div([
+                    html.Div([lbl("Stop Loss  🛑"),
+                        html.Button("\u29c9",id="copy-sl-btn",n_clicks=0,title="Copy SL",
+                            style={"background":"transparent","border":f"1px solid {BEAR}40","color":BEAR,
+                                   "borderRadius":"4px","padding":"1px 6px","fontSize":"0.7em","cursor":"pointer",
+                                   "marginLeft":"6px","verticalAlign":"middle"})],
+                        style={"display":"flex","alignItems":"center","marginBottom":"2px"}),
+                    html.Div(id="sl-text",style={"color":BEAR,"fontWeight":"600","fontSize":"1.08em"}),
+                    html.Div(id="sl-pnl-preview",style={"color":BEAR,"fontSize":"0.65em"}),
+                ],style={"backgroundColor":BG_CARD2,"border":"1px solid rgba(248,113,113,0.2)","borderRadius":"8px","padding":"11px 15px","flex":"1"}),
+                html.Div([lbl("Live P&L  📊"),html.Div(id="trade-status",style={"color":NEUTRAL,"fontWeight":"600","fontSize":"1.08em"}),html.Div(id="trade-status-hint",style={"color":TEXT_DIM,"fontSize":"0.65em"}),html.Button("Exit & Log Trade",id="exit-btn",n_clicks=0,style={"backgroundColor":"transparent","border":"1px solid rgba(248,113,113,0.3)","color":BEAR,"fontSize":"0.7em","padding":"3px 10px","borderRadius":"4px","marginTop":"6px","width":"100%","cursor":"pointer"})],style={"backgroundColor":BG_CARD2,"border":"1px solid rgba(167,139,250,0.2)","borderRadius":"8px","padding":"11px 15px","flex":"1"}),
+            ],style={"display":"flex","gap":"7px","marginBottom":"7px"})]),
+
+            # ── CHART ROW: [pattern sidebar] + [chart card] ──────────────────
+            html.Div([
+                # ── PATTERN SIDEBAR (hidden by default, shown beside chart) ──
+                html.Div(id="pattern-panel",style={"display":"none"},children=[
+                    html.Div([
+                        # Header
+                        html.Div("PATTERNS",style={"color":TEXT_MUTED,"fontSize":"0.52em","letterSpacing":"2px","fontWeight":"700","marginBottom":"10px","paddingBottom":"6px","borderBottom":f"1px solid {BORDER}"}),
+                        # Color legend
+                        html.Div([
+                            html.Span("▮",style={"color":BULL,"marginRight":"4px","fontSize":"0.7em"}),html.Span("Bullish",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginRight":"8px"}),
+                            html.Span("▮",style={"color":BEAR,"marginRight":"4px","fontSize":"0.7em"}),html.Span("Bearish",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginRight":"8px"}),
+                            html.Span("▮",style={"color":NEUTRAL,"marginRight":"4px","fontSize":"0.7em"}),html.Span("Neutral",style={"color":TEXT_MUTED,"fontSize":"0.6em"}),
+                        ],style={"marginBottom":"10px","display":"flex","flexWrap":"wrap","alignItems":"center"}),
+                        # Chips grid
+                        html.Div(id="pattern-toggle-container",children=make_toggles([]),
+                            style={"marginBottom":"14px"}),
+                        # Divider
+                        html.Div(style={"height":"1px","backgroundColor":BORDER,"margin":"6px 0 10px 0"}),
+                        # Active on chart
+                        html.Div("ACTIVE ON CHART",style={"color":TEXT_MUTED,"fontSize":"0.52em","letterSpacing":"2px","fontWeight":"700","marginBottom":"8px"}),
+                        html.Div(id="active-pattern-list",children=make_active_list([])),
+                    ],style={"padding":"12px 10px","overflowY":"auto","height":"100%"}),
+                ]),
+
+                # ── CHART CARD ────────────────────────────────────────────────
+                html.Div([
+                    html.Div(id="alert-triggered-bar",style={"display":"none"},children=[html.Div("🔔  PRICE ALERT TRIGGERED!",style={"backgroundColor":f"{PURPLE}30","border":f"1px solid {PURPLE}","color":NEUTRAL,"padding":"8px 16px","fontSize":"0.82em","fontWeight":"600","textAlign":"center","letterSpacing":"1px"})]),
+                    # Chart toolbar — pattern picker + indicator toggles
+                    html.Div([
+                        tbtn("⊞ Patterns","pattern-btn",tip="Open pattern picker"),
+                        html.Div(style={"width":"1px","height":"18px","backgroundColor":BORDER,"margin":"0 8px","flexShrink":"0"}),
+                        tbtn("〰 Bands","bb-btn",tip="Toggle Bollinger Bands on chart"),
+                        html.Div(style={"width":"4px"}),
+                        tbtn("📏 Pivots","pd-btn",tip="Toggle Pivot / Divergence lines on chart"),
+                        *([html.Div(style={"width":"4px"}),tbtn("📊 Breakdown","breakdown-btn",tip="Open signal breakdown panel")] if limits["breakdown"] else []),
+                    ],style={"display":"flex","alignItems":"center","padding":"6px 10px","borderBottom":f"1px solid {BORDER}","backgroundColor":"#07060f"}),
+                    html.Div([
+                        dcc.Graph(id="candle-chart",style={"height":"620px","flex":"1","minWidth":"0"},config={
+                            "scrollZoom":True,
+                            "displayModeBar":False,   # hide modebar — stops hover reflow jank
+                            "doubleClick":"reset",
+                            "responsive":True,
+                            "showTips":False,
+                        }),
+                        html.Div(id="breakdown-panel",className="breakdown-scroll",style=BREAKDOWN_HIDDEN,children=[html.Div(id="breakdown-content")]),
+                    ],style={"display":"flex"}),
+                ],style={"flex":"1","backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","minWidth":"0"}),
+
+            ],style={"display":"flex","gap":"7px","marginBottom":"7px","alignItems":"flex-start"}),
+
+            html.Div(id="last-updated",style={"color":TEXT_MUTED,"fontSize":"0.6em","textAlign":"right","marginBottom":"10px"}),
+            html.Div([
+                html.Div([html.Div("PATTERNS DETECTED",style={"color":TEXT_MAIN,"fontSize":"0.6em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px","opacity":"0.85"}),html.Div(id="patterns-div")],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 18px","flex":"1"}),
+                html.Div([html.Div("TIPS & LESSONS",style={"color":TEXT_MAIN,"fontSize":"0.6em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px","opacity":"0.85"}),html.Div(id="tips-div")],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 18px","flex":"1"}),
+            ],style={"display":"flex","gap":"7px","marginBottom":"7px"}),
+            html.Div([html.Div("RECENT PATTERN HISTORY",style={"color":TEXT_MAIN,"fontSize":"0.6em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px","opacity":"0.85"}),html.Div(id="pattern-history-div")],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 18px","marginBottom":"20px"}),
+        ],style={"padding":"10px 24px"}),
+
+        html.Div([html.Span("BOJKET  ",style={"color":PURPLE,"fontWeight":"700","letterSpacing":"2px","fontSize":"0.7em"}),html.Span("·  Zero bullshit.  ·  ",style={"color":TEXT_MUTED,"fontSize":"0.62em","fontStyle":"italic"}),html.Span("Not financial advice. Trade responsibly.",style={"color":TEXT_MUTED,"fontSize":"0.6em"})],style={"borderTop":f"1px solid {BORDER}","padding":"14px 24px","display":"flex","alignItems":"center","gap":"4px","backgroundColor":"#050508"}),
+
+        # ── CHAT ─────────────────────────────────────────────────────────────
+        html.Div([
+            html.Div(id="chat-panel",style={"display":"none","width":"380px","backgroundColor":"#0a0912","border":f"1px solid {BORDER}","borderRadius":"14px","overflow":"hidden","boxShadow":"0 8px 40px rgba(0,0,0,0.6)"},children=[
+                html.Div([html.Div([html.Span("✦",style={"color":PURPLE,"marginRight":"8px","fontSize":"1.1em"}),html.Span("Bojket",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"0.9em"}),html.Span("●",style={"color":BULL,"fontSize":"0.45em","marginLeft":"8px","verticalAlign":"middle"}),html.Span("online",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginLeft":"4px"})],style={"display":"flex","alignItems":"center","flex":"1"}),html.Span("✕",id="chat-close-btn",n_clicks=0,style={"cursor":"pointer","color":TEXT_MUTED,"fontSize":"1em","padding":"2px 6px","userSelect":"none"})],style={"display":"flex","alignItems":"center","padding":"11px 14px","borderBottom":f"1px solid {BORDER}"}),
+                html.Div(id="chat-messages-area",className="chat-scroll",children=render_chat_messages([]),style={"height":"400px","overflowY":"auto","padding":"12px","display":"flex","flexDirection":"column","gap":"8px"}),
+                html.Div([dcc.Input(id="chat-input",type="text",placeholder="Ask Bojket anything...",debounce=False,n_submit=0,style={"flex":"1","backgroundColor":"transparent","border":"none","color":TEXT_MAIN,"fontSize":"0.82em","outline":"none","padding":"8px 0"}),html.Button("→",id="chat-send-btn",n_clicks=0,style={"backgroundColor":PURPLE,"border":"none","color":"white","padding":"7px 13px","borderRadius":"8px","cursor":"pointer","fontSize":"0.9em","fontWeight":"600"})],style={"display":"flex","alignItems":"center","padding":"8px 14px","borderTop":f"1px solid {BORDER}","gap":"8px"}),
+                html.Div([
+                    html.Button("🎓 Replay Tutorial",id="tutorial-replay-btn",n_clicks=0,style={"backgroundColor":"transparent","border":"none","color":TEXT_MUTED,"fontSize":"0.62em","cursor":"pointer","padding":"4px 8px","textDecoration":"underline"}),
+                ],style={"padding":"0 14px 6px 14px","textAlign":"center"}),
+            ]),
+            html.Div([html.Span("✦",style={"color":"white","marginRight":"7px","fontSize":"1.0em"}),html.Span("Bojket",style={"color":"white","fontWeight":"500","fontSize":"0.82em","letterSpacing":"1px"})],id="chat-toggle-btn",n_clicks=0,style={"display":"flex","alignItems":"center","backgroundColor":PURPLE,"padding":"9px 18px","borderRadius":"20px","cursor":"pointer","userSelect":"none","boxShadow":f"0 4px 20px {PURPLE_GLOW}"}),
+        ],style={"position":"fixed","bottom":"24px","right":"24px","zIndex":"1000","display":"flex","flexDirection":"column","alignItems":"flex-end","gap":"8px"}),
+
+        # ── STORES & INTERVALS ───────────────────────────────────────────────
+        dcc.Interval(id="auto-refresh",    interval=60*1000, n_intervals=0),
+        dcc.Interval(id="ml-poll-interval", interval=2500,  n_intervals=0),
+        dcc.Store(id="trade-store",data={"in_trade":False,"entry":None,"signal":None,"symbol":None,"time":None,"position_size":None,"custom_tp":None,"custom_sl":None,"tp":None,"sl":None,"cooldown":False,"cooldown_since":None,"last_result":None,"consecutive_losses":0}),
+        dcc.Store(id="active-patterns-store",data=[]),
+        dcc.Store(id="journal-store",data=[]),
+        dcc.Store(id="chart-theme",data="dark"),
+        dcc.Store(id="bb-store",data=False),
+        dcc.Store(id="pd-store",data=False),
+        dcc.Store(id="alert-store",data={"price":None,"active":False}),
+        dcc.Store(id="mute-store",data=False),
+        dcc.Store(id="bell-dd-store",data=False),
+        dcc.Store(id="pattern-history-store",data=[]),
+        dcc.Store(id="chat-messages-store",data=[]),
+        dcc.Store(id="chat-open-store",data=False),
+        dcc.Store(id="chat-pending-store",data=None),
+        dcc.Store(id="quick-chip-store",data=""),
+        dcc.Store(id="pending-trade-store",data=None),
+        dcc.Store(id="breakdown-open-store",data=False),
+        dcc.Store(id="ailab-open-store",data=False),
+        dcc.Store(id="bt-symbol-store",data="BTC-USD"),
+        dcc.Store(id="bt-interval-store",data="1h"),
+        dcc.Store(id="ml-train-symbols-store",data=["BTC-USD","ETH-USD","SOL-USD","NQ=F","GC=F","EURUSD=X"]),
+        dcc.Store(id="ml-train-interval-store",data="1h"),
+    ],style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN})
+
+
