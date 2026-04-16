@@ -574,10 +574,10 @@ def pricing_page(billing="monthly"):
 
     # ── Card styles ───────────────────────────────────────────────────────────
     hustler_style = {
-        "background": "linear-gradient(135deg,#0f0e18,#13101f)",
-        "border": f"1px solid {'rgba(52,211,153,0.25)' if is_annual else 'rgba(255,255,255,0.08)'}",
+        "background": "#0a0910",
+        "border": "1px solid rgba(255,255,255,0.05)",
         "borderRadius": "18px", "padding": "32px", "flex": "1", "maxWidth": "360px",
-        **({"boxShadow": "0 0 28px rgba(52,211,153,0.06)"} if is_annual else {}),
+        "opacity": "0.8",
     }
     veteran_style = {
         "background": "linear-gradient(135deg,#12102a,#1a1238)",
@@ -609,7 +609,7 @@ def pricing_page(billing="monthly"):
             html.Div([
                 # Hustler
                 html.Div([
-                    html.Div("HUSTLER", style={"color":NEUTRAL,"fontSize":"0.64em","fontWeight":"800","letterSpacing":"2.5px","marginBottom":"14px"}),
+                    html.Div("SIMPLE", style={"color":TEXT_MUTED,"fontSize":"0.64em","fontWeight":"500","letterSpacing":"2.5px","marginBottom":"14px"}),
                     price_block_annual(hustler_orig, hustler_price, "~€70") if is_annual else price_block_monthly(hustler_price, "per month"),
                     html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.06)","marginBottom":"22px"}),
                     *[_plan_feature(t,c) for t,c in [
@@ -620,7 +620,7 @@ def pricing_page(billing="monthly"):
                         ("Backtesting engine",True),("Higher timeframe analysis",False),
                         ("RSI divergence detection",False),("Signal breakdown panel",False),
                     ]],
-                    html.Button("Start with Hustler →", id="buy-hustler-btn", n_clicks=0, style={
+                    html.Button("Start with Simple →", id="buy-hustler-btn", n_clicks=0, style={
                         "backgroundColor": "transparent",
                         "border": f"1px solid {'rgba(52,211,153,0.5)' if is_annual else 'rgba(192,132,252,0.4)'}",
                         "color": BULL if is_annual else NEUTRAL,
@@ -632,7 +632,7 @@ def pricing_page(billing="monthly"):
                 # Veteran
                 html.Div([
                     html.Div([
-                        html.Span("PROFITABLE VETERAN", style={"color":BULL,"fontSize":"0.64em","fontWeight":"800","letterSpacing":"2px"}),
+                        html.Span("PREMIUM", style={"color":BULL,"fontSize":"0.64em","fontWeight":"800","letterSpacing":"2px"}),
                         html.Span("BEST VALUE", style={"color":"white","fontSize":"0.58em","background":PURPLE,"padding":"3px 10px","borderRadius":"20px","marginLeft":"10px","fontWeight":"700"}),
                         *([] if not is_annual else [
                             html.Span("🔥 ANNUAL DEAL", style={
@@ -642,7 +642,17 @@ def pricing_page(billing="monthly"):
                             })
                         ]),
                     ], style={"marginBottom":"14px","display":"flex","alignItems":"center","flexWrap":"wrap","gap":"4px"}),
-                    price_block_annual(veteran_orig, veteran_price, "~€100") if is_annual else price_block_monthly(veteran_price, "per month"),
+                    price_block_annual(veteran_orig, veteran_price, "~€100") if is_annual else html.Div([
+                        html.Div([
+                            html.Span("was ", style={"color":"rgba(255,255,255,0.38)","fontSize":"0.74em","marginRight":"5px"}),
+                            html.Span("€79.99/mo", style={"textDecoration":"line-through","textDecorationColor":"#f87171","textDecorationThickness":"2px","color":"rgba(248,113,113,0.65)","fontSize":"0.9em","fontWeight":"600"}),
+                        ], style={"marginBottom":"5px"}),
+                        html.Div(veteran_price, style={"color":"white","fontWeight":"900","fontSize":"2.8em","marginBottom":"4px","letterSpacing":"-1px"}),
+                        html.Div([
+                            html.Span("per month  ", style={"color":TEXT_MUTED,"fontSize":"0.75em"}),
+                            html.Span("✓  Save €30/mo", style={"color":BULL,"fontSize":"0.68em","fontWeight":"800","backgroundColor":f"{BULL}18","border":f"1px solid {BULL}45","borderRadius":"5px","padding":"2px 8px"}),
+                        ], style={"marginBottom":"28px","display":"flex","alignItems":"center","gap":"6px"}),
+                    ]),
                     html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.08)","marginBottom":"22px"}),
                     *[_plan_feature(t,True) for t in [
                         "Everything in Hustler","All 8 pattern indicators",
@@ -650,7 +660,7 @@ def pricing_page(billing="monthly"):
                         "Full signal breakdown panel","Unlimited Bojket AI usage",
                         "XGBoost ML model + backtesting","Early access to new features",
                     ]],
-                    html.Button("Go Veteran →", id="buy-veteran-btn", n_clicks=0, className="cta-primary", style={
+                    html.Button("Go Premium →", id="buy-veteran-btn", n_clicks=0, className="cta-primary", style={
                         "padding": "13px", "fontSize": "0.88em", "width": "100%", "marginTop": "28px",
                     }),
                 ], className="plan-card", style=veteran_style),

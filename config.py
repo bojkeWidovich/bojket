@@ -334,3 +334,22 @@ DESCS = {
 NEWS_SOURCES    = {"Crypto":["BTC-USD","ETH-USD","SOL-USD"],"Markets":["SPY","QQQ","GC=F"],"Commodities":["CL=F","SI=F"],"Forex":["EURUSD=X","GBPUSD=X"],"Tech":["NVDA","AAPL","TSLA","MSFT"]}
 NEWS_CAT_ICONS  = {"Crypto":"₿","Markets":"📊","Commodities":"◈","Forex":"⇄","Tech":"⬡"}
 NEWS_CAT_COLORS = {"Crypto":"#f7931a","Markets":"#34d399","Commodities":"#facc15","Forex":"#60a5fa","Tech":"#a78bfa"}
+
+# ── Device session tracking (max 2 devices per account) ──────────────────────
+ACTIVE_SESSIONS = {}  # {email: set of session_ids}
+MAX_DEVICES = 2
+
+def register_session(email, session_id):
+    """Register a new session. Returns True if allowed, False if device limit reached."""
+    if not email: return True
+    if email not in ACTIVE_SESSIONS:
+        ACTIVE_SESSIONS[email] = set()
+    if session_id in ACTIVE_SESSIONS[email]: return True
+    if len(ACTIVE_SESSIONS[email]) >= MAX_DEVICES: return False
+    ACTIVE_SESSIONS[email].add(session_id)
+    return True
+
+def unregister_session(email, session_id):
+    """Remove a session when user signs out."""
+    if email and email in ACTIVE_SESSIONS:
+        ACTIVE_SESSIONS[email].discard(session_id)

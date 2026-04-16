@@ -10,6 +10,7 @@ from plotly.subplots import make_subplots
 import numpy as np
 from datetime import datetime
 
+import secrets
 from server import app
 from config import (
     PURPLE, PURPLE_LIGHT, BG_DARK, BG_CARD, BG_CARD2, BORDER,
@@ -18,6 +19,9 @@ from config import (
     ASSET_ICONS, LABELS, SYMBOLS, ALL_OPTIONS, CATEGORY_ICONS,
     ALL_PATTERNS, PAT_COLOR, PAT_ABBR, SEN_EMOJI, SEN_LABEL, DESCS,
     _register_user, call_bojket,
+    VERIFIED_ACCOUNTS, PENDING_VERIFICATIONS, EMAIL_ENABLED,
+    send_verification_email,
+    register_session, unregister_session,
 )
 from ml import (
     _ML_LOCK, _ML_STATE, _BT_STATE, _ML_MODEL, _ML_SCALER,
@@ -539,15 +543,22 @@ def handle_navigation(login_sub,login_enter,signup_link,back_btn,logo_btn,ob_ans
     if any(x in trig for x in ["login-submit-btn","login-password"]):
         e=(email or "").strip().lower(); p=(password or "").strip()
         if e==ADMIN_EMAIL.lower() and p==ADMIN_PASSWORD:
-            s.update({"logged_in":True,"plan":"admin","onboarding_done":True,"pending_email":""})
+            sid = secrets.token_urlsafe(16)
+            s.update({"logged_in":True,"plan":"admin","onboarding_done":True,"pending_email":"","session_id":sid})
             return "/dashboard",s
         if e in BETA_ACCOUNTS and p==BETA_ACCOUNTS[e]:
+            sid = secrets.token_urlsafe(16)
+            if not register_session(e, sid):
+                return dash.no_update, s
             _register_user(e,"veteran","monthly")
-            s.update({"logged_in":True,"plan":"veteran","onboarding_done":True,"pending_email":e})
+            s.update({"logged_in":True,"plan":"veteran","onboarding_done":True,"pending_email":e,"session_id":sid})
             return "/dashboard",s
         if e and p and len(p)>=6:
             if e in VERIFIED_ACCOUNTS or not EMAIL_ENABLED:
-                s.update({"logged_in":True,"plan":None,"onboarding_done":False,"ob_step":0,"ob_answers":[],"pending_email":e})
+                sid = secrets.token_urlsafe(16)
+                if not register_session(e, sid):
+                    return dash.no_update, s
+                s.update({"logged_in":True,"plan":None,"onboarding_done":False,"ob_step":0,"ob_answers":[],"pending_email":e,"session_id":sid})
                 return "/onboarding",s
             else:
                 token=secrets.token_urlsafe(32); PENDING_VERIFICATIONS[token]=e
@@ -573,7 +584,8 @@ def handle_navigation(login_sub,login_enter,signup_link,back_btn,logo_btn,ob_ans
         email   = s.get("pending_email", "")
         return f"/create-checkout-session?plan=veteran&billing={billing}&email={email}", s
     if "signout-btn"         in trig:
-        return "/",{"logged_in":False,"plan":None,"onboarding_done":False,"ob_step":0,"ob_answers":[],"billing":"monthly","pending_email":""}
+        unregister_session(s.get("pending_email",""), s.get("session_id",""))
+        return "/",{"logged_in":False,"plan":None,"onboarding_done":False,"ob_step":0,"ob_answers":[],"billing":"monthly","pending_email":"","session_id":""}
     return dash.no_update,s
 
 @app.callback(Output("login-error","children"),Input("login-submit-btn","n_clicks"),Input("login-password","n_submit"),State("login-email","value"),State("login-password","value"),prevent_initial_call=True)
@@ -582,6 +594,9 @@ def login_error(n,ns,email,password):
     if not e: return "Please enter your email."
     if not p: return "Please enter your password."
     if len(p)<6: return "Password must be at least 6 characters."
+    from config import ACTIVE_SESSIONS, MAX_DEVICES
+    if len(ACTIVE_SESSIONS.get(e.strip().lower(), set())) >= MAX_DEVICES:
+        return "⚠️ This account is already active on 2 devices. Sign out on another device first."
     return ""
 
 # ── LANGUAGE CALLBACKS ────────────────────────────────────────────────────────

@@ -16,7 +16,6 @@
 # ══════════════════════════════════════════════════════════════════════════════
 
 # Import order matters — server first, then modules that register on it
-from server import app, server   # noqa: F401  (server used by Gunicorn)
 import payment                   # noqa: F401  registers Flask routes
 import callbacks                 # noqa: F401  registers Dash callbacks + sets layout
 
