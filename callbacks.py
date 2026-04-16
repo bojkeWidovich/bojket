@@ -43,6 +43,7 @@ from pages import (
     _typing_bubble, render_chat_messages, render_breakdown,
     trade_entry_modal, build_admin_content, build_admin_analytics,
     compute_short_term_forecast, render_forecast_card,
+    ONBOARDING_QUESTIONS,
 )
 
 
