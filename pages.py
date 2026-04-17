@@ -1042,7 +1042,7 @@ def render_forecast_card(forecast):
 
     ], style={
         "backgroundColor": BG_CARD2,
-        "border":         f"1px solid {BORDER}",
+       "border":         f"1px solid {BORDER}",
         "borderLeft":     f"3px solid {dir_color}",
         "borderRadius":   "10px",
         "padding":        "12px 16px",
@@ -1050,7 +1050,6 @@ def render_forecast_card(forecast):
     })
 
 
-def build_admin_content():
 def build_admin_content():
     """Render the admin members table grouped by plan."""
     users  = list(REGISTERED_USERS.values())
