@@ -1,9 +1,3 @@
-# ══════════════════════════════════════════════════════════════════════════════
-#  server.py  —  Creates the Dash app and Flask server
-#  All other modules import `app` and `server` from here.
-#  This file has ZERO local imports — it is the foundation.
-# ══════════════════════════════════════════════════════════════════════════════
-
 import dash
 import dash_bootstrap_components as dbc
 
@@ -15,5 +9,8 @@ app = dash.Dash(
 )
 app.title = "Bojket"
 
-# Flask server — used for payment routes and Gunicorn deployment
 server = app.server
+
+# Load layout + all callbacks. Must be at the bottom (after `app` exists)
+# so callbacks.py can do `from server import app` without circular issues.
+import callbacks  # noqa: F401

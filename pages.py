@@ -1051,6 +1051,7 @@ def render_forecast_card(forecast):
 
 
 def build_admin_content():
+def build_admin_content():
     """Render the admin members table grouped by plan."""
     users  = list(REGISTERED_USERS.values())
     hustlers         = [u for u in users if u.get("plan")=="hustler"]
@@ -1060,7 +1061,6 @@ def build_admin_content():
     veterans_monthly = [u for u in veterans if u.get("billing")!="annual"]
     veterans_annual  = [u for u in veterans if u.get("billing")=="annual"]
 
-    # ── stat card ──────────────────────────────────────────────────────────────
     def stat(num, label, color, sublabel=None):
         return html.Div([
             html.Div(str(num), style={"color":color,"fontWeight":"800","fontSize":"2.2em","letterSpacing":"-1px","lineHeight":"1"}),
@@ -1070,13 +1070,12 @@ def build_admin_content():
 
     stats_row = html.Div([
         stat(len(users),             "TOTAL MEMBERS",    TEXT_MAIN),
-        stat(len(hustlers_monthly),  "HUSTLER / MO",     "#facc15"),
-        stat(len(hustlers_annual),   "HUSTLER / ANNUAL", "#facc15", "€290 / yr"),
-        stat(len(veterans_monthly),  "VETERAN / MO",     BULL),
-        stat(len(veterans_annual),   "VETERAN / ANNUAL", BULL,     "€500 / yr"),
+        stat(len(hustlers_monthly),  "SIMPLE / MO",     "#facc15"),
+        stat(len(hustlers_annual),   "SIMPLE / ANNUAL", "#facc15", "€290 / yr"),
+        stat(len(veterans_monthly),  "PREMIUM / MO",     BULL),
+        stat(len(veterans_annual),   "PREMIUM / ANNUAL", BULL,     "€500 / yr"),
     ], style={"display":"flex","gap":"10px","marginBottom":"28px"})
 
-    # ── table header ───────────────────────────────────────────────────────────
     def tbl_header():
         cols = ["USERNAME","EMAIL","PLAN","BILLING","JOINED"]
         return html.Div([
@@ -1084,10 +1083,9 @@ def build_admin_content():
             for c,w in zip(cols,["1","2","1","1","1.2"])
         ], style={"display":"flex","padding":"8px 14px","borderBottom":f"1px solid {BORDER}","marginBottom":"4px"})
 
-    # ── single user row ────────────────────────────────────────────────────────
     def user_row(u, accent):
         billing_txt = ("Annual 🔁" if u.get("billing")=="annual" else "Monthly")
-        plan_labels = {"hustler":"Hustler","veteran":"Veteran"}
+        plan_labels = {"hustler":"Simple","veteran":"Premium"}
         return html.Div([
             html.Div(u.get("username","—"),          style={"color":TEXT_MAIN,"fontSize":"0.82em","fontWeight":"600","flex":"1","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
             html.Div(u.get("email","—"),              style={"color":TEXT_DIM, "fontSize":"0.78em","flex":"2","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
@@ -1099,7 +1097,6 @@ def build_admin_content():
             html.Div(u.get("joined","—"),             style={"color":TEXT_MUTED,"fontSize":"0.72em","flex":"1.2"}),
         ], style={"display":"flex","alignItems":"center","padding":"10px 14px","borderBottom":f"1px solid rgba(30,26,46,0.5)","gap":"8px"})
 
-    # ── plan section ───────────────────────────────────────────────────────────
     def plan_section(icon, title, price, user_list, accent):
         sec_header = html.Div([
             html.Span(icon, style={"fontSize":"1em","marginRight":"8px"}),
@@ -1108,7 +1105,6 @@ def build_admin_content():
             html.Span(f"  ·  {len(user_list)} member{'s' if len(user_list)!=1 else ''}",
                       style={"color":accent,"fontSize":"0.68em","fontWeight":"600","marginLeft":"8px"}),
         ], style={"display":"flex","alignItems":"center","padding":"10px 14px","backgroundColor":f"{accent}08","border":f"1px solid {accent}20"})
-        # Build children list imperatively — avoids starred-expression syntax errors
         sec_children = [sec_header]
         if user_list:
             sec_children.append(tbl_header())
@@ -1122,10 +1118,10 @@ def build_admin_content():
 
     return html.Div([
         stats_row,
-        plan_section("⚡","HUSTLER — MONTHLY",  "€29.99 / mo",  hustlers_monthly, "#facc15"),
-        plan_section("⚡","HUSTLER — ANNUAL",   "€290 / yr",    hustlers_annual,  "#f59e0b"),
-        plan_section("🏆","VETERAN — MONTHLY",  "€49.99 / mo",  veterans_monthly, BULL),
-        plan_section("🏆","VETERAN — ANNUAL",   "€500 / yr",    veterans_annual,  "#10b981"),
+        plan_section("⚡","SIMPLE — MONTHLY",  "€29.99 / mo",  hustlers_monthly, "#facc15"),
+        plan_section("⚡","SIMPLE — ANNUAL",   "€290 / yr",    hustlers_annual,  "#f59e0b"),
+        plan_section("🏆","PREMIUM — MONTHLY",  "€49.99 / mo",  veterans_monthly, BULL),
+        plan_section("🏆","PREMIUM — ANNUAL",   "€500 / yr",    veterans_annual,  "#10b981"),
     ], style={"padding":"20px 22px 40px 22px"})
 
 
@@ -1133,7 +1129,6 @@ def build_admin_analytics():
     """Render per-user trading analytics in the admin panel."""
     users = list(REGISTERED_USERS.values())
 
-    # ── Global aggregates ──────────────────────────────────────────────────────
     all_trades  = [t for u in users for t in u.get("trades", [])]
     total_trades = len(all_trades)
     sys_wins     = sum(1 for t in all_trades if "TP" in str(t.get("result","")))
@@ -1142,7 +1137,6 @@ def build_admin_analytics():
     most_active_u  = max(users, key=lambda u: len(u.get("trades",[])), default=None)
     most_active_name = most_active_u["username"] if most_active_u and most_active_u.get("trades") else "—"
 
-    # ── Stat card ──────────────────────────────────────────────────────────────
     def stat(val, label, color):
         return html.Div([
             html.Div(str(val), style={"color":color,"fontWeight":"800","fontSize":"2.2em","letterSpacing":"-1px","lineHeight":"1"}),
@@ -1156,9 +1150,8 @@ def build_admin_analytics():
         stat(most_active_name,"MOST ACTIVE",     "#facc15"),
     ], style={"display":"flex","gap":"10px","marginBottom":"28px"})
 
-    # ── Per-user table ─────────────────────────────────────────────────────────
     PLAN_COLORS  = {"hustler":"#facc15","veteran":BULL,"admin":PURPLE}
-    PLAN_LABELS  = {"hustler":"Hustler","veteran":"Veteran","admin":"Admin"}
+    PLAN_LABELS  = {"hustler":"Simple","veteran":"Premium","admin":"Admin"}
     COL_NAMES    = ["USER","PLAN","TRADES","WINS","LOSSES","WIN RATE","STREAK","TOP ASSET","LAST TRADE"]
     COL_WIDTHS   = ["1","0.9","0.7","0.6","0.7","0.8","0.7","1","1.3"]
 
@@ -1177,14 +1170,12 @@ def build_admin_analytics():
         wr_str   = f"{wr_val}%" if wr_val is not None else "—"
         wr_color = (BULL if wr_val >= 50 else BEAR) if wr_val is not None else TEXT_MUTED
 
-        # Consecutive TP streak from most recent trades
         streak = 0
         for t in reversed(trades):
             if "TP" in str(t.get("result","")): streak += 1
             else: break
         streak_txt = (f"🔥 {streak}" if streak >= 2 else (f"✅ {streak}" if streak == 1 else "—"))
 
-        # Most-traded asset
         top_asset_c = Counter(t.get("symbol","") for t in trades if t.get("symbol"))
         top_asset   = top_asset_c.most_common(1)[0][0] if top_asset_c else "—"
 
