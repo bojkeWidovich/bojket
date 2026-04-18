@@ -82,6 +82,7 @@ app.layout = html.Div([
         # Trade modal stubs — kept in root layout so callbacks always find them
         html.Button("",id="confirm-trade-btn", n_clicks=0),
         html.Button("",id="cancel-trade-btn",  n_clicks=0),
+        html.Button("",id="i-bought-btn",      n_clicks=0),
         html.Div("",id="copy-tp-feedback",     style={"display":"none"}),
         html.Div("",id="copy-sl-feedback",     style={"display":"none"}),
         html.Button("",id="alert-close-btn",   n_clicks=0),
@@ -794,11 +795,11 @@ def set_alert(sn,cn,price,store):
     if price: return {"price":float(price),"active":True},f"Alert set at {price}"
     return store,"Enter a price first"
 
-@app.callback(Output("trade-modal","children"),Output("trade-modal","style"),Output("pending-trade-store","data"),Input("buy-btn-div","n_clicks"),Input("cancel-trade-btn","n_clicks"),State("trade-store","data"),State("symbol-input","value"),State("interval-dropdown","value"),State("session-store","data"),prevent_initial_call=True)
+@app.callback(Output("trade-modal","children"),Output("trade-modal","style"),Output("pending-trade-store","data"),Input("i-bought-btn","n_clicks"),Input("cancel-trade-btn","n_clicks"),State("trade-store","data"),State("symbol-input","value"),State("interval-dropdown","value"),State("session-store","data"),prevent_initial_call=True)
 def open_trade_modal(buy_clicks,cancel_clicks,trade_store,symbol,interval,session):
     trig=dash.callback_context.triggered[0]["prop_id"]; hidden={"display":"none"}
     if "cancel-trade-btn" in trig: return [],hidden,None
-    if "buy-btn-div" in trig and buy_clicks:
+    if "i-bought-btn" in trig and buy_clicks:
         period_map={"1m":"5d","5m":"5d","15m":"1mo","30m":"1mo","1h":"3mo","2h":"6mo","3h":"6mo","4h":"6mo","1d":"2y"}
         df=fetch_data((symbol or "BTC-USD").upper().strip(),interval=interval or "5m",period=period_map.get(interval or "5m","5d"))
         if df is None or df.empty: return [],hidden,None
