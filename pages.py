@@ -1217,7 +1217,7 @@ def dashboard_page(plan="admin"):
         html.Div([
             html.Div([
                 html.Span("BOJKET",style={"color":"white","fontWeight":"700","fontSize":"1.05em","letterSpacing":"3px"}),
-                html.Div("Zero bullshit.",style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"1px","marginTop":"1px","fontStyle":"italic"}),
+                html.Div("The future of trading.",style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"1px","marginTop":"1px","fontStyle":"italic"}),
             ],style={"minWidth":"140px"}),
             html.Div([
                 # Asset + timeframe
@@ -1268,7 +1268,7 @@ def dashboard_page(plan="admin"):
                     html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
                              style={"width":"13px","height":"13px","marginRight":"5px","verticalAlign":"middle","opacity":"0.8"}),
                     html.Span("Discord", style={"verticalAlign":"middle"}),
-                ], href="https://discord.gg/BtpK96fM", target="_blank", style={
+                ], href="https://discord.gg/e2merC6eFE", target="_blank", style={
                     "color":"rgba(255,255,255,0.65)","fontSize":"0.68em","fontWeight":"600",
                     "textDecoration":"none","display":"inline-flex","alignItems":"center",
                     "border":"1px solid rgba(88,101,242,0.45)","borderRadius":"6px",
@@ -1502,7 +1502,7 @@ def dashboard_page(plan="admin"):
             html.Div([html.Div("RECENT PATTERN HISTORY",style={"color":TEXT_MAIN,"fontSize":"0.6em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px","opacity":"0.85"}),html.Div(id="pattern-history-div")],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 18px","marginBottom":"20px"}),
         ],style={"padding":"10px 24px"}),
 
-        html.Div([html.Span("BOJKET  ",style={"color":PURPLE,"fontWeight":"700","letterSpacing":"2px","fontSize":"0.7em"}),html.Span("·  Zero bullshit.  ·  ",style={"color":TEXT_MUTED,"fontSize":"0.62em","fontStyle":"italic"}),html.Span("Not financial advice. Trade responsibly.",style={"color":TEXT_MUTED,"fontSize":"0.6em"})],style={"borderTop":f"1px solid {BORDER}","padding":"14px 24px","display":"flex","alignItems":"center","gap":"4px","backgroundColor":"#050508"}),
+        html.Div([html.Span("BOJKET  ",style={"color":PURPLE,"fontWeight":"700","letterSpacing":"2px","fontSize":"0.7em"}),html.Span("·  The future of trading.  ·  ",style={"color":TEXT_MUTED,"fontSize":"0.62em","fontStyle":"italic"}),html.Span("Not financial advice. Trade responsibly.",style={"color":TEXT_MUTED,"fontSize":"0.6em"})],style={"borderTop":f"1px solid {BORDER}","padding":"14px 24px","display":"flex","alignItems":"center","gap":"4px","backgroundColor":"#050508"}),
 
         # ── CHAT ─────────────────────────────────────────────────────────────
         html.Div([
