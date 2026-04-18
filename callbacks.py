@@ -42,6 +42,7 @@ from pages import (
     make_toggles, make_active_list, lbl, tbtn,
     _typing_bubble, render_chat_messages, render_breakdown,
     trade_entry_modal, build_admin_content, build_admin_analytics,
+    ADMIN_PANEL_HIDDEN, ADMIN_PANEL_SHOWN,
     compute_short_term_forecast, render_forecast_card,
     ONBOARDING_QUESTIONS,
 )
