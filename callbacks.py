@@ -365,6 +365,14 @@ app.index_string = f"""<!DOCTYPE html>
         <style>{_LIGHT_CSS}</style>
     </head>
     <body>
+        <div id="bojket-loader" style="position:fixed;top:0;left:0;width:100vw;height:100vh;background:#060608;z-index:99999;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.5s ease;">
+            <div style="position:relative;width:76px;height:76px;">
+                <div style="position:absolute;inset:0;border-radius:50%;border:3px solid rgba(147,51,234,0.15);"></div>
+                <div style="position:absolute;inset:0;border-radius:50%;border:3px solid transparent;border-top-color:#9333EA;border-right-color:#A855F7;animation:spin 0.9s linear infinite;box-shadow:0 0 30px rgba(147,51,234,0.4);"></div>
+            </div>
+            <div style="margin-top:26px;color:#A855F7;font-family:Inter,sans-serif;font-weight:900;letter-spacing:6px;font-size:0.9em;">BOJKET</div>
+            <div style="margin-top:4px;color:rgba(255,255,255,0.35);font-family:Inter,sans-serif;font-style:italic;font-size:0.7em;letter-spacing:1px;">The future of trading.</div>
+        </div>
         {{%app_entry%}}
         <footer>
             {{%config%}}
@@ -432,6 +440,28 @@ app.index_string = f"""<!DOCTYPE html>
         }});
 
         /* Video is now a YouTube iframe — no JS injection needed */
+
+        /* ── Fade out the Bojket loader once Dash renders the first page ── */
+        (function() {{
+            function hideLoader() {{
+                var el = document.getElementById('bojket-loader');
+                if (!el) return;
+                var content = document.getElementById('page-content');
+                if (content && content.children.length > 0) {{
+                    el.style.opacity = '0';
+                    setTimeout(function() {{ el.style.display = 'none'; }}, 500);
+                }} else {{
+                    setTimeout(hideLoader, 100);
+                }}
+            }}
+            /* Safety timeout — hide after 8 sec no matter what */
+            setTimeout(function() {{
+                var el = document.getElementById('bojket-loader');
+                if (el) {{ el.style.opacity = '0'; setTimeout(function() {{ el.style.display = 'none'; }}, 500); }}
+            }}, 8000);
+            if (document.readyState === 'complete') hideLoader();
+            else window.addEventListener('load', hideLoader);
+        }})();
 
         /* ── Bojket polling JS — pure DOM, no Dash callback machinery ── */
         {_POLLING_JS}
