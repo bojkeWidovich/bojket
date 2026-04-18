@@ -3,6 +3,9 @@
 # ══════════════════════════════════════════════════════════════════════════════
 
 import yfinance as yf
+import requests as http_req
+import xml.etree.ElementTree as ET
+import time
 import pandas as pd
 import numpy as np
 import ta
@@ -481,11 +484,118 @@ def render_news_section(cat,items,cat_color,cat_icon):
             className="news-card",style={"display":"flex","alignItems":"flex-start","backgroundColor":"#0a0912","border":f"1px solid {BORDER}","borderRadius":"7px","padding":"10px 12px","marginBottom":"6px","cursor":"pointer"})))
     return html.Div([html.Div([html.Span(cat_icon,style={"color":cat_color,"marginRight":"7px","fontSize":"0.9em"}),html.Span(cat.upper(),style={"color":cat_color,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"1.5px"})],style={"marginBottom":"8px","marginTop":"16px","display":"flex","alignItems":"center"}),html.Div(cards)])
 
+
+# ── Forex Factory economic calendar (cached, public XML feed) ────────────────
+_FF_CACHE = {"data": None, "ts": 0}
+
+def fetch_forex_factory_events(max_events=12):
+    """Fetch upcoming economic events from the ForexFactory weekly XML feed.
+    Cached for 10 minutes to respect rate limits."""
+    now = time.time()
+    if _FF_CACHE["data"] is not None and (now - _FF_CACHE["ts"]) < 600:
+        return _FF_CACHE["data"]
+    try:
+        url = "https://nfs.faireconomy.media/ff_calendar_thisweek.xml"
+        r = http_req.get(url, timeout=8, headers={"User-Agent": "Mozilla/5.0"})
+        if not r.ok:
+            return _FF_CACHE["data"] or []
+        root = ET.fromstring(r.content)
+        events = []
+        impact_emoji = {"High": "🔴", "Medium": "🟡", "Low": "🟢", "Holiday": "⚪"}
+        for ev in root.findall("event"):
+            def _g(tag):
+                n = ev.find(tag)
+                return (n.text or "").strip() if n is not None and n.text else ""
+            title    = _g("title")
+            country  = _g("country")
+            date_txt = _g("date")
+            time_txt = _g("time")
+            impact   = _g("impact") or "Low"
+            forecast = _g("forecast")
+            previous = _g("previous")
+            actual   = _g("actual")
+            if not title:
+                continue
+            # Skip past events — only keep today & upcoming this week
+            try:
+                ev_dt = datetime.strptime(f"{date_txt} {time_txt}", "%m-%d-%Y %I:%M%p")
+                if ev_dt < datetime.now():
+                    continue
+            except Exception:
+                pass
+            when = f"{date_txt}  {time_txt}".strip()
+            events.append({
+                "title":    title,
+                "country":  country,
+                "impact":   impact,
+                "emoji":    impact_emoji.get(impact, "⚪"),
+                "when":     when,
+                "forecast": forecast,
+                "previous": previous,
+                "actual":   actual,
+            })
+        # Prioritise High impact, then chronological
+        events.sort(key=lambda e: (0 if e["impact"] == "High" else 1 if e["impact"] == "Medium" else 2))
+        events = events[:max_events]
+        _FF_CACHE["data"] = events
+        _FF_CACHE["ts"]   = now
+        return events
+    except Exception:
+        return _FF_CACHE["data"] or []
+
+def render_forex_factory_section(events):
+    if not events:
+        return html.Div()
+    cards = []
+    for ev in events:
+        impact_color = {"High": BEAR, "Medium": "#facc15", "Low": BULL, "Holiday": TEXT_MUTED}.get(ev["impact"], TEXT_MUTED)
+        detail_bits = []
+        if ev["actual"]:   detail_bits.append(f"Actual: {ev['actual']}")
+        if ev["forecast"]: detail_bits.append(f"Forecast: {ev['forecast']}")
+        if ev["previous"]: detail_bits.append(f"Prev: {ev['previous']}")
+        detail_txt = "  ·  ".join(detail_bits) if detail_bits else ""
+        cards.append(html.Div([
+            html.Div(style={"width":"3px","backgroundColor":impact_color,"borderRadius":"2px","marginRight":"10px","flexShrink":"0","marginTop":"2px"}),
+            html.Div([
+                html.Div([
+                    html.Span(ev["emoji"], style={"marginRight":"6px"}),
+                    html.Span(f"{ev['country']}  ·  {ev['title']}", style={"color":TEXT_MAIN,"fontSize":"0.78em","fontWeight":"600"}),
+                ], style={"marginBottom":"3px","lineHeight":"1.35"}),
+                html.Div([
+                    html.Span(ev["when"], style={"color":impact_color,"fontSize":"0.6em","fontWeight":"600","marginRight":"8px"}),
+                    html.Span(detail_txt, style={"color":TEXT_MUTED,"fontSize":"0.6em"}),
+                ]),
+            ], style={"flex":"1"}),
+        ], style={"display":"flex","alignItems":"flex-start","backgroundColor":"#0a0912","border":f"1px solid {BORDER}","borderRadius":"7px","padding":"10px 12px","marginBottom":"6px"}))
+    return html.Div([
+        html.Div([
+            html.Span("📅", style={"color":"#f59e0b","marginRight":"7px","fontSize":"0.9em"}),
+            html.Span("ECONOMIC CALENDAR  ·  FOREX FACTORY", style={"color":"#f59e0b","fontSize":"0.58em","fontWeight":"700","letterSpacing":"1.5px"}),
+        ], style={"marginBottom":"8px","marginTop":"4px","display":"flex","alignItems":"center"}),
+        html.Div(cards),
+    ])
+
 def build_news_content():
-    sections=[]
-    for cat,syms in NEWS_SOURCES.items():
-        items=fetch_category_news(syms)
-        sections.append(render_news_section(cat,items,NEWS_CAT_COLORS.get(cat,NEUTRAL),NEWS_CAT_ICONS.get(cat,"●")))
+    """Build the full news panel. Wrapped so any single source failing can't crash the callback."""
+    sections = []
+    # ── Forex Factory calendar first (trader-priority) ──────────────────────
+    try:
+        ff_events = fetch_forex_factory_events()
+        ff_section = render_forex_factory_section(ff_events)
+        if ff_events:
+            sections.append(ff_section)
+    except Exception:
+        pass
+    # ── Yahoo finance news per category ────────────────────────────────────
+    for cat, syms in NEWS_SOURCES.items():
+        try:
+            items = fetch_category_news(syms)
+            sections.append(render_news_section(cat, items, NEWS_CAT_COLORS.get(cat, NEUTRAL), NEWS_CAT_ICONS.get(cat, "●")))
+        except Exception:
+            continue
+    if not sections:
+        sections.append(html.Div("News temporarily unavailable. Try refreshing.",
+                                 style={"color": TEXT_MUTED, "fontSize": "0.78em", "fontStyle": "italic", "padding": "20px 0"}))
     return sections
 
 
