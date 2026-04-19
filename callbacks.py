@@ -789,13 +789,27 @@ def tog_bb(n,d): return not d
 def tog_pd(n,d): return not d
 
 @app.callback(Output("trade-modal","children"),Output("trade-modal","style"),Output("pending-trade-store","data"),Input("i-bought-btn","n_clicks"),Input("cancel-trade-btn","n_clicks"),State("trade-store","data"),State("symbol-input","value"),State("interval-dropdown","value"),State("session-store","data"),prevent_initial_call=True)
+def open_trade_modal(buy_clicks,cancel_clicks,trade_store,symbol,interval,session):
+    trig=dash.callback_context.triggered[0]["prop_id"]; hidden={"display":"none"}
+    if "cancel-trade-btn" in trig: return [],hidden,None
+    if "i-bought-btn" in trig and buy_clicks:
+        period_map={"1m":"5d","5m":"5d","15m":"1mo","30m":"1mo","1h":"3mo","2h":"6mo","3h":"6mo","4h":"6mo","1d":"2y"}
+        df=fetch_data((symbol or "BTC-USD").upper().strip(),interval=interval or "5m",period=period_map.get(interval or "5m","5d"))
+        if df is None or df.empty: return [],hidden,None
+        plan=session.get("plan","hustler"); patterns=detect_patterns(df)
+        signal,_,_,_,_=superintelligent_signal(df,symbol or "BTC-USD",interval or "5m",patterns,plan)
+        if signal=="WAIT": return [],hidden,None
+        entry,default_tp,default_sl=get_levels(df,signal); atr=get_atr(df)
+        pending={"signal":signal,"entry":entry,"default_tp":default_tp,"default_sl":default_sl,"symbol":symbol,"atr":atr}
+        return trade_entry_modal(signal,entry,default_tp,default_sl,atr),{"display":"block"},pending
+    return [],hidden,None
+
 @app.callback(Output("news-panel","style"),Output("news-content","children"),Output("news-last-updated","children"),Input("news-btn","n_clicks"),Input("news-close-btn","n_clicks"),Input("news-refresh-btn","n_clicks"),State("news-panel","style"),prevent_initial_call=True)
 def toggle_news(o,c,r,style):
     trig=dash.callback_context.triggered[0]["prop_id"]; is_open=style.get("display")!="none"
     if "news-close-btn" in trig: return NEWS_PANEL_HIDDEN,dash.no_update,dash.no_update
-    if "i-bought-btn" in trig and buy_clicks:
+    if "news-btn" in trig and is_open: return NEWS_PANEL_HIDDEN,dash.no_update,dash.no_update
     return NEWS_PANEL_SHOWN,build_news_content(),f"Updated {datetime.now().strftime('%H:%M')}"
-
 @app.callback(Output("symbol-input","value"),Input({"type":"sym-btn","index":ALL},"n_clicks"),prevent_initial_call=True)
 def pick_symbol(n):
     t=dash.callback_context.triggered
