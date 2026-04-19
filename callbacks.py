@@ -83,6 +83,10 @@ app.layout = html.Div([
         html.Button("",id="confirm-trade-btn", n_clicks=0),
         html.Button("",id="cancel-trade-btn",  n_clicks=0),
         html.Button("",id="i-bought-btn",      n_clicks=0),
+        html.Button("",id="exit-btn",          n_clicks=0),
+        html.Div("",id="trade-status"),
+        html.Div("",id="trade-status-hint"),
+        html.Button("",id="i-bought-btn",      n_clicks=0),
         html.Div("",id="copy-tp-feedback",     style={"display":"none"}),
         html.Div("",id="copy-sl-feedback",     style={"display":"none"}),
         html.Button("",id="alert-close-btn",   n_clicks=0),
@@ -110,23 +114,48 @@ _POLLING_JS = """
         if (el.scrollHeight !== _lastH) { _lastH = el.scrollHeight; el.scrollTop = el.scrollHeight; }
     }, 120);
 
-    /* ── Copy TP / SL buttons via event delegation ── */
+    /* ── Copy TP / SL buttons via event delegation ──
+       Fades label back to the copy icon after 1.2s.
+       Also resets whenever the TP/SL value text changes (e.g. new symbol). */
+    function _bjkResetCopyBtn(btnId, color) {
+        var b = document.getElementById(btnId);
+        if (!b) return;
+        b.innerText = '\u29c9';
+        b.style.color = color;
+        b.style.fontWeight = 'normal';
+        b.style.opacity = '1';
+        b.style.transition = 'opacity 0.35s ease';
+    }
     document.addEventListener('click', function(e) {
         var t = e.target && e.target.closest ? e.target.closest('#copy-tp-btn') : null;
         if (t) {
             var src = document.getElementById('tp-text');
             if (src) try { navigator.clipboard.writeText(src.innerText || src.textContent || ''); } catch(_) {}
-            t.innerText = '\u2713 Copied!'; t.style.color = '#34d399'; t.style.fontWeight = '700';
-            setTimeout(function() { t.innerText = '\u29c9'; t.style.fontWeight = 'normal'; }, 1500);
+            t.style.transition = 'opacity 0.35s ease';
+            t.innerText = '\u2713 Copied!'; t.style.color = '#34d399'; t.style.fontWeight = '700'; t.style.opacity = '1';
+            setTimeout(function() { if (t && t.innerText.indexOf('Copied') !== -1) t.style.opacity = '0'; }, 900);
+            setTimeout(function() { _bjkResetCopyBtn('copy-tp-btn', '#34d399'); }, 1300);
         }
         t = e.target && e.target.closest ? e.target.closest('#copy-sl-btn') : null;
         if (t) {
             var src2 = document.getElementById('sl-text');
             if (src2) try { navigator.clipboard.writeText(src2.innerText || src2.textContent || ''); } catch(_) {}
-            t.innerText = '\u2713 Copied!'; t.style.color = '#f87171'; t.style.fontWeight = '700';
-            setTimeout(function() { t.innerText = '\u29c9'; t.style.fontWeight = 'normal'; }, 1500);
+            t.style.transition = 'opacity 0.35s ease';
+            t.innerText = '\u2713 Copied!'; t.style.color = '#f87171'; t.style.fontWeight = '700'; t.style.opacity = '1';
+            setTimeout(function() { if (t && t.innerText.indexOf('Copied') !== -1) t.style.opacity = '0'; }, 900);
+            setTimeout(function() { _bjkResetCopyBtn('copy-sl-btn', '#f87171'); }, 1300);
         }
     });
+    /* Reset copy buttons whenever the TP/SL numeric text changes (e.g. symbol switch). */
+    var _lastTp = '', _lastSl = '';
+    setInterval(function() {
+        var tp = document.getElementById('tp-text');
+        var sl = document.getElementById('sl-text');
+        var tpTxt = tp ? (tp.innerText || tp.textContent || '') : '';
+        var slTxt = sl ? (sl.innerText || sl.textContent || '') : '';
+        if (tpTxt !== _lastTp) { _lastTp = tpTxt; _bjkResetCopyBtn('copy-tp-btn', '#34d399'); }
+        if (slTxt !== _lastSl) { _lastSl = slTxt; _bjkResetCopyBtn('copy-sl-btn', '#f87171'); }
+    }, 300);
 
     /* ── Light/dark theme: read theme-applier text, apply class to body ── */
     setInterval(function() {
@@ -759,16 +788,12 @@ def tog_bb(n,d): return not d
 @app.callback(Output("pd-store","data"),       Input("pd-btn","n_clicks"),      State("pd-store","data"),       prevent_initial_call=True)
 def tog_pd(n,d): return not d
 
-@app.callback(Output("breakdown-panel","style"),Output("breakdown-open-store","data"),Input("breakdown-btn","n_clicks"),State("breakdown-open-store","data"),prevent_initial_call=True)
-def tog_breakdown(n,is_open):
-    if is_open: return BREAKDOWN_HIDDEN,False
-    return BREAKDOWN_SHOWN,True
-
+@app.callback(Output("trade-modal","children"),Output("trade-modal","style"),Output("pending-trade-store","data"),Input("i-bought-btn","n_clicks"),Input("cancel-trade-btn","n_clicks"),State("trade-store","data"),State("symbol-input","value"),State("interval-dropdown","value"),State("session-store","data"),prevent_initial_call=True)
 @app.callback(Output("news-panel","style"),Output("news-content","children"),Output("news-last-updated","children"),Input("news-btn","n_clicks"),Input("news-close-btn","n_clicks"),Input("news-refresh-btn","n_clicks"),State("news-panel","style"),prevent_initial_call=True)
 def toggle_news(o,c,r,style):
     trig=dash.callback_context.triggered[0]["prop_id"]; is_open=style.get("display")!="none"
     if "news-close-btn" in trig: return NEWS_PANEL_HIDDEN,dash.no_update,dash.no_update
-    if "news-btn" in trig and is_open: return NEWS_PANEL_HIDDEN,dash.no_update,dash.no_update
+    if "i-bought-btn" in trig and buy_clicks:
     return NEWS_PANEL_SHOWN,build_news_content(),f"Updated {datetime.now().strftime('%H:%M')}"
 
 @app.callback(Output("symbol-input","value"),Input({"type":"sym-btn","index":ALL},"n_clicks"),prevent_initial_call=True)
