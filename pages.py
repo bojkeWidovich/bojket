@@ -1281,7 +1281,7 @@ def dashboard_page(plan="admin"):
                 dbc.Button("⚙  Admin",id="admin-btn",n_clicks=0,color="dark",outline=True,title="Open Admin Panel",
                            style={"border":f"1px solid {PURPLE}50","color":PURPLE,"padding":"5px 14px","fontSize":"0.76em","borderRadius":"6px","marginRight":"8px","fontWeight":"700","letterSpacing":"0.8px",
                                   "display":"inline-block" if plan=="admin" else "none"}),
-                dbc.Button("🌙",id="theme-btn",color="dark",outline=True,title="Toggle chart theme (dark / light)",style={"border":f"1px solid {BORDER}","color":TEXT_DIM,"padding":"5px 10px","fontSize":"0.82em","borderRadius":"6px","marginRight":"6px"}),
+                html.Div(id="theme-btn",style={"display":"none"}),
                 dbc.Button("↺",id="refresh-btn",color="dark",outline=True,title="Refresh chart data now",style={"border":f"1px solid {BORDER}","color":PURPLE,"padding":"5px 10px","fontSize":"0.88em","borderRadius":"6px"}),
             ],style={"display":"flex","alignItems":"center"}),
         ],style={"display":"flex","alignItems":"center","justifyContent":"space-between","padding":"11px 24px","borderBottom":f"1px solid {BORDER}","backgroundColor":"#050508","position":"sticky","top":"0","zIndex":"100"}),
