@@ -371,6 +371,10 @@ app.index_string = f"""<!DOCTYPE html>
             .reveal.in-view {{ opacity: 1; transform: translateY(0); }}
             /* ── Mega CTA hover lift ── */
             .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
+            /* ── Topbar refinements ── */
+            .topbar-icon-btn:hover {{ border-color: rgba(168,85,247,0.45) !important; color:white !important; background-color: rgba(147,51,234,0.08) !important; }}
+            .topbar-pill-btn:hover {{ color:white !important; border-color: rgba(168,85,247,0.35) !important; background: rgba(147,51,234,0.06) !important; }}
+            .topbar-pill-btn.discord:hover {{ border-color: rgba(88,101,242,0.7) !important; background: linear-gradient(135deg,rgba(88,101,242,0.25),rgba(88,101,242,0.08)) !important; }}
             .spinning {{ animation: spin 1.2s linear infinite; display:inline-block; }}
             .hero-glow {{
                 position: absolute; width: 900px; height: 900px; border-radius: 50%;

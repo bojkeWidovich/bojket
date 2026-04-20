@@ -1224,41 +1224,67 @@ def dashboard_page(plan="admin"):
     plan_label={"admin":"Admin","veteran":"Profitable Veteran","hustler":"Hustler"}.get(plan,"Hustler")
 
     return html.Div([
-        # ── TOPBAR ─────────────────────────────────────────────────────────
+# ── TOPBAR ─────────────────────────────────────────────────────────
         html.Div([
+            # Left — logo block
             html.Div([
-                html.Span("BOJKET",style={"color":"white","fontWeight":"700","fontSize":"1.05em","letterSpacing":"3px"}),
-                html.Div("The future of trading.",style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"1px","marginTop":"1px","fontStyle":"italic"}),
-            ],style={"minWidth":"140px"}),
+                html.Span("BOJKET", style={
+                    "background":"linear-gradient(135deg,#ffffff 0%,#A855F7 100%)",
+                    "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
+                    "fontWeight":"900","fontSize":"1.1em","letterSpacing":"5px",
+                    "filter":"drop-shadow(0 0 14px rgba(168,85,247,0.25))",
+                }),
+                html.Div("The future of trading.", style={
+                    "color":"rgba(168,85,247,0.7)","fontSize":"0.52em","letterSpacing":"2.5px",
+                    "marginTop":"2px","fontWeight":"600","textTransform":"uppercase",
+                }),
+            ], style={"minWidth":"150px"}),
+
+            # Middle — tool row
             html.Div([
-                # Asset + timeframe
                 tbtn("☰","market-btn",tip="Browse all markets"),
                 html.Div(style={"width":"6px"}),
-                dcc.Dropdown(id="symbol-input",options=ALL_OPTIONS,value="BTC-USD",searchable=True,clearable=False,placeholder="Search...",style={"width":"170px","backgroundColor":BG_CARD,"color":"black","border":f"1px solid {BORDER}","borderRadius":"6px","fontSize":"0.82em"}),
+                dcc.Dropdown(id="symbol-input", options=ALL_OPTIONS, value="BTC-USD",
+                    searchable=True, clearable=False, placeholder="Search...",
+                    style={"width":"170px","backgroundColor":BG_CARD,"color":"black",
+                           "border":f"1px solid {BORDER}","borderRadius":"7px","fontSize":"0.82em"}),
                 html.Div(style={"width":"5px"}),
-                dcc.Dropdown(id="interval-dropdown",options=[{"label":l,"value":v} for l,v in [("1m","1m"),("5m","5m"),("15m","15m"),("30m","30m"),("1h","1h"),("2h","2h"),("3h","3h"),("4h","4h"),("1D","1d")]],value="5m",clearable=False,style={"width":"72px","backgroundColor":BG_CARD,"color":"black","border":f"1px solid {BORDER}","borderRadius":"6px","fontSize":"0.82em"}),
+                dcc.Dropdown(id="interval-dropdown",
+                    options=[{"label":l,"value":v} for l,v in [("1m","1m"),("5m","5m"),("15m","15m"),("30m","30m"),("1h","1h"),("2h","2h"),("3h","3h"),("4h","4h"),("1D","1d")]],
+                    value="5m", clearable=False,
+                    style={"width":"72px","backgroundColor":BG_CARD,"color":"black",
+                           "border":f"1px solid {BORDER}","borderRadius":"7px","fontSize":"0.82em"}),
+
                 # Divider
-                html.Div(style={"width":"1px","height":"22px","backgroundColor":BORDER,"margin":"0 10px","flexShrink":"0"}),
-                # General tool buttons
-                tbtn("📓","journal-btn",tip="Trade Journal — log & review your trades"),html.Div(style={"width":"4px"}),
-                tbtn("📰","news-btn",tip="Market News — live global headlines"),html.Div(style={"width":"4px"}),
+                html.Div(style={"width":"1px","height":"22px",
+                    "background":"linear-gradient(180deg, transparent, rgba(147,51,234,0.35), transparent)",
+                    "margin":"0 12px","flexShrink":"0"}),
+
+                tbtn("📓","journal-btn",tip="Trade Journal — log & review your trades"),
+                html.Div(style={"width":"4px"}),
+                tbtn("📰","news-btn",tip="Market News — live global headlines"),
+                html.Div(style={"width":"4px"}),
+
+                # Bell with dropdown
                 html.Div([
                     html.Button("🔔", id="alert-btn", n_clicks=0, title="Notifications",
-                        style={"border":"1px solid rgba(255,255,255,0.22)","color":"rgba(255,255,255,0.72)",
-                               "backgroundColor":"transparent","padding":"5px 11px","fontSize":"0.85em",
-                               "borderRadius":"6px","cursor":"pointer","minWidth":"0"}),
+                        className="topbar-icon-btn",
+                        style={"border":"1px solid rgba(255,255,255,0.14)","color":"rgba(255,255,255,0.75)",
+                               "backgroundColor":"rgba(255,255,255,0.02)","padding":"5px 11px","fontSize":"0.85em",
+                               "borderRadius":"7px","cursor":"pointer","minWidth":"0",
+                               "transition":"all 0.18s ease"}),
                     html.Div([
                         html.Button([html.Span("🔔",style={"marginRight":"8px"}),"Set Price Alert"],
                             id="alert-dropdown-price-btn", n_clicks=0,
                             style={"display":"flex","alignItems":"center","width":"100%","background":"transparent",
-                                   "border":"none","color":"rgba(255,255,255,0.82)","padding":"8px 12px",
+                                   "border":"none","color":"rgba(255,255,255,0.85)","padding":"9px 13px",
                                    "fontSize":"0.8em","borderRadius":"7px","cursor":"pointer","textAlign":"left",
                                    "fontWeight":"500","whiteSpace":"nowrap"}),
                         html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.07)","margin":"2px 6px"}),
                         html.Button([html.Span("🔕",style={"marginRight":"8px"}),"Mute Notifications"],
                             id="alert-dropdown-mute-btn", n_clicks=0,
                             style={"display":"flex","alignItems":"center","width":"100%","background":"transparent",
-                                   "border":"none","color":"rgba(255,255,255,0.82)","padding":"8px 12px",
+                                   "border":"none","color":"rgba(255,255,255,0.85)","padding":"9px 13px",
                                    "fontSize":"0.8em","borderRadius":"7px","cursor":"pointer","textAlign":"left",
                                    "fontWeight":"500","whiteSpace":"nowrap"}),
                     ], id="alert-dropdown",
@@ -1267,33 +1293,80 @@ def dashboard_page(plan="admin"):
                            "borderRadius":"10px","padding":"5px","minWidth":"188px","zIndex":"600",
                            "boxShadow":"0 8px 32px rgba(0,0,0,0.7)"}),
                 ], style={"position":"relative"}),
+
                 html.Div(style={"width":"4px"}),
+
                 # Divider
-                html.Div(style={"width":"1px","height":"22px","backgroundColor":BORDER,"margin":"0 10px","flexShrink":"0"}),
-                tbtn("🧠  AI Lab","ailab-btn",tip="AI Lab — ML training, backtesting & insights"),html.Div(style={"width":"4px"}),
+                html.Div(style={"width":"1px","height":"22px",
+                    "background":"linear-gradient(180deg, transparent, rgba(147,51,234,0.35), transparent)",
+                    "margin":"0 12px","flexShrink":"0"}),
+
+                tbtn("🧠  AI Lab","ailab-btn",tip="AI Lab — ML training, backtesting & insights"),
                 html.Div(style={"width":"4px"}),
-            ],style={"display":"flex","alignItems":"center"}),
+            ], style={"display":"flex","alignItems":"center"}),
+
+            # Right — plan badge + Discord + Sign out + Admin + Refresh
             html.Div([
-                html.Span(plan_label,style={"color":plan_badge_color,"fontSize":"0.62em","fontWeight":"600","border":f"1px solid {plan_badge_color}40","padding":"3px 10px","borderRadius":"20px","marginRight":"10px"}),
+                # Plan badge — gradient pill with glow
+                html.Span(plan_label, style={
+                    "background":f"linear-gradient(135deg,{plan_badge_color}18,{plan_badge_color}05)",
+                    "color":plan_badge_color,"fontSize":"0.6em","fontWeight":"700",
+                    "border":f"1px solid {plan_badge_color}55","padding":"5px 12px","borderRadius":"100px",
+                    "marginRight":"14px","letterSpacing":"1.2px","textTransform":"uppercase",
+                    "boxShadow":f"0 0 14px {plan_badge_color}25",
+                }),
+
+                # Discord
                 html.A([
                     html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
-                             style={"width":"13px","height":"13px","marginRight":"5px","verticalAlign":"middle","opacity":"0.8"}),
-                    html.Span("Discord", style={"verticalAlign":"middle"}),
-                ], href="https://discord.gg/e2merC6eFE", target="_blank", style={
-                    "color":"rgba(255,255,255,0.65)","fontSize":"0.68em","fontWeight":"600",
+                        style={"width":"13px","height":"13px","marginRight":"6px","verticalAlign":"middle","opacity":"0.85"}),
+                    html.Span("Discord", style={"verticalAlign":"middle","letterSpacing":"0.4px"}),
+                ], href="https://discord.gg/e2merC6eFE", target="_blank",
+                className="topbar-pill-btn discord",
+                style={
+                    "color":"rgba(255,255,255,0.8)","fontSize":"0.7em","fontWeight":"600",
                     "textDecoration":"none","display":"inline-flex","alignItems":"center",
-                    "border":"1px solid rgba(88,101,242,0.45)","borderRadius":"6px",
-                    "padding":"4px 10px","backgroundColor":"rgba(88,101,242,0.08)","marginRight":"10px",
+                    "border":"1px solid rgba(88,101,242,0.45)","borderRadius":"7px",
+                    "padding":"5px 12px","background":"linear-gradient(135deg,rgba(88,101,242,0.14),rgba(88,101,242,0.04))",
+                    "marginRight":"10px","transition":"all 0.18s ease",
                 }),
-                html.Span("Sign Out",id="signout-btn",n_clicks=0,title="Log out of your account",style={"color":TEXT_MUTED,"fontSize":"0.68em","cursor":"pointer","marginRight":"10px"}),
-                # Admin button — only visible to the admin account
-                dbc.Button("⚙  Admin",id="admin-btn",n_clicks=0,color="dark",outline=True,title="Open Admin Panel",
-                           style={"border":f"1px solid {PURPLE}50","color":PURPLE,"padding":"5px 14px","fontSize":"0.76em","borderRadius":"6px","marginRight":"8px","fontWeight":"700","letterSpacing":"0.8px",
-                                  "display":"inline-block" if plan=="admin" else "none"}),
-                html.Div(id="theme-btn",style={"display":"none"}),
-                dbc.Button("↺",id="refresh-btn",color="dark",outline=True,title="Refresh chart data now",style={"border":f"1px solid {BORDER}","color":PURPLE,"padding":"5px 10px","fontSize":"0.88em","borderRadius":"6px"}),
-            ],style={"display":"flex","alignItems":"center"}),
-        ],style={"display":"flex","alignItems":"center","justifyContent":"space-between","padding":"11px 24px","borderBottom":f"1px solid {BORDER}","backgroundColor":"#050508","position":"sticky","top":"0","zIndex":"100"}),
+
+                # Sign Out
+                html.Span("Sign Out", id="signout-btn", n_clicks=0, title="Log out of your account",
+                    className="topbar-pill-btn",
+                    style={"color":"rgba(255,255,255,0.55)","fontSize":"0.7em","cursor":"pointer",
+                           "marginRight":"10px","fontWeight":"600","padding":"5px 12px",
+                           "border":"1px solid rgba(255,255,255,0.08)","borderRadius":"7px",
+                           "transition":"all 0.18s ease"}),
+
+                # Admin
+                dbc.Button("⚙  Admin", id="admin-btn", n_clicks=0, color="dark", outline=False,
+                    title="Open Admin Panel",
+                    style={"background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                           "border":"1px solid rgba(168,85,247,0.6)","color":"white",
+                           "padding":"5px 14px","fontSize":"0.72em","borderRadius":"7px",
+                           "marginRight":"8px","fontWeight":"700","letterSpacing":"1.5px",
+                           "textTransform":"uppercase",
+                           "boxShadow":"0 4px 18px rgba(147,51,234,0.38)",
+                           "display":"inline-block" if plan=="admin" else "none"}),
+
+                # Theme placeholder (hidden — kept so callbacks don't break)
+                html.Div(id="theme-btn", style={"display":"none"}),
+
+                # Refresh
+                dbc.Button("↺", id="refresh-btn", color="dark", outline=True,
+                    title="Refresh chart data now",
+                    style={"border":"1px solid rgba(168,85,247,0.35)","color":PURPLE_LIGHT,
+                           "padding":"5px 12px","fontSize":"0.92em","borderRadius":"7px",
+                           "background":"rgba(147,51,234,0.06)",
+                           "transition":"all 0.18s ease"}),
+            ], style={"display":"flex","alignItems":"center"}),
+
+        ], style={"display":"flex","alignItems":"center","justifyContent":"space-between",
+                  "padding":"13px 26px","borderBottom":"1px solid rgba(147,51,234,0.15)",
+                  "background":"linear-gradient(180deg, #0a0710 0%, #050508 100%)",
+                  "position":"sticky","top":"0","zIndex":"100",
+                  "boxShadow":"0 4px 24px rgba(0,0,0,0.4)"}),
 
         # ── PANEL AREA (market / journal / alert — NOT pattern, that's beside the chart) ──
         html.Div([
