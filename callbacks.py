@@ -364,6 +364,11 @@ app.index_string = f"""<!DOCTYPE html>
             @keyframes glow-pulse {{ 0%,100% {{ opacity:0.6; }} 50% {{ opacity:1; }} }}
             @keyframes spin {{ from{{transform:rotate(0deg)}} to{{transform:rotate(360deg)}} }}
             .fade-in {{ animation: fadeInUp 0.45s ease forwards; }}
+            /* ── Scroll reveal: opacity 0 → 1 as element enters viewport ── */
+            .reveal {{ opacity: 0; transform: translateY(24px); transition: opacity 0.9s ease-out, transform 0.9s ease-out; }}
+            .reveal.in-view {{ opacity: 1; transform: translateY(0); }}
+            /* ── Mega CTA hover lift ── */
+            .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
             .spinning {{ animation: spin 1.2s linear infinite; display:inline-block; }}
             .hero-glow {{
                 position: absolute; width: 900px; height: 900px; border-radius: 50%;
@@ -470,6 +475,25 @@ app.index_string = f"""<!DOCTYPE html>
         }});
 
         /* Video is now a YouTube iframe — no JS injection needed */
+
+        /* ── Scroll reveal observer — fade in elements as they enter viewport ── */
+        (function() {{
+            function bindReveal() {{
+                var els = document.querySelectorAll('.reveal:not(.reveal-bound)');
+                if (!els.length) return;
+                var obs = new IntersectionObserver(function(entries) {{
+                    entries.forEach(function(e) {{
+                        if (e.isIntersecting) {{
+                            e.target.classList.add('in-view');
+                            obs.unobserve(e.target);
+                        }}
+                    }});
+                }}, {{ threshold: 0.12, rootMargin: '0px 0px -60px 0px' }});
+                els.forEach(function(el) {{ el.classList.add('reveal-bound'); obs.observe(el); }});
+            }}
+            bindReveal();
+            setInterval(bindReveal, 600); /* re-bind when Dash re-renders the page */
+        }})();
 
         /* ── Fade out the Bojket loader once Dash renders the first page ── */
         (function() {{

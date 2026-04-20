@@ -44,339 +44,262 @@ def _review_card(initials, name, country_flag, plan, quote, accent=PURPLE, avata
 
 
 def landing_page():
-    def tr(k):
-        strings = {
-            "tagline": "The future of trading.",
-            "signin": "Sign In",
-            "lp_badge": "PRIVATE ACCESS",
-            "lp_badge_sub": "By invitation only",
-            "lp_h1a": "A private trading system",
-            "lp_h1b": "for serious capital.",
-            "lp_desc1": "Institutional-grade signals, machine learning, and a personalised mentor — delivered as a closed, high-touch program.",
-            "lp_desc2": "We work with a limited number of clients at a time. Every engagement begins with a private consultation.",
-            "lp_cta": "Book a Private Call →",
-            "lp_trust": ["Fully personalised setup", "Direct 24/7 support", "Lifetime access"],
-            "lp_stats": [("60+", "Markets covered"), ("10", "Signal factors"), ("24/7", "Direct support"), ("1:1", "Onboarding")],
-            "built_tag": "THE SYSTEM THAT CHANGED HOW WE TRADE",
-            "built_h2": "Built for traders who are done guessing.",
-            "built_sub": "A complete trading intelligence suite — AI signals, live ML predictions, pattern recognition, and a dedicated mentor. Used by capital that takes itself seriously.",
-            "feat": [("📊", "Multi-Timeframe Analysis", "See what the bigger trend is doing before you enter. Stop getting caught on the wrong side of the market."),
-                     ("🧠", "XGBoost ML Engine", "Trained on 2 years of real data. Learns which market conditions actually produce winning trades."),
-                     ("⚡", "Defined Entry, TP & SL", "Every signal comes with a precise entry, take profit, and stop loss. No more making it up as you go."),
-                     ("🤖", "AI Trading Mentor", "Ask anything about trading — patterns, risk, psychology, strategy. Available 24/7. Answers like a trader, not a textbook."),
-                     ("🔬", "Backtesting Engine", "Test your strategy against 2 years of history. Know what works before you risk real money."),
-                     ("📓", "Smart Trade Journal", "Every trade logged automatically. Streaks, patterns, performance. Watch your edge sharpen over time.")],
-            "test_tag": "WHAT OUR CLIENTS SAY",
-            "test_h2": "A handful of early voices.",
-            "join_badge": "REQUEST ACCESS",
-            "join_h2a": "Ready for a ",
-            "join_h2b": "serious conversation",
-            "join_h2c": "?",
-            "join_d1": "Every engagement starts with a private call. We talk about your capital, your style, and whether the program fits.",
-            "join_d2": "If it's a match, we set you up personally. If not, no hard feelings.",
-            "join_trust": ["Private consultation", "No obligation", "Direct access to the founder"],
-            "join_cta": "Book a Private Call →",
-            "footer_copy": "© 2026 Bojket  ·  Not financial advice.",
-            "footer_sub": "The future of trading.",
-        }
-        return strings.get(k, k)
-
-    reviews = [
-        ("LB","Lukas B.","🇩🇪","Client",
-         "honestly didn't expect much at first but the signals were scarily accurate on BTC and ETH. "
-         "missed a few entries before i found this, not missing them anymore lol.",
-         BULL, "https://i.pravatar.cc/80?img=11"),
-
-        ("SM","Sophia M.","🇦🇹","Client",
-         "was already paying for two other tools when i joined. cancelled both within a week. "
-         "the HTF alignment alone saves me so much second-guessing.",
-         NEUTRAL, "https://i.pravatar.cc/80?img=47"),
-
-        ("DK","David K.","🇨🇭","Client",
-         "i trade part time around my job so i don't have hours to stare at charts. this thing does the reading "
-         "for me and i just check in when i have 10 min. works way better than i thought.",
-         PURPLE_LIGHT,
-         "https://api.dicebear.com/7.x/avataaars/svg?seed=DavidK&backgroundColor=b6e3f4"),
-
-        ("JO","James O.","🇮🇪","Client",
-         "the TP and SL levels were the first thing i tested against my own manual analysis. they were tighter "
-         "and more consistent than what i was drawing. hard to argue with that after a few weeks of data.",
-         BULL,
-         "https://api.dicebear.com/7.x/avataaars/svg?seed=JamesOIE&backgroundColor=d1f4d6"),
-
-        ("TB","Tyler B.","🇺🇸","Client",
-         "asked the AI a dumb question about divergence at like 2am and got a proper answer. no fluff, "
-         "no 'consult a financial advisor'. just actual explanation.",
-         "#facc15", "https://i.pravatar.cc/80?img=52"),
-
-        ("CE","Charlotte E.","🇬🇧","Client",
-         "i've tried a lot of these platforms and most look good in demos then fall apart in real use. "
-         "this one actually held up. the journal is the feature i didn't know i needed.",
-         NEUTRAL, "https://i.pravatar.cc/80?img=44"),
-    ]
+    # ── all-caps copy system ──
+    strings = {
+        "tagline":       "THE FUTURE OF TRADING.",
+        "signin":        "SIGN IN",
+        "lp_badge":      "PRIVATE ACCESS",
+        "lp_badge_sub":  "BY INVITATION ONLY",
+        "lp_h1":         "EXCLUSIVE TRADING SYSTEM. SERIOUS CAPITAL.",
+        "lp_desc":       "INSTITUTIONAL-GRADE SIGNALS. DEDICATED MENTOR. A CLOSED PROGRAM FOR A LIMITED NUMBER OF CLIENTS.",
+        "lp_cta":        "BOOK A PRIVATE CALL",
+        "trust_items":   ["PRIVATE ONBOARDING", "LIFETIME ACCESS", "24/7 DIRECT SUPPORT"],
+        "trust_geo":     "TRUSTED BY TRADERS IN GERMANY · SWITZERLAND · AUSTRIA · UK · IRELAND",
+        "built_tag":     "THE SYSTEM THAT CHANGED HOW WE TRADE",
+        "built_h2":      "BUILT FOR TRADERS WHO ARE DONE GUESSING.",
+        "built_sub":     "A COMPLETE TRADING INTELLIGENCE SUITE. USED BY CAPITAL THAT TAKES ITSELF SERIOUSLY.",
+        "feat":          [("📊", "MULTI-TIMEFRAME ANALYSIS",  "See what the bigger trend is doing before you enter."),
+                          ("🧠", "XGBoost ML ENGINE",          "Trained on 2 years of real data — learns what actually wins."),
+                          ("⚡", "DEFINED ENTRY, TP & SL",     "Every signal comes with a precise entry, target, and stop."),
+                          ("🤖", "AI TRADING MENTOR",          "Available 24/7. Answers like a trader, not a textbook."),
+                          ("🔬", "BACKTESTING ENGINE",         "Validate any strategy against 2 years of market history."),
+                          ("📓", "SMART TRADE JOURNAL",        "Every trade logged. Watch your edge sharpen over time.")],
+        "footer_copy":   "© 2026 BOJKET  ·  NOT FINANCIAL ADVICE.",
+        "footer_sub":    "THE FUTURE OF TRADING.",
+    }
+    def tr(k): return strings.get(k, k)
 
     return html.Div([
         html.Div(className="hero-glow"),
-        # ── Navbar ─────────────────────────────────────────────────────────────
-        html.Div([
-            html.Div([
-                html.Div([
-                    html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"5px"}),
-                ], style={"display":"flex","alignItems":"center"}),
-                html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.62em","letterSpacing":"1px","fontStyle":"italic","marginTop":"3px"}),
-            ]),
-            html.Div([
-                html.A(tr("signin"),href="/login",className="cta-secondary",
-                    style={"padding":"9px 24px","fontSize":"0.85em","textDecoration":"none","display":"inline-block",
-                           "color":"rgba(255,255,255,0.7)","border":"1px solid rgba(255,255,255,0.15)",
-                           "borderRadius":"8px"}),
-            ],style={"display":"flex","alignItems":"center"}),
-        ],style={"display":"flex","justifyContent":"space-between","alignItems":"center",
-                 "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
-                 "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
-                 "zIndex":"100","backdropFilter":"blur(20px)"}),
 
-        # ── Intro Video ────────────────────────────────────────────────────────
+        # ── Navbar ───────────────────────────────────────────────────────────
         html.Div([
             html.Div([
-                html.Div("THE SYSTEM THAT CHANGED HOW WE TRADE", style={
-                    "color": PURPLE_LIGHT, "fontSize": "1.05em", "fontWeight": "900",
-                    "letterSpacing": "5px", "textAlign": "center", "marginBottom": "14px",
-                    "textTransform": "uppercase",
-                }),
-                html.H2("A look inside, in 1:30.", style={
-                    "color": "white", "fontWeight": "900", "fontSize": "3em",
-                    "textAlign": "center", "margin": "0 0 36px 0", "letterSpacing": "-1.5px",
-                    "lineHeight": "1.1",
+                html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
+                html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
+            ]),
+            html.A(tr("signin"), href="/login", style={
+                "color":"rgba(255,255,255,0.75)","padding":"9px 22px","fontSize":"0.72em","fontWeight":"700",
+                "letterSpacing":"2.5px","textDecoration":"none","display":"inline-block",
+                "border":"1px solid rgba(255,255,255,0.18)","borderRadius":"8px",
+                "transition":"all 0.2s ease",
+            }),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
+                  "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
+                  "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
+                  "zIndex":"100","backdropFilter":"blur(20px)"}),
+
+        # ── Intro Video ─────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div(tr("built_tag"), className="reveal", style={
+                    "color": PURPLE_LIGHT, "fontSize": "0.82em", "fontWeight": "800",
+                    "letterSpacing": "5px", "textAlign": "center", "marginBottom": "42px",
                 }),
             ]),
             html.Div(
                 html.Iframe(
                     src="https://www.youtube.com/embed/ChICDNSkdGo?rel=0&modestbranding=1",
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen",
-                    style={
-                        "width": "100%", "aspectRatio": "16/9",
-                        "border": "none", "borderRadius": "18px", "display": "block",
-                    },
+                    style={"width":"100%","aspectRatio":"16/9","border":"none","borderRadius":"18px","display":"block"},
                 ),
-                style={
-                    "maxWidth": "960px", "margin": "0 auto",
-                    "borderRadius": "22px",
-                    "padding": "5px",
-                    "background": "linear-gradient(135deg, rgba(147,51,234,0.3), rgba(147,51,234,0.06))",
-                    "boxShadow": "0 24px 80px rgba(0,0,0,0.75), 0 0 60px rgba(147,51,234,0.18)",
-                },
+                className="reveal",
+                style={"maxWidth":"960px","margin":"0 auto","borderRadius":"22px","padding":"5px",
+                       "background":"linear-gradient(135deg, rgba(147,51,234,0.3), rgba(147,51,234,0.06))",
+                       "boxShadow":"0 24px 80px rgba(0,0,0,0.75), 0 0 60px rgba(147,51,234,0.18)"},
             ),
-        ], style={
-            "padding": "64px 64px 72px 64px",
-            "borderBottom": "1px solid rgba(255,255,255,0.05)",
-            "backgroundColor": "#060608",
-        }),
+        ], style={"padding":"72px 64px","borderBottom":"1px solid rgba(255,255,255,0.05)","backgroundColor":"#060608"}),
 
-        # ── Hero ───────────────────────────────────────────────────────────────
+        # ── HERO (big, bold, premium) ───────────────────────────────────────
         html.Div([
             html.Div([
+                # Big "PRIVATE ACCESS" badge
                 html.Div([
-                    html.Span(tr("lp_badge"), style={"color":"white","fontWeight":"800","fontSize":"0.68em","letterSpacing":"3px"}),
-                    html.Span(" · ", style={"color":"rgba(255,255,255,0.25)","margin":"0 8px"}),
-                    html.Span(tr("lp_badge_sub"), style={"color":"rgba(255,255,255,0.5)","fontWeight":"600","fontSize":"0.68em","letterSpacing":"1px"}),
-                ], style={"display":"inline-flex","alignItems":"center","whiteSpace":"nowrap","backgroundColor":"rgba(147,51,234,0.12)","border":"1px solid rgba(147,51,234,0.4)","borderRadius":"100px","padding":"8px 20px","marginBottom":"30px"}),
-                html.H1([
-                    html.Span(tr("lp_h1a"), style={"color":"white"}), html.Br(),
-                    html.Span(tr("lp_h1b"), style={"background":"linear-gradient(135deg,#A855F7,#9333EA)","-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text"}),
-                ], style={"fontWeight":"900","fontSize":"4.2em","lineHeight":"1.05","margin":"0 0 24px 0","letterSpacing":"-2px"}),
-                html.Div([
-                    html.Div(tr("lp_desc1"), style={"color":"rgba(255,255,255,0.90)","fontWeight":"500","fontSize":"1.0em","marginBottom":"8px","letterSpacing":"0.1px","lineHeight":"1.6"}),
-                    html.Div(tr("lp_desc2"), style={"color":"rgba(255,255,255,0.52)","fontWeight":"500","fontSize":"0.88em","fontStyle":"italic","lineHeight":"1.6"}),
-                ], style={"marginBottom":"40px","maxWidth":"480px"}),
-                html.Div([
-                    html.A(tr("lp_cta"), href="/book-call", style={
-                        "backgroundColor":PURPLE,"color":"white","padding":"16px 38px","borderRadius":"10px",
-                        "fontWeight":"700","fontSize":"1em","textDecoration":"none","display":"inline-block",
-                        "letterSpacing":"0.2px","boxShadow":"0 4px 28px rgba(147,51,234,0.45)",
-                        "whiteSpace":"nowrap","border":"1px solid rgba(168,85,247,0.6)",
+                    html.Span(tr("lp_badge"), style={
+                        "color":"white","fontWeight":"900","fontSize":"0.92em","letterSpacing":"5px",
                     }),
-                ], style={"display":"flex","alignItems":"center","gap":"14px"}),
-                html.Div([
-                    html.Span("Already have an account?  ", style={"color":"rgba(255,255,255,0.4)","fontSize":"0.82em"}),
-                    html.A("Sign in", href="/login", style={
-                        "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"600","textDecoration":"none",
-                        "borderBottom":f"1px solid {PURPLE_LIGHT}40",
+                    html.Span("·", style={"color":PURPLE_LIGHT,"margin":"0 14px","fontSize":"0.9em"}),
+                    html.Span(tr("lp_badge_sub"), style={
+                        "color":"rgba(255,255,255,0.6)","fontWeight":"600","fontSize":"0.75em","letterSpacing":"3px",
                     }),
-                ], style={"marginTop":"14px"}),
+                ], className="reveal", style={"display":"inline-flex","alignItems":"center","whiteSpace":"nowrap",
+                    "backgroundColor":"rgba(147,51,234,0.14)","border":"1px solid rgba(147,51,234,0.5)",
+                    "borderRadius":"100px","padding":"12px 28px","marginBottom":"42px",
+                    "boxShadow":"0 0 28px rgba(147,51,234,0.22)"}),
+
+                # Main headline — all caps, gigantic, condensed
+                html.H1(tr("lp_h1"), className="reveal hero-title", style={
+                    "color":"white","fontWeight":"900","fontSize":"4.6em","lineHeight":"1.02",
+                    "margin":"0 0 32px 0","letterSpacing":"-2.5px","textTransform":"uppercase",
+                    "maxWidth":"780px",
+                }),
+
+                # Short tagline
+                html.Div(tr("lp_desc"), className="reveal", style={
+                    "color":"rgba(255,255,255,0.6)","fontWeight":"600","fontSize":"0.9em",
+                    "letterSpacing":"2.5px","lineHeight":"1.9","marginBottom":"44px","maxWidth":"540px",
+                    "textTransform":"uppercase",
+                }),
+
+                # Big CTA button — unmissable
+                html.A(tr("lp_cta"), href="/book-call", className="reveal cta-mega", style={
+                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                    "color":"white","padding":"22px 52px","borderRadius":"14px",
+                    "fontWeight":"800","fontSize":"1.05em","letterSpacing":"3px",
+                    "textDecoration":"none","display":"inline-block",
+                    "boxShadow":"0 12px 48px rgba(147,51,234,0.55), 0 0 0 1px rgba(168,85,247,0.7) inset",
+                    "whiteSpace":"nowrap","transition":"transform 0.2s ease, box-shadow 0.2s ease",
+                }),
+
                 html.Div([
-                    *[html.Span([
-                        html.Span("✓ ", style={"color":BULL,"fontWeight":"800"}),
-                        html.Span(item, style={"color":"rgba(255,255,255,0.45)","fontWeight":"600","letterSpacing":"0.2px"}),
-                    ], style={"fontSize":"0.76em","whiteSpace":"nowrap"})
-                    for item in tr("lp_trust")],
-                ], style={"display":"flex","alignItems":"center","gap":"22px","marginTop":"26px","flexWrap":"nowrap"}),
-            ], style={"flex":"1","maxWidth":"600px"}),
+                    html.Span("ALREADY HAVE AN ACCOUNT? ", style={"color":"rgba(255,255,255,0.4)","fontSize":"0.72em","letterSpacing":"2px","fontWeight":"600"}),
+                    html.A("SIGN IN →", href="/login", style={
+                        "color":PURPLE_LIGHT,"fontSize":"0.72em","fontWeight":"700","textDecoration":"none",
+                        "letterSpacing":"2px",
+                    }),
+                ], className="reveal", style={"marginTop":"22px"}),
+
+            ], style={"flex":"1","maxWidth":"700px"}),
+
+            # Right side — signal card (unchanged)
             html.Div([
-                html.Img(src="/assets/logo.png",style={"width":"290px","height":"auto","display":"block","marginBottom":"0px","alignSelf":"center","position":"relative","zIndex":"0","mixBlendMode":"screen","filter":"blur(0.45px) contrast(18) brightness(1.2)","imageRendering":"auto"}),
+                html.Img(src="/assets/logo.png", style={"width":"290px","height":"auto","display":"block",
+                    "alignSelf":"center","position":"relative","zIndex":"0","mixBlendMode":"screen",
+                    "filter":"blur(0.45px) contrast(18) brightness(1.2)","imageRendering":"auto"}),
                 html.Div([
-                    html.Div("₿  Bitcoin",style={"color":TEXT_MUTED,"fontSize":"0.7em","letterSpacing":"1px","marginBottom":"12px"}),
-                    html.Div("BUY",style={"color":BULL,"fontWeight":"900","fontSize":"2.8em","letterSpacing":"-1px","lineHeight":"1"}),
-                    html.Div("84% engine score",style={"color":TEXT_MUTED,"fontSize":"0.7em","marginTop":"4px","marginBottom":"10px"}),
-                    html.Div(html.Div(style={"width":"84%","background":"linear-gradient(90deg,#34d399,#10b981)","height":"4px","borderRadius":"4px"}),style={"backgroundColor":"#1e1a2e","borderRadius":"4px","height":"4px","marginBottom":"12px"}),
-                    html.Div([html.Span("🧠",style={"fontSize":"0.7em","marginRight":"6px"}),html.Span("ML Model:",style={"color":TEXT_MUTED,"fontSize":"0.68em","marginRight":"4px"}),html.Span("Bull 79%",style={"color":BULL,"fontSize":"0.68em","fontWeight":"700"})],style={"marginBottom":"16px"}),
-                    *[html.Div([html.Span(ic,style={"color":BULL,"fontSize":"0.7em","marginRight":"8px"}),html.Span(lb,style={"color":"rgba(255,255,255,0.5)","fontSize":"0.7em","marginRight":"6px"}),html.Span(vl,style={"color":BULL,"fontSize":"0.7em","fontWeight":"600"})],style={"marginBottom":"7px","display":"flex"})
-                      for ic,lb,vl in [("✅","EMA Trend","Bullish"),("✅","Higher TF","Aligned"),("✅","VWAP","Above"),("🔥","Divergence","Bullish"),("✅","Volume","High")]],
+                    html.Div("₿  BITCOIN", style={"color":TEXT_MUTED,"fontSize":"0.7em","letterSpacing":"2px","marginBottom":"12px","fontWeight":"700"}),
+                    html.Div("BUY", style={"color":BULL,"fontWeight":"900","fontSize":"2.8em","letterSpacing":"-1px","lineHeight":"1"}),
+                    html.Div("84% ENGINE SCORE", style={"color":TEXT_MUTED,"fontSize":"0.65em","marginTop":"4px","marginBottom":"10px","letterSpacing":"1.5px","fontWeight":"600"}),
+                    html.Div(html.Div(style={"width":"84%","background":"linear-gradient(90deg,#34d399,#10b981)","height":"4px","borderRadius":"4px"}),
+                        style={"backgroundColor":"#1e1a2e","borderRadius":"4px","height":"4px","marginBottom":"12px"}),
+                    html.Div([html.Span("🧠",style={"fontSize":"0.7em","marginRight":"6px"}),
+                              html.Span("ML MODEL:",style={"color":TEXT_MUTED,"fontSize":"0.62em","marginRight":"4px","letterSpacing":"1.5px","fontWeight":"700"}),
+                              html.Span("BULL 79%",style={"color":BULL,"fontSize":"0.68em","fontWeight":"800","letterSpacing":"1px"})],
+                        style={"marginBottom":"16px"}),
+                    *[html.Div([html.Span(ic,style={"color":BULL,"fontSize":"0.7em","marginRight":"8px"}),
+                                html.Span(lb,style={"color":"rgba(255,255,255,0.5)","fontSize":"0.66em","marginRight":"6px","letterSpacing":"1px","fontWeight":"600"}),
+                                html.Span(vl,style={"color":BULL,"fontSize":"0.68em","fontWeight":"700","letterSpacing":"1px"})],
+                                style={"marginBottom":"7px","display":"flex"})
+                      for ic,lb,vl in [("✅","EMA TREND","BULLISH"),("✅","HIGHER TF","ALIGNED"),("✅","VWAP","ABOVE"),("🔥","DIVERGENCE","BULLISH"),("✅","VOLUME","HIGH")]],
                     html.Div(style={"height":"1px","backgroundColor":"rgba(255,255,255,0.06)","margin":"16px 0"}),
                     html.Div([
-                        html.Div([html.Div("TP 🎯",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginBottom":"3px"}),html.Div("94,820",style={"color":BULL,"fontWeight":"800"})],style={"flex":"1"}),
-                        html.Div([html.Div("SL 🛑",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginBottom":"3px"}),html.Div("91,200",style={"color":BEAR,"fontWeight":"800"})],style={"flex":"1"}),
-                    ],style={"display":"flex"}),
-                ],style={"background":"linear-gradient(135deg,#0f0e18,#13101f)","border":"1px solid rgba(147,51,234,0.3)","borderRadius":"20px","padding":"28px","width":"260px","flexShrink":"0","boxShadow":"0 20px 60px rgba(0,0,0,0.6)","position":"relative","zIndex":"1"}),
-            ], style={"display":"flex","flexDirection":"column","alignItems":"center","flexShrink":"0"}),
-        ],style={"display":"flex","justifyContent":"space-between","alignItems":"flex-start","gap":"60px","padding":"50px 64px 80px 64px","maxWidth":"1200px","margin":"0 auto","position":"relative"}),
+                        html.Div([html.Div("TP 🎯",style={"color":TEXT_MUTED,"fontSize":"0.58em","marginBottom":"3px","letterSpacing":"1.5px","fontWeight":"700"}),html.Div("94,820",style={"color":BULL,"fontWeight":"800"})],style={"flex":"1"}),
+                        html.Div([html.Div("SL 🛑",style={"color":TEXT_MUTED,"fontSize":"0.58em","marginBottom":"3px","letterSpacing":"1.5px","fontWeight":"700"}),html.Div("91,200",style={"color":BEAR,"fontWeight":"800"})],style={"flex":"1"}),
+                    ], style={"display":"flex"}),
+                ], style={"background":"linear-gradient(135deg,#0f0e18,#13101f)","border":"1px solid rgba(147,51,234,0.3)",
+                          "borderRadius":"20px","padding":"28px","width":"260px","flexShrink":"0",
+                          "boxShadow":"0 20px 60px rgba(0,0,0,0.6)","position":"relative","zIndex":"1"}),
+            ], className="reveal", style={"display":"flex","flexDirection":"column","alignItems":"center","flexShrink":"0"}),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","gap":"60px",
+                  "padding":"80px 64px 100px 64px","maxWidth":"1280px","margin":"0 auto","position":"relative"}),
 
-        # ── Stats bar ──────────────────────────────────────────────────────────
-        html.Div([html.Div([
-            *[html.Div([html.Div(num,style={"color":"white","fontWeight":"800","fontSize":"2em","letterSpacing":"-1px","marginBottom":"4px"}),html.Div(lbl,style={"color":TEXT_MUTED,"fontSize":"0.78em"})],style={"textAlign":"center","flex":"1"})
-              for num,lbl in tr("lp_stats")],
-        ],style={"display":"flex","maxWidth":"800px","margin":"0 auto","width":"100%"})],
-        style={"borderTop":"1px solid rgba(255,255,255,0.05)","borderBottom":"1px solid rgba(255,255,255,0.05)","padding":"40px 64px","backgroundColor":"rgba(147,51,234,0.04)"}),
-
-        # ── Features ───────────────────────────────────────────────────────────
+        # ── Credibility bar (replaces stats) ────────────────────────────────
         html.Div([
             html.Div([
-                html.Div(tr("built_tag"),style={"color":PURPLE_LIGHT,"fontSize":"0.72em","fontWeight":"700","letterSpacing":"3px","textAlign":"center","marginBottom":"14px"}),
-                html.H2(tr("built_h2"),style={"color":"white","fontWeight":"800","fontSize":"2.6em","textAlign":"center","margin":"0 0 16px 0","letterSpacing":"-1px","lineHeight":"1.2"}),
-                html.P(tr("built_sub"),style={"color":"rgba(255,255,255,0.5)","textAlign":"center","fontSize":"1.05em","margin":"0 auto 56px auto","maxWidth":"540px"}),
+                *[html.Div([
+                    html.Span("✓", style={"color":BULL,"fontWeight":"900","fontSize":"1em","marginRight":"10px"}),
+                    html.Span(item, style={"color":"white","fontWeight":"700","fontSize":"0.85em","letterSpacing":"3px"}),
+                ], style={"display":"flex","alignItems":"center"}) for item in tr("trust_items")],
+            ], className="reveal", style={"display":"flex","justifyContent":"center","gap":"52px","flexWrap":"wrap","marginBottom":"24px"}),
+            html.Div(tr("trust_geo"), className="reveal", style={
+                "color":"rgba(255,255,255,0.4)","fontSize":"0.72em","fontWeight":"600",
+                "letterSpacing":"3px","textAlign":"center",
+            }),
+        ], style={"borderTop":"1px solid rgba(255,255,255,0.05)","borderBottom":"1px solid rgba(255,255,255,0.05)",
+                  "padding":"48px 64px","backgroundColor":"rgba(147,51,234,0.04)"}),
+
+        # ── Features ─────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div(tr("built_tag"), className="reveal", style={"color":PURPLE_LIGHT,"fontSize":"0.8em","fontWeight":"800","letterSpacing":"5px","textAlign":"center","marginBottom":"18px"}),
+                html.H2(tr("built_h2"), className="reveal", style={"color":"white","fontWeight":"900","fontSize":"2.8em","textAlign":"center","margin":"0 0 18px 0","letterSpacing":"-1.5px","lineHeight":"1.1","textTransform":"uppercase"}),
+                html.P(tr("built_sub"), className="reveal", style={"color":"rgba(255,255,255,0.5)","textAlign":"center","fontSize":"0.88em","fontWeight":"600","letterSpacing":"2.5px","margin":"0 auto 64px auto","maxWidth":"640px","lineHeight":"1.8","textTransform":"uppercase"}),
             ]),
             html.Div([_feature_card(ic,ti,de) for ic,ti,de in tr("feat")],
+                className="reveal",
                 style={"display":"grid","gridTemplateColumns":"repeat(3,1fr)","gap":"20px","maxWidth":"1100px","margin":"0 auto"}),
-        ],style={"padding":"80px 64px","backgroundColor":"#050507","borderTop":"1px solid rgba(255,255,255,0.04)"}),
+        ], style={"padding":"96px 64px","backgroundColor":"#050507","borderTop":"1px solid rgba(255,255,255,0.04)"}),
 
-        # ── Testimonials ───────────────────────────────────────────────────────
-        html.Div([
-            html.Div(tr("test_tag"),style={"color":PURPLE_LIGHT,"fontSize":"0.72em","fontWeight":"700","letterSpacing":"3px","textAlign":"center","marginBottom":"14px"}),
-            html.H2(tr("test_h2"),style={"color":"white","fontWeight":"800","fontSize":"2.4em","textAlign":"center","margin":"0 0 52px 0","letterSpacing":"-1px"}),
-            html.Div([
-                _review_card(ini,name,flag,plan,quote,accent,avatar)
-                for ini,name,flag,plan,quote,accent,avatar in reviews
-            ], style={"display":"grid","gridTemplateColumns":"repeat(3,1fr)","gap":"20px","maxWidth":"1100px","margin":"0 auto"}),
-        ], style={"padding":"80px 64px","borderTop":"1px solid rgba(255,255,255,0.04)","backgroundColor":"rgba(147,51,234,0.02)"}),
-
-        # ── Discord Community Section ──────────────────────────────────────────
+        # ── Discord Community Section ────────────────────────────────────────
         html.Div([
             html.Div([
                 html.Div([
-                    html.Div("PRIVATE COMMUNITY", style={
-                        "color":"rgba(88,101,242,0.9)","fontSize":"0.7em","fontWeight":"800",
-                        "letterSpacing":"3px","marginBottom":"16px",
+                    html.Div("PRIVATE COMMUNITY", className="reveal", style={
+                        "color":"rgba(88,101,242,0.9)","fontSize":"0.78em","fontWeight":"800",
+                        "letterSpacing":"4px","marginBottom":"18px",
                     }),
-                    html.H2("A community built on\nexclusive access.", style={
+                    html.H2("A COMMUNITY BUILT ON\nEXCLUSIVE ACCESS.", className="reveal", style={
                         "color":"white","fontWeight":"900","fontSize":"2.4em",
-                        "letterSpacing":"-1px","lineHeight":"1.15","margin":"0 0 18px 0",
-                        "whiteSpace":"pre-line",
+                        "letterSpacing":"-1px","lineHeight":"1.1","margin":"0 0 22px 0",
+                        "whiteSpace":"pre-line","textTransform":"uppercase",
                     }),
-                    html.P(
-                        "When you join Bojket you also get access to a private Discord community "
-                        "filled with real traders — market insights, live events, trade reviews, and "
-                        "information you won't find anywhere else.",
-                        style={"color":"rgba(255,255,255,0.55)","fontSize":"0.97em",
-                               "lineHeight":"1.75","maxWidth":"440px","margin":"0 0 28px 0"},
-                    ),
-                    html.Div([
-                        html.Span("🔒", style={"marginRight":"8px","fontSize":"0.9em"}),
-                        html.Span("Members only — no public access",
-                            style={"color":"rgba(255,255,255,0.4)","fontSize":"0.82em","fontStyle":"italic"}),
-                    ]),
+                    html.P("A PRIVATE DISCORD WITH REAL CLIENTS — MARKET INSIGHTS, LIVE SESSIONS, TRADE REVIEWS. NOT PUBLIC.",
+                        className="reveal",
+                        style={"color":"rgba(255,255,255,0.55)","fontSize":"0.8em","fontWeight":"600",
+                               "letterSpacing":"2.5px","lineHeight":"1.9","maxWidth":"440px","margin":"0"}),
                 ], style={"flex":"1","paddingRight":"48px"}),
                 html.Div([
                     html.Div([
-                        html.Div([
-                            html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
-                                style={"width":"36px","height":"36px","opacity":"0.9"}),
-                        ], style={"marginBottom":"20px"}),
-                        html.Div("Bojket Community", style={
-                            "color":"white","fontWeight":"800","fontSize":"1.15em",
-                            "letterSpacing":"0.3px","marginBottom":"8px",
-                        }),
-                        html.Div("Private · Members only", style={
-                            "color":"rgba(255,255,255,0.4)","fontSize":"0.78em",
-                            "marginBottom":"24px","letterSpacing":"0.5px",
-                        }),
+                        html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
+                            style={"width":"36px","height":"36px","opacity":"0.9","marginBottom":"20px"}),
+                        html.Div("BOJKET COMMUNITY", style={"color":"white","fontWeight":"900","fontSize":"1.05em","letterSpacing":"3px","marginBottom":"8px"}),
+                        html.Div("PRIVATE · MEMBERS ONLY", style={"color":"rgba(255,255,255,0.4)","fontSize":"0.7em","marginBottom":"24px","letterSpacing":"2.5px","fontWeight":"700"}),
                         *[html.Div([
                             html.Span(icon, style={"marginRight":"10px","fontSize":"0.95em"}),
-                            html.Span(text, style={"color":"rgba(255,255,255,0.72)","fontSize":"0.84em"}),
+                            html.Span(text, style={"color":"rgba(255,255,255,0.72)","fontSize":"0.76em","letterSpacing":"1.5px","fontWeight":"600"}),
                         ], style={"marginBottom":"11px","display":"flex","alignItems":"center"})
                         for icon, text in [
-                            ("📊", "Live market insights & analysis"),
-                            ("🎯", "Trade setups from real members"),
-                            ("📅", "Exclusive events & live sessions"),
-                            ("🧠", "Educational content & strategies"),
-                            ("🔔", "Early signals & alerts"),
+                            ("📊","LIVE MARKET INSIGHTS"),
+                            ("🎯","TRADE SETUPS FROM CLIENTS"),
+                            ("📅","EXCLUSIVE EVENTS & SESSIONS"),
+                            ("🧠","EDUCATION & STRATEGIES"),
+                            ("🔔","EARLY SIGNALS & ALERTS"),
                         ]],
-                        html.Div([
-                            html.Span("🔒  Accessible from your dashboard after joining",
-                                style={"color":"rgba(255,255,255,0.3)","fontSize":"0.72em","fontStyle":"italic"}),
-                        ], style={"marginTop":"22px","paddingTop":"18px",
-                                  "borderTop":"1px solid rgba(255,255,255,0.06)"}),
-                    ], style={
-                        "backgroundColor":"rgba(88,101,242,0.07)",
-                        "border":"1px solid rgba(88,101,242,0.25)",
-                        "borderRadius":"18px","padding":"32px",
-                        "backdropFilter":"blur(10px)",
-                    }),
-                ], style={"flex":"1","maxWidth":"360px"}),
-            ], style={
-                "display":"flex","alignItems":"center","maxWidth":"1000px",
-                "margin":"0 auto","gap":"24px",
-            }),
-        ], style={
-            "padding":"90px 64px",
-            "borderTop":"1px solid rgba(255,255,255,0.04)",
-            "background":"linear-gradient(180deg, rgba(88,101,242,0.04) 0%, transparent 100%)",
-        }),
+                    ], style={"backgroundColor":"rgba(88,101,242,0.07)","border":"1px solid rgba(88,101,242,0.25)",
+                              "borderRadius":"18px","padding":"32px","backdropFilter":"blur(10px)"}),
+                ], className="reveal", style={"flex":"1","maxWidth":"360px"}),
+            ], style={"display":"flex","alignItems":"center","maxWidth":"1000px","margin":"0 auto","gap":"24px"}),
+        ], style={"padding":"96px 64px","borderTop":"1px solid rgba(255,255,255,0.04)",
+                  "background":"linear-gradient(180deg, rgba(88,101,242,0.04) 0%, transparent 100%)"}),
 
-        # ── Bottom CTA ─────────────────────────────────────────────────────────
-        html.Div([html.Div([
-            html.Div([
-                html.Span(tr("join_badge"), style={"color":"white","fontWeight":"800","fontSize":"0.68em","letterSpacing":"3px"}),
-            ], style={"display":"inline-flex","alignItems":"center","backgroundColor":"rgba(147,51,234,0.12)","border":"1px solid rgba(147,51,234,0.4)","borderRadius":"100px","padding":"8px 20px","marginBottom":"28px"}),
-            html.H2([
-                html.Span(tr("join_h2a"), style={"color":"white"}),
-                html.Span(tr("join_h2b"), style={"background":"linear-gradient(135deg,#A855F7,#9333EA)","-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text"}),
-                html.Span(tr("join_h2c"), style={"color":"white"}),
-            ], style={"fontWeight":"900","fontSize":"3em","margin":"0 0 20px 0","letterSpacing":"-1.5px","lineHeight":"1.1"}),
-            html.Div([
-                html.Div(tr("join_d1"), style={"color":"rgba(255,255,255,0.75)","fontWeight":"500","fontSize":"1.05em","marginBottom":"6px","lineHeight":"1.65"}),
-                html.Div(tr("join_d2"), style={"color":"rgba(255,255,255,0.35)","fontWeight":"500","fontSize":"0.95em","fontStyle":"italic","lineHeight":"1.65"}),
-            ], style={"marginBottom":"38px"}),
-            html.A(tr("join_cta"), href="/book-call", style={
-                "backgroundColor":PURPLE,"color":"white","padding":"16px 40px","borderRadius":"10px",
-                "fontWeight":"700","fontSize":"1em","textDecoration":"none","display":"inline-block",
-                "letterSpacing":"0.2px","boxShadow":"0 4px 28px rgba(147,51,234,0.45)",
-                "whiteSpace":"nowrap","border":"1px solid rgba(168,85,247,0.6)",
-            }),
-            html.Div([
-                *[html.Span([
-                    html.Span("✓ ", style={"color":BULL,"fontWeight":"800"}),
-                    html.Span(item, style={"color":"rgba(255,255,255,0.45)","fontWeight":"600","letterSpacing":"0.2px"}),
-                ], style={"fontSize":"0.76em","whiteSpace":"nowrap"})
-                for item in tr("join_trust")],
-            ], style={"display":"flex","alignItems":"center","justifyContent":"center","gap":"22px","marginTop":"22px","flexWrap":"nowrap"}),
-        ],style={"textAlign":"center"})],style={"padding":"100px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
-
-        # ── Footer ─────────────────────────────────────────────────────────────
+        # ── Bottom CTA — tight & premium ─────────────────────────────────────
         html.Div([
             html.Div([
-                html.Div("BOJKET",style={"color":"white","fontWeight":"900","fontSize":"1.1em","letterSpacing":"4px","marginBottom":"4px"}),
-                html.Div(tr("footer_sub"),style={"color":TEXT_MUTED,"fontSize":"0.8em","fontStyle":"italic"}),
+                html.Div("THE NEXT STEP", className="reveal", style={
+                    "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"800","letterSpacing":"5px","marginBottom":"24px",
+                }),
+                html.H2("BOOK A PRIVATE CALL.", className="reveal", style={
+                    "color":"white","fontWeight":"900","fontSize":"3.6em","margin":"0 0 22px 0",
+                    "letterSpacing":"-2px","lineHeight":"1.05","textTransform":"uppercase",
+                }),
+                html.Div("ONE CONVERSATION. NO OBLIGATION. WE DECIDE TOGETHER IF IT'S A FIT.",
+                    className="reveal",
+                    style={"color":"rgba(255,255,255,0.55)","fontSize":"0.85em","fontWeight":"600",
+                           "letterSpacing":"3px","marginBottom":"44px","lineHeight":"1.9"}),
+                html.A("BOOK A PRIVATE CALL", href="/book-call", className="reveal cta-mega", style={
+                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                    "color":"white","padding":"22px 52px","borderRadius":"14px",
+                    "fontWeight":"800","fontSize":"1.05em","letterSpacing":"3px",
+                    "textDecoration":"none","display":"inline-block",
+                    "boxShadow":"0 12px 48px rgba(147,51,234,0.55), 0 0 0 1px rgba(168,85,247,0.7) inset",
+                    "whiteSpace":"nowrap",
+                }),
+            ], style={"textAlign":"center"}),
+        ], style={"padding":"120px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+
+        # ── Footer ────────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1em","letterSpacing":"5px","marginBottom":"4px"}),
+                html.Div(tr("footer_sub"), style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600"}),
             ], style={"flex":"1"}),
             html.Div([
-                html.Span("\U0001f4cd", style={"fontSize":"1em","marginRight":"7px"}),
-                html.Span("BASED IN VIENNA, AUSTRIA", style={
-                    "color":"white","fontWeight":"700","fontSize":"0.75em",
-                    "letterSpacing":"2px",
-                }),
+                html.Span("📍", style={"fontSize":"0.9em","marginRight":"7px"}),
+                html.Span("BASED IN VIENNA, AUSTRIA", style={"color":"white","fontWeight":"700","fontSize":"0.72em","letterSpacing":"2.5px"}),
             ], style={"flex":"1","display":"flex","alignItems":"center","justifyContent":"center"}),
-            html.Div(tr("footer_copy"),style={"color":TEXT_MUTED,"fontSize":"0.75em","fontStyle":"italic","flex":"1","textAlign":"right"}),
-        ],style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"28px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
-    ],style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
+            html.Div(tr("footer_copy"), style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","flex":"1","textAlign":"right"}),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+    ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
 
 def _feature_card(icon,title,desc):
     return html.Div([
