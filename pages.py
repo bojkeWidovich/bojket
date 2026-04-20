@@ -368,69 +368,95 @@ def _feature_card(icon,title,desc):
     ],className="feature-card",style={"backgroundColor":"rgba(147,51,234,0.06)","border":"1px solid rgba(255,255,255,0.07)","borderRadius":"16px","padding":"28px"})
 
 def login_page():
-    def tr(k):
-        strings = {
-            "login_h": "Welcome back.",
-            "login_sub": "Sign in to your Bojket account.",
-            "login_email": "Email address",
-            "login_pass": "Password",
-            "login_btn": "Sign In →",
-            "login_new": "NO ACCOUNT YET?",
-            "login_new_lnk": "🚀  View Plans & Pricing",
-            "login_incl": "What's included",
-            "login_features": ["Real-time signals across 60+ assets", "10-factor engine + XGBoost ML model",
-                              "Backtesting over 2 years of history", "Personalised TP & SL calculation",
-                              "Bojket AI mentor available 24/7", "Full trade journal & streak tracking"],
-        }
-        return strings.get(k, k)
     return html.Div([
+        # ── Top bar ─────────────────────────────────────────────────────────
         html.Div([
-            html.Span("←",id="lv-back",style={"color":TEXT_MUTED,"cursor":"pointer","fontSize":"1em","marginRight":"10px"}),
-            html.Span("BOJKET",id="lv-logo",style={"color":PURPLE_LIGHT,"fontWeight":"900","fontSize":"1.1em","letterSpacing":"4px","cursor":"pointer"}),
-        ],style={"padding":"22px 48px","borderBottom":"1px solid rgba(255,255,255,0.06)"}),
+            html.Span("←", id="lv-back", style={
+                "color":"rgba(255,255,255,0.45)","cursor":"pointer","fontSize":"1.1em","marginRight":"14px",
+            }),
+            html.Span("BOJKET", id="lv-logo", style={
+                "color":"white","fontWeight":"900","fontSize":"1.05em","letterSpacing":"6px","cursor":"pointer",
+            }),
+        ], style={"padding":"22px 48px","borderBottom":"1px solid rgba(255,255,255,0.06)",
+                  "display":"flex","alignItems":"center"}),
+
+        # ── Centered form ────────────────────────────────────────────────────
         html.Div([
             html.Div([
+                # Small purple eyebrow
+                html.Div("PRIVATE ACCESS", className="reveal", style={
+                    "color":PURPLE_LIGHT,"fontSize":"0.78em","fontWeight":"800",
+                    "letterSpacing":"5px","textAlign":"center","marginBottom":"20px",
+                }),
+                # Main heading
+                html.H1("WELCOME BACK.", className="reveal", style={
+                    "color":"white","fontWeight":"900","fontSize":"3em",
+                    "letterSpacing":"-1.5px","textAlign":"center","margin":"0 0 14px 0",
+                    "textTransform":"uppercase",
+                }),
+                html.Div("SIGN IN TO YOUR BOJKET ACCOUNT.", className="reveal", style={
+                    "color":"rgba(255,255,255,0.45)","fontSize":"0.82em","fontWeight":"600",
+                    "letterSpacing":"3px","textAlign":"center","marginBottom":"48px","textTransform":"uppercase",
+                }),
+
+                # Email
+                html.Div("EMAIL", style={
+                    "color":"rgba(255,255,255,0.7)","fontSize":"0.7em","fontWeight":"700",
+                    "letterSpacing":"3px","marginBottom":"10px",
+                }),
+                dcc.Input(id="lv-email", type="email", placeholder="you@example.com",
+                    className="inp", style={"marginBottom":"22px","textAlign":"center","letterSpacing":"1px"}),
+
+                # Password
+                html.Div("PASSWORD", style={
+                    "color":"rgba(255,255,255,0.7)","fontSize":"0.7em","fontWeight":"700",
+                    "letterSpacing":"3px","marginBottom":"10px",
+                }),
+                dcc.Input(id="lv-password", type="password", placeholder="••••••••",
+                    className="inp", style={"marginBottom":"14px","textAlign":"center","letterSpacing":"2px"}),
+
+                html.Div(id="lv-error", style={
+                    "color":BEAR,"fontSize":"0.78em","marginBottom":"18px","minHeight":"22px",
+                    "textAlign":"center","fontWeight":"600","letterSpacing":"1px",
+                }),
+
+                # Sign-in button
+                html.Button("SIGN IN →", id="lv-submit", className="cta-mega", style={
+                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                    "color":"white","padding":"18px","fontSize":"0.92em","width":"100%",
+                    "fontWeight":"800","letterSpacing":"3px","border":"none",
+                    "borderRadius":"12px","cursor":"pointer","marginBottom":"32px",
+                    "boxShadow":"0 10px 40px rgba(147,51,234,0.45), 0 0 0 1px rgba(168,85,247,0.6) inset",
+                    "transition":"transform 0.2s ease, box-shadow 0.2s ease",
+                }),
+
+                # OR divider
                 html.Div([
-                    html.Div(tr("login_h"),style={"color":"white","fontWeight":"800","fontSize":"2.2em","marginBottom":"6px","letterSpacing":"-1px"}),
-                    html.Div(tr("login_sub"),style={"color":"rgba(255,255,255,0.45)","fontSize":"0.92em","marginBottom":"36px"}),
-                    html.Div(tr("login_email"),style={"color":"rgba(255,255,255,0.7)","fontSize":"0.75em","fontWeight":"600","letterSpacing":"0.8px","marginBottom":"8px","textTransform":"uppercase"}),
-                    dcc.Input(id="lv-email",type="email",placeholder="you@example.com",className="inp",style={"marginBottom":"18px"}),
-                    html.Div(tr("login_pass"),style={"color":"rgba(255,255,255,0.7)","fontSize":"0.75em","fontWeight":"600","letterSpacing":"0.8px","marginBottom":"8px","textTransform":"uppercase"}),
-                    dcc.Input(id="lv-password",type="password",placeholder="••••••••",className="inp",style={"marginBottom":"10px"}),
-                    html.Div(id="lv-error",style={"color":BEAR,"fontSize":"0.82em","marginBottom":"18px","minHeight":"22px"}),
-                    html.Button(tr("login_btn"),id="lv-submit",className="cta-primary",style={"padding":"14px","fontSize":"0.95em","width":"100%","marginBottom":"16px"}),
-                    # ── OR divider ─────────────────────────────────────────
-                    html.Div([
-                        html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","flex":"1"}),
-                        html.Span("or",style={"color":"rgba(255,255,255,0.22)","fontSize":"0.72em","padding":"0 14px","flexShrink":"0"}),
-                        html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","flex":"1"}),
-                    ],style={"display":"flex","alignItems":"center","marginBottom":"14px"}),
-                    # ── View plans CTA ─────────────────────────────────────
-                    html.Span(tr("login_new_lnk"),id="lv-signup",style={
-                        "display":"block","width":"100%","padding":"13px",
-                        "textAlign":"center","border":f"1px solid {PURPLE}",
-                        "borderRadius":"10px","cursor":"pointer","color":PURPLE_LIGHT,
-                        "fontWeight":"700","fontSize":"0.97em",
-                        "background":f"linear-gradient(135deg,rgba(147,51,234,0.07),rgba(147,51,234,0.17))",
-                        "boxShadow":f"0 0 22px rgba(147,51,234,0.25)",
-                        "letterSpacing":"0.2px","marginBottom":"12px",
-                    }),
-                    html.Div(tr("login_new"),style={"color":"rgba(255,255,255,0.85)","fontSize":"0.72em","textAlign":"center","fontWeight":"700","letterSpacing":"1px"}),
-                ],style={"width":"380px"}),
-                html.Div([
-                    html.Div(tr("login_incl"),style={"color":"white","fontWeight":"700","fontSize":"0.95em","marginBottom":"20px"}),
-                    *[html.Div([html.Div("✦",style={"color":PURPLE_LIGHT,"marginRight":"10px","flexShrink":"0"}),html.Div(feat,style={"color":"rgba(255,255,255,0.6)","fontSize":"0.85em","lineHeight":"1.5"})],style={"display":"flex","alignItems":"flex-start","marginBottom":"14px"})
-                    for feat in tr("login_features")],
-                    html.Div([
-                        html.Div("✓  Full access · Cancel anytime",
-                            style={"color":BULL,"fontWeight":"700","fontSize":"0.82em","marginBottom":"3px"}),
-                        html.Div("No setup fee.",
-                            style={"color":TEXT_MUTED,"fontSize":"0.75em"}),
-                    ], style={"backgroundColor":"rgba(52,211,153,0.08)","border":"1px solid rgba(52,211,153,0.2)","borderRadius":"10px","padding":"12px 14px","marginTop":"20px"}),
-                ],style={"background":"linear-gradient(135deg,#0f0e18,#13101f)","border":"1px solid rgba(255,255,255,0.07)","borderRadius":"16px","padding":"28px","width":"270px","alignSelf":"flex-start","marginLeft":"56px"}),
-            ],style={"display":"flex","alignItems":"center","justifyContent":"center"}),
-        ],style={"display":"flex","alignItems":"center","justifyContent":"center","minHeight":"calc(100vh - 65px)","padding":"40px"}),
-    ],style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN})
+                    html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","flex":"1"}),
+                    html.Span("OR", style={"color":"rgba(255,255,255,0.3)","fontSize":"0.7em",
+                             "padding":"0 16px","flexShrink":"0","letterSpacing":"3px","fontWeight":"700"}),
+                    html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","flex":"1"}),
+                ], style={"display":"flex","alignItems":"center","marginBottom":"24px"}),
+
+                # No account yet — book a call
+                html.Div("NO ACCOUNT YET?", style={
+                    "color":"rgba(255,255,255,0.5)","fontSize":"0.72em","fontWeight":"700",
+                    "letterSpacing":"3px","textAlign":"center","marginBottom":"14px",
+                }),
+                html.A("BOOK A PRIVATE CALL →", href="/book-call", style={
+                    "display":"block","width":"100%","padding":"16px",
+                    "textAlign":"center","border":f"2px solid {PURPLE}",
+                    "borderRadius":"12px","color":"white",
+                    "fontWeight":"800","fontSize":"0.85em","letterSpacing":"3px",
+                    "textDecoration":"none","textTransform":"uppercase",
+                    "background":"rgba(147,51,234,0.08)",
+                    "boxShadow":"0 0 28px rgba(147,51,234,0.2)",
+                    "transition":"all 0.25s ease",
+                }),
+            ], className="reveal", style={"width":"100%","maxWidth":"440px"}),
+        ], style={"display":"flex","justifyContent":"center","alignItems":"center",
+                  "minHeight":"calc(100vh - 70px)","padding":"60px 24px"}),
+    ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN})
 
 def email_sent_page(email):
     return html.Div([html.Div([
