@@ -45,76 +45,73 @@ def _review_card(initials, name, country_flag, plan, quote, accent=PURPLE, avata
 
 def landing_page():
     def tr(k):
-        # Hardcoded English strings
         strings = {
             "tagline": "The future of trading.",
             "signin": "Sign In",
-            "lp_badge": "EXCLUSIVE ACCESS",
-            "lp_badge_sub": "Not for everyone",
-            "lp_h1a": "The future of",
-            "lp_h1b": "trading is here.",
-            "lp_desc1": "An advanced AI-powered trading machine that predicts, adapts, and simplifies every decision.",
-            "lp_desc2": "Built for serious traders who want an edge. Not for everyone.",
-            "lp_cta": "Get Access →",
-            "lp_trust": ["Know your exact entry", "Defined risk on every trade", "Learn while you trade"],
-            "lp_stats": [("60+", "Assets tracked"), ("10", "Signal factors"), ("24/7", "Market monitoring"), ("< 5s", "Signal refresh")],
-            "built_tag": "THE MACHINE THAT CHANGES THE GAME",
-            "built_h2": "Trade smarter. Learn faster. Risk less.",
-            "built_sub": "An advanced futuristic trading machine — AI signals, live ML predictions, and pattern recognition that completely changes how you trade. Less guesswork, more precision.",
+            "lp_badge": "PRIVATE ACCESS",
+            "lp_badge_sub": "By invitation only",
+            "lp_h1a": "A private trading system",
+            "lp_h1b": "for serious capital.",
+            "lp_desc1": "Institutional-grade signals, machine learning, and a personalised mentor — delivered as a closed, high-touch program.",
+            "lp_desc2": "We work with a limited number of clients at a time. Every engagement begins with a private consultation.",
+            "lp_cta": "Book a Private Call →",
+            "lp_trust": ["Fully personalised setup", "Direct 24/7 support", "Lifetime access"],
+            "lp_stats": [("60+", "Markets covered"), ("10", "Signal factors"), ("24/7", "Direct support"), ("1:1", "Onboarding")],
+            "built_tag": "THE SYSTEM THAT CHANGED HOW WE TRADE",
+            "built_h2": "Built for traders who are done guessing.",
+            "built_sub": "A complete trading intelligence suite — AI signals, live ML predictions, pattern recognition, and a dedicated mentor. Used by capital that takes itself seriously.",
             "feat": [("📊", "Multi-Timeframe Analysis", "See what the bigger trend is doing before you enter. Stop getting caught on the wrong side of the market."),
                      ("🧠", "XGBoost ML Engine", "Trained on 2 years of real data. Learns which market conditions actually produce winning trades."),
                      ("⚡", "Defined Entry, TP & SL", "Every signal comes with a precise entry, take profit, and stop loss. No more making it up as you go."),
                      ("🤖", "AI Trading Mentor", "Ask anything about trading — patterns, risk, psychology, strategy. Available 24/7. Answers like a trader, not a textbook."),
                      ("🔬", "Backtesting Engine", "Test your strategy against 2 years of history. Know what works before you risk real money."),
                      ("📓", "Smart Trade Journal", "Every trade logged automatically. Streaks, patterns, performance. Watch your edge sharpen over time.")],
-            "test_tag": "EARLY ACCESS FEEDBACK",
-            "test_h2": "What our prototype testers say.",
-            "join_badge": "LIMITED ACCESS",
-            "join_h2a": "The future of trading ",
-            "join_h2b": "starts here",
-            "join_h2c": ".",
-            "join_d1": "Full access to every tool — AI signals, ML engine, AI mentor, backtesting, trade journal.",
-            "join_d2": "Built for serious, hungry traders who want a real edge. Not for everyone.",
-            "join_trust": ["Every feature included", "Cancel anytime", "24/7 AI mentor"],
-            "join_cta": "Get Access →",
-            "footer_copy": "© 2025 Bojket  ·  Not financial advice.",
+            "test_tag": "WHAT OUR CLIENTS SAY",
+            "test_h2": "A handful of early voices.",
+            "join_badge": "REQUEST ACCESS",
+            "join_h2a": "Ready for a ",
+            "join_h2b": "serious conversation",
+            "join_h2c": "?",
+            "join_d1": "Every engagement starts with a private call. We talk about your capital, your style, and whether the program fits.",
+            "join_d2": "If it's a match, we set you up personally. If not, no hard feelings.",
+            "join_trust": ["Private consultation", "No obligation", "Direct access to the founder"],
+            "join_cta": "Book a Private Call →",
+            "footer_copy": "© 2026 Bojket  ·  Not financial advice.",
             "footer_sub": "The future of trading.",
         }
         return strings.get(k, k)
 
-    # ── Testimonials data: (initials, name, flag, plan, quote, accent, avatar_url)
-    # Avatar mix: realistic photo (pravatar.cc), discord/cartoon (dicebear), realistic portrait
     reviews = [
-        ("LB","Lukas B.","🇩🇪","Early Access",
-         "honestly didn't expect much from a beta but the signals were scarily accurate on BTC and ETH. "
-         "missed a few entries before i found this, not missing them anymore lol. waiting for full launch.",
+        ("LB","Lukas B.","🇩🇪","Client",
+         "honestly didn't expect much at first but the signals were scarily accurate on BTC and ETH. "
+         "missed a few entries before i found this, not missing them anymore lol.",
          BULL, "https://i.pravatar.cc/80?img=11"),
 
-        ("SM","Sophia M.","🇦🇹","Early Access",
-         "was already paying for two other tools when i got into the prototype group. cancelled both within a week. "
+        ("SM","Sophia M.","🇦🇹","Client",
+         "was already paying for two other tools when i joined. cancelled both within a week. "
          "the HTF alignment alone saves me so much second-guessing.",
          NEUTRAL, "https://i.pravatar.cc/80?img=47"),
 
-        ("DK","David K.","🇨🇭","Early Access",
+        ("DK","David K.","🇨🇭","Client",
          "i trade part time around my job so i don't have hours to stare at charts. this thing does the reading "
-         "for me and i just check in when i have 10 min. works way better than i thought a prototype would.",
+         "for me and i just check in when i have 10 min. works way better than i thought.",
          PURPLE_LIGHT,
          "https://api.dicebear.com/7.x/avataaars/svg?seed=DavidK&backgroundColor=b6e3f4"),
 
-        ("JO","James O.","🇮🇪","Early Access",
+        ("JO","James O.","🇮🇪","Client",
          "the TP and SL levels were the first thing i tested against my own manual analysis. they were tighter "
          "and more consistent than what i was drawing. hard to argue with that after a few weeks of data.",
          BULL,
          "https://api.dicebear.com/7.x/avataaars/svg?seed=JamesOIE&backgroundColor=d1f4d6"),
 
-        ("TB","Tyler B.","🇺🇸","Early Access",
+        ("TB","Tyler B.","🇺🇸","Client",
          "asked the AI a dumb question about divergence at like 2am and got a proper answer. no fluff, "
-         "no 'consult a financial advisor'. just actual explanation. that alone made the early access worth it.",
+         "no 'consult a financial advisor'. just actual explanation.",
          "#facc15", "https://i.pravatar.cc/80?img=52"),
 
-        ("CE","Charlotte E.","🇬🇧","Early Access",
+        ("CE","Charlotte E.","🇬🇧","Client",
          "i've tried a lot of these platforms and most look good in demos then fall apart in real use. "
-         "this one actually held up. the journal is the feature i didn't know i needed until i started using it.",
+         "this one actually held up. the journal is the feature i didn't know i needed.",
          NEUTRAL, "https://i.pravatar.cc/80?img=44"),
     ]
 
@@ -125,31 +122,29 @@ def landing_page():
             html.Div([
                 html.Div([
                     html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"5px"}),
-                    html.Span("BETA", style={
-                        "color":"white","fontWeight":"800","fontSize":"0.48em","letterSpacing":"1.5px",
-                        "backgroundColor":"#e11d48","borderRadius":"5px","padding":"3px 8px",
-                        "marginLeft":"10px","verticalAlign":"middle","lineHeight":"1",
-                    }),
                 ], style={"display":"flex","alignItems":"center"}),
                 html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.62em","letterSpacing":"1px","fontStyle":"italic","marginTop":"3px"}),
             ]),
             html.Div([
                 html.A(tr("signin"),href="/login",className="cta-secondary",
-                    style={"padding":"9px 24px","fontSize":"0.85em","textDecoration":"none","display":"inline-block"}),
+                    style={"padding":"9px 24px","fontSize":"0.85em","textDecoration":"none","display":"inline-block",
+                           "color":"rgba(255,255,255,0.7)","border":"1px solid rgba(255,255,255,0.15)",
+                           "borderRadius":"8px"}),
             ],style={"display":"flex","alignItems":"center"}),
         ],style={"display":"flex","justifyContent":"space-between","alignItems":"center",
                  "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
                  "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
                  "zIndex":"100","backdropFilter":"blur(20px)"}),
+
         # ── Intro Video ────────────────────────────────────────────────────────
         html.Div([
             html.Div([
-                html.Div("BOJKET EXPLAINED", style={
+                html.Div("THE SYSTEM THAT CHANGED HOW WE TRADE", style={
                     "color": PURPLE_LIGHT, "fontSize": "1.05em", "fontWeight": "900",
                     "letterSpacing": "5px", "textAlign": "center", "marginBottom": "14px",
                     "textTransform": "uppercase",
                 }),
-                html.H2("See everything in 1:30 minutes.", style={
+                html.H2("A look inside, in 1:30.", style={
                     "color": "white", "fontWeight": "900", "fontSize": "3em",
                     "textAlign": "center", "margin": "0 0 36px 0", "letterSpacing": "-1.5px",
                     "lineHeight": "1.1",
@@ -189,32 +184,33 @@ def landing_page():
                 html.H1([
                     html.Span(tr("lp_h1a"), style={"color":"white"}), html.Br(),
                     html.Span(tr("lp_h1b"), style={"background":"linear-gradient(135deg,#A855F7,#9333EA)","-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text"}),
-                ], style={"fontWeight":"900","fontSize":"4.5em","lineHeight":"1.05","margin":"0 0 24px 0","letterSpacing":"-2px"}),
+                ], style={"fontWeight":"900","fontSize":"4.2em","lineHeight":"1.05","margin":"0 0 24px 0","letterSpacing":"-2px"}),
                 html.Div([
-                    html.Div(tr("lp_desc1"), style={"color":"rgba(255,255,255,0.90)","fontWeight":"500","fontSize":"1.0em","marginBottom":"6px","letterSpacing":"0.1px"}),
-                    html.Div(tr("lp_desc2"), style={"color":"rgba(255,255,255,0.52)","fontWeight":"500","fontSize":"0.88em","fontStyle":"italic"}),
-                ], style={"marginBottom":"40px","lineHeight":"1.65","maxWidth":"420px"}),
+                    html.Div(tr("lp_desc1"), style={"color":"rgba(255,255,255,0.90)","fontWeight":"500","fontSize":"1.0em","marginBottom":"8px","letterSpacing":"0.1px","lineHeight":"1.6"}),
+                    html.Div(tr("lp_desc2"), style={"color":"rgba(255,255,255,0.52)","fontWeight":"500","fontSize":"0.88em","fontStyle":"italic","lineHeight":"1.6"}),
+                ], style={"marginBottom":"40px","maxWidth":"480px"}),
                 html.Div([
-                    html.A(tr("lp_cta"), href="/login", style={
-                        "backgroundColor":PURPLE,"color":"white","padding":"15px 34px","borderRadius":"10px",
-                        "fontWeight":"700","fontSize":"0.96em","textDecoration":"none","display":"inline-block",
+                    html.A(tr("lp_cta"), href="/book-call", style={
+                        "backgroundColor":PURPLE,"color":"white","padding":"16px 38px","borderRadius":"10px",
+                        "fontWeight":"700","fontSize":"1em","textDecoration":"none","display":"inline-block",
                         "letterSpacing":"0.2px","boxShadow":"0 4px 28px rgba(147,51,234,0.45)",
                         "whiteSpace":"nowrap","border":"1px solid rgba(168,85,247,0.6)",
                     }),
-                    html.A(tr("signin"), href="/login", style={
-                        "color":"white","padding":"15px 30px","borderRadius":"10px","fontWeight":"600",
-                        "fontSize":"0.96em","textDecoration":"none","display":"inline-block",
-                        "border":"1px solid rgba(255,255,255,0.15)","backgroundColor":"rgba(255,255,255,0.05)",
-                        "whiteSpace":"nowrap","letterSpacing":"0.2px",
-                    }),
                 ], style={"display":"flex","alignItems":"center","gap":"14px"}),
+                html.Div([
+                    html.Span("Already have an account?  ", style={"color":"rgba(255,255,255,0.4)","fontSize":"0.82em"}),
+                    html.A("Sign in", href="/login", style={
+                        "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"600","textDecoration":"none",
+                        "borderBottom":f"1px solid {PURPLE_LIGHT}40",
+                    }),
+                ], style={"marginTop":"14px"}),
                 html.Div([
                     *[html.Span([
                         html.Span("✓ ", style={"color":BULL,"fontWeight":"800"}),
                         html.Span(item, style={"color":"rgba(255,255,255,0.45)","fontWeight":"600","letterSpacing":"0.2px"}),
                     ], style={"fontSize":"0.76em","whiteSpace":"nowrap"})
                     for item in tr("lp_trust")],
-                ], style={"display":"flex","alignItems":"center","gap":"22px","marginTop":"22px","flexWrap":"nowrap"}),
+                ], style={"display":"flex","alignItems":"center","gap":"22px","marginTop":"26px","flexWrap":"nowrap"}),
             ], style={"flex":"1","maxWidth":"600px"}),
             html.Div([
                 html.Img(src="/assets/logo.png",style={"width":"290px","height":"auto","display":"block","marginBottom":"0px","alignSelf":"center","position":"relative","zIndex":"0","mixBlendMode":"screen","filter":"blur(0.45px) contrast(18) brightness(1.2)","imageRendering":"auto"}),
@@ -247,7 +243,7 @@ def landing_page():
             html.Div([
                 html.Div(tr("built_tag"),style={"color":PURPLE_LIGHT,"fontSize":"0.72em","fontWeight":"700","letterSpacing":"3px","textAlign":"center","marginBottom":"14px"}),
                 html.H2(tr("built_h2"),style={"color":"white","fontWeight":"800","fontSize":"2.6em","textAlign":"center","margin":"0 0 16px 0","letterSpacing":"-1px","lineHeight":"1.2"}),
-                html.P(tr("built_sub"),style={"color":"rgba(255,255,255,0.5)","textAlign":"center","fontSize":"1.05em","margin":"0 auto 56px auto","maxWidth":"480px"}),
+                html.P(tr("built_sub"),style={"color":"rgba(255,255,255,0.5)","textAlign":"center","fontSize":"1.05em","margin":"0 auto 56px auto","maxWidth":"540px"}),
             ]),
             html.Div([_feature_card(ic,ti,de) for ic,ti,de in tr("feat")],
                 style={"display":"grid","gridTemplateColumns":"repeat(3,1fr)","gap":"20px","maxWidth":"1100px","margin":"0 auto"}),
@@ -266,7 +262,6 @@ def landing_page():
         # ── Discord Community Section ──────────────────────────────────────────
         html.Div([
             html.Div([
-                # Left — text
                 html.Div([
                     html.Div("PRIVATE COMMUNITY", style={
                         "color":"rgba(88,101,242,0.9)","fontSize":"0.7em","fontWeight":"800",
@@ -278,7 +273,7 @@ def landing_page():
                         "whiteSpace":"pre-line",
                     }),
                     html.P(
-                        "When you get a Bojket membership you also get access to a private Discord community "
+                        "When you join Bojket you also get access to a private Discord community "
                         "filled with real traders — market insights, live events, trade reviews, and "
                         "information you won't find anywhere else.",
                         style={"color":"rgba(255,255,255,0.55)","fontSize":"0.97em",
@@ -290,7 +285,6 @@ def landing_page():
                             style={"color":"rgba(255,255,255,0.4)","fontSize":"0.82em","fontStyle":"italic"}),
                     ]),
                 ], style={"flex":"1","paddingRight":"48px"}),
-                # Right — visual card
                 html.Div([
                     html.Div([
                         html.Div([
@@ -347,12 +341,12 @@ def landing_page():
                 html.Span(tr("join_h2a"), style={"color":"white"}),
                 html.Span(tr("join_h2b"), style={"background":"linear-gradient(135deg,#A855F7,#9333EA)","-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text"}),
                 html.Span(tr("join_h2c"), style={"color":"white"}),
-            ], style={"fontWeight":"900","fontSize":"3.2em","margin":"0 0 20px 0","letterSpacing":"-1.5px","lineHeight":"1.05"}),
+            ], style={"fontWeight":"900","fontSize":"3em","margin":"0 0 20px 0","letterSpacing":"-1.5px","lineHeight":"1.1"}),
             html.Div([
-                html.Div(tr("join_d1"), style={"color":"rgba(255,255,255,0.75)","fontWeight":"500","fontSize":"1.05em","marginBottom":"6px"}),
-                html.Div(tr("join_d2"), style={"color":"rgba(255,255,255,0.35)","fontWeight":"500","fontSize":"0.95em","fontStyle":"italic"}),
-            ], style={"marginBottom":"38px","lineHeight":"1.7"}),
-            html.A(tr("join_cta"), href="/login", style={
+                html.Div(tr("join_d1"), style={"color":"rgba(255,255,255,0.75)","fontWeight":"500","fontSize":"1.05em","marginBottom":"6px","lineHeight":"1.65"}),
+                html.Div(tr("join_d2"), style={"color":"rgba(255,255,255,0.35)","fontWeight":"500","fontSize":"0.95em","fontStyle":"italic","lineHeight":"1.65"}),
+            ], style={"marginBottom":"38px"}),
+            html.A(tr("join_cta"), href="/book-call", style={
                 "backgroundColor":PURPLE,"color":"white","padding":"16px 40px","borderRadius":"10px",
                 "fontWeight":"700","fontSize":"1em","textDecoration":"none","display":"inline-block",
                 "letterSpacing":"0.2px","boxShadow":"0 4px 28px rgba(147,51,234,0.45)",
