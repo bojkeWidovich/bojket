@@ -89,6 +89,9 @@ app.layout = html.Div([
         html.Button("",id="exit-btn",          n_clicks=0),
         html.Div("",id="trade-status"),
         html.Div("",id="trade-status-hint"),
+        html.Button("",id="what-is-btn",       n_clicks=0),
+        html.Div("",   id="what-is-answer"),
+        html.Span("",  id="what-is-arrow"),
         html.Div("",id="copy-tp-feedback",     style={"display":"none"}),
         html.Div("",id="copy-sl-feedback",     style={"display":"none"}),
         html.Button("",id="alert-close-btn",   n_clicks=0),
@@ -525,6 +528,29 @@ app.index_string = f"""<!DOCTYPE html>
     </body>
 </html>
 """
+# ── "What is Bojket?" click-to-reveal ─────────────────────────────────────────
+@app.callback(
+    Output("what-is-answer", "style"),
+    Output("what-is-arrow", "style"),
+    Input("what-is-btn", "n_clicks"),
+    prevent_initial_call=True,
+)
+def toggle_what_is(n):
+    if n and n % 2 == 1:
+        open_style = {
+            "maxHeight":"800px","overflow":"hidden","opacity":"1",
+            "transition":"max-height 0.7s ease, opacity 0.7s ease",
+            "maxWidth":"1000px","margin":"0 auto",
+        }
+        arrow_style = {"transition":"transform 0.3s ease","display":"inline-block","transform":"rotate(90deg)"}
+        return open_style, arrow_style
+    closed_style = {
+        "maxHeight":"0","overflow":"hidden","opacity":"0",
+        "transition":"max-height 0.7s ease, opacity 0.7s ease",
+        "maxWidth":"1000px","margin":"0 auto",
+    }
+    arrow_style = {"transition":"transform 0.3s ease","display":"inline-block","transform":"rotate(0deg)"}
+    return closed_style, arrow_style
 
 # ── PAGE ROUTER ───────────────────────────────────────────────────────────────
 @app.callback(
