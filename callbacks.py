@@ -89,8 +89,6 @@ app.layout = html.Div([
         html.Button("",id="exit-btn",          n_clicks=0),
         html.Div("",id="trade-status"),
         html.Div("",id="trade-status-hint"),
-        html.Div("",   id="what-is-answer"),
-        html.Span("",  id="what-is-arrow"),
         html.Div("",id="copy-tp-feedback",     style={"display":"none"}),
         html.Div("",id="copy-sl-feedback",     style={"display":"none"}),
         html.Button("",id="alert-close-btn",   n_clicks=0),
