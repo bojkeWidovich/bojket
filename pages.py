@@ -262,6 +262,39 @@ def landing_page():
         ], style={"padding":"96px 64px","borderTop":"1px solid rgba(255,255,255,0.04)",
                   "background":"linear-gradient(180deg, rgba(88,101,242,0.04) 0%, transparent 100%)"}),
 
+        # ── WHAT IS BOJKET — one-sentence explainer ───────────────────────────
+        html.Div([
+            html.Div([
+                html.Div("IN SIMPLE TERMS", className="reveal", style={
+                    "color": PURPLE_LIGHT, "fontSize": "0.82em", "fontWeight": "800",
+                    "letterSpacing": "5px", "marginBottom": "28px", "textAlign": "center",
+                }),
+                html.H2([
+                    html.Span("BOJKET IS A ", style={"color":"white"}),
+                    html.Span("TRADING TOOL", style={
+                        "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                        "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
+                    }),
+                    html.Span(" THAT USES AN ADVANCED AI ENGINE TO PREDICT MARKETS AND MAKE ", style={"color":"white"}),
+                    html.Span("BETTER DECISIONS FOR YOU", style={
+                        "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                        "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
+                    }),
+                    html.Span(" — OUTGROWING TRADITIONAL TACTICS IN SECONDS.", style={"color":"white"}),
+                ], className="reveal", style={
+                    "fontWeight":"900","fontSize":"2.6em","lineHeight":"1.2",
+                    "letterSpacing":"-1px","textAlign":"center","maxWidth":"1000px",
+                    "margin":"0 auto","textTransform":"uppercase",
+                }),
+                html.Div([
+                    html.Div(style={"width":"60px","height":"3px","background":"linear-gradient(90deg,#A855F7,#9333EA)","borderRadius":"3px"}),
+                ], className="reveal", style={"display":"flex","justifyContent":"center","marginTop":"44px"}),
+            ]),
+        ], style={
+            "padding":"120px 64px","borderTop":"1px solid rgba(255,255,255,0.05)",
+            "background":"radial-gradient(circle at 50% 50%, rgba(147,51,234,0.06) 0%, transparent 70%)",
+        }),
+
         # ── Bottom CTA — tight & premium ─────────────────────────────────────
         html.Div([
             html.Div([
