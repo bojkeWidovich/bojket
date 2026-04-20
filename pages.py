@@ -51,7 +51,7 @@ def landing_page():
         "lp_badge":      "PRIVATE ACCESS",
         "lp_badge_sub":  "BY INVITATION ONLY",
         "lp_h1":         "EXCLUSIVE TRADING SYSTEM. SERIOUS CAPITAL.",
-        "lp_desc":       "INSTITUTIONAL-GRADE SIGNALS. DEDICATED MENTOR. A CLOSED PROGRAM FOR A LIMITED NUMBER OF CLIENTS.",
+        "lp_desc":       "INSTITUTIONAL-GRADE SIGNALS. A CLOSED PROGRAM FOR A LIMITED NUMBER OF CLIENTS. LIFETIME ACCESS TO EVERY UPDATE.",
         "lp_cta":        "BOOK A PRIVATE CALL",
         "trust_items":   ["PRIVATE ONBOARDING", "LIFETIME ACCESS", "24/7 DIRECT SUPPORT"],
         "trust_geo":     "TRUSTED BY TRADERS IN GERMANY · SWITZERLAND · AUSTRIA · UK · IRELAND",
@@ -262,33 +262,59 @@ def landing_page():
         ], style={"padding":"96px 64px","borderTop":"1px solid rgba(255,255,255,0.04)",
                   "background":"linear-gradient(180deg, rgba(88,101,242,0.04) 0%, transparent 100%)"}),
 
-        # ── WHAT IS BOJKET — one-sentence explainer ───────────────────────────
+# ── WHAT IS BOJKET — click to reveal ──────────────────────────────────
         html.Div([
             html.Div([
                 html.Div("IN SIMPLE TERMS", className="reveal", style={
                     "color": PURPLE_LIGHT, "fontSize": "0.82em", "fontWeight": "800",
                     "letterSpacing": "5px", "marginBottom": "28px", "textAlign": "center",
                 }),
-                html.H2([
-                    html.Span("BOJKET IS A ", style={"color":"white"}),
-                    html.Span("TRADING TOOL", style={
-                        "background":"linear-gradient(135deg,#A855F7,#9333EA)",
-                        "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
-                    }),
-                    html.Span(" THAT USES AN ADVANCED AI ENGINE TO PREDICT MARKETS AND MAKE ", style={"color":"white"}),
-                    html.Span("BETTER DECISIONS FOR YOU", style={
-                        "background":"linear-gradient(135deg,#A855F7,#9333EA)",
-                        "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
-                    }),
-                    html.Span(" — OUTGROWING TRADITIONAL TACTICS IN SECONDS.", style={"color":"white"}),
-                ], className="reveal", style={
-                    "fontWeight":"900","fontSize":"2.6em","lineHeight":"1.2",
-                    "letterSpacing":"-1px","textAlign":"center","maxWidth":"1000px",
-                    "margin":"0 auto","textTransform":"uppercase",
+                html.H2("WHAT IS BOJKET?", className="reveal", style={
+                    "color": "white", "fontWeight": "900", "fontSize": "2.8em",
+                    "margin": "0 0 36px 0", "letterSpacing": "-1.5px",
+                    "textAlign": "center", "textTransform": "uppercase",
                 }),
+                # The button — clicking it reveals the hidden answer below
                 html.Div([
-                    html.Div(style={"width":"60px","height":"3px","background":"linear-gradient(90deg,#A855F7,#9333EA)","borderRadius":"3px"}),
-                ], className="reveal", style={"display":"flex","justifyContent":"center","marginTop":"44px"}),
+                    html.Button([
+                        html.Span("TELL ME IN ONE SENTENCE", style={"marginRight":"12px"}),
+                        html.Span("→", id="what-is-arrow", style={"transition":"transform 0.3s ease","display":"inline-block"}),
+                    ], id="what-is-btn", n_clicks=0, className="reveal cta-mega", style={
+                        "background":"transparent",
+                        "color":"white","padding":"18px 44px","borderRadius":"14px",
+                        "fontWeight":"800","fontSize":"0.92em","letterSpacing":"3px",
+                        "border":f"2px solid {PURPLE}","cursor":"pointer",
+                        "boxShadow":"0 0 32px rgba(147,51,234,0.25)",
+                        "transition":"all 0.25s ease",
+                    }),
+                ], style={"display":"flex","justifyContent":"center"}),
+                # The hidden answer — revealed by callback on click
+                html.Div(id="what-is-answer", style={
+                    "maxHeight":"0","overflow":"hidden","opacity":"0",
+                    "transition":"max-height 0.7s ease, opacity 0.7s ease, margin-top 0.7s ease",
+                    "marginTop":"0","maxWidth":"1000px","margin":"0 auto",
+                }, children=[
+                    html.Div([
+                        html.H3([
+                            html.Span("BOJKET IS A ", style={"color":"white"}),
+                            html.Span("TRADING TOOL", style={
+                                "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                                "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
+                            }),
+                            html.Span(" THAT USES AN ADVANCED AI ENGINE TO PREDICT MARKETS AND MAKE ", style={"color":"white"}),
+                            html.Span("BETTER DECISIONS FOR YOU", style={
+                                "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                                "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
+                            }),
+                            html.Span(" — OUTGROWING TRADITIONAL TACTICS IN SECONDS.", style={"color":"white"}),
+                        ], style={
+                            "fontWeight":"900","fontSize":"2.2em","lineHeight":"1.25",
+                            "letterSpacing":"-1px","textAlign":"center",
+                            "margin":"56px auto 0 auto","textTransform":"uppercase",
+                        }),
+                        html.Div(style={"width":"60px","height":"3px","background":"linear-gradient(90deg,#A855F7,#9333EA)","borderRadius":"3px","margin":"40px auto 0 auto"}),
+                    ]),
+                ]),
             ]),
         ], style={
             "padding":"120px 64px","borderTop":"1px solid rgba(255,255,255,0.05)",
