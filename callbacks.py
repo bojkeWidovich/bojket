@@ -18,7 +18,7 @@ from config import (
     PLAN_LIMITS, REGISTERED_USERS, BETA_ACCOUNTS, ADMIN_EMAIL, ADMIN_PASSWORD,
     ASSET_ICONS, LABELS, SYMBOLS, ALL_OPTIONS, CATEGORY_ICONS,
     ALL_PATTERNS, PAT_COLOR, PAT_ABBR, SEN_EMOJI, SEN_LABEL, DESCS,
-    _register_user, call_bojket,
+    _register_user, _mark_login, call_bojket,
     VERIFIED_ACCOUNTS, PENDING_VERIFICATIONS, EMAIL_ENABLED,
     send_verification_email,
     register_session, unregister_session,
@@ -497,26 +497,62 @@ app.index_string = f"""<!DOCTYPE html>
             setInterval(bindReveal, 600); /* re-bind when Dash re-renders the page */
         }})();
 
-        /* ── Fade out the Bojket loader once Dash renders the first page ── */
+        /* ── Bojket loader: shows on first paint + on every navigation to /dashboard ── */
         (function() {{
-            function hideLoader() {{
-                var el = document.getElementById('bojket-loader');
-                if (!el) return;
+            var loader = document.getElementById('bojket-loader');
+            function showLoader() {{
+                if (!loader) loader = document.getElementById('bojket-loader');
+                if (!loader) return;
+                loader.style.display = 'flex';
+                /* Next frame so transition fires */
+                requestAnimationFrame(function() {{ loader.style.opacity = '1'; }});
+            }}
+            function hideLoaderSoon() {{
+                if (!loader) loader = document.getElementById('bojket-loader');
+                if (!loader) return;
+                loader.style.opacity = '0';
+                setTimeout(function() {{ loader.style.display = 'none'; }}, 500);
+            }}
+            function dashboardIsFullyLoaded() {{
+                /* Dashboard is ready only when the chart canvas has rendered */
+                var chart = document.getElementById('live-chart');
+                if (!chart) return false;
+                var svg = chart.querySelector('.main-svg');
+                return !!svg;
+            }}
+            function initialHide() {{
                 var content = document.getElementById('page-content');
-                if (content && content.children.length > 0) {{
-                    el.style.opacity = '0';
-                    setTimeout(function() {{ el.style.display = 'none'; }}, 500);
+                if (!content || content.children.length === 0) {{
+                    return setTimeout(initialHide, 100);
+                }}
+                /* If this is the dashboard route, wait for chart; else hide now. */
+                if (window.location.pathname === '/dashboard') {{
+                    if (dashboardIsFullyLoaded()) hideLoaderSoon();
+                    else setTimeout(initialHide, 150);
                 }} else {{
-                    setTimeout(hideLoader, 100);
+                    hideLoaderSoon();
                 }}
             }}
-            /* Safety timeout — hide after 8 sec no matter what */
-            setTimeout(function() {{
-                var el = document.getElementById('bojket-loader');
-                if (el) {{ el.style.opacity = '0'; setTimeout(function() {{ el.style.display = 'none'; }}, 500); }}
-            }}, 8000);
-            if (document.readyState === 'complete') hideLoader();
-            else window.addEventListener('load', hideLoader);
+            /* Safety: force-hide after 10s no matter what */
+            setTimeout(hideLoaderSoon, 10000);
+            if (document.readyState === 'complete') initialHide();
+            else window.addEventListener('load', initialHide);
+
+            /* Re-show loader on ANY navigation click heading to /dashboard */
+            document.addEventListener('click', function(e) {{
+                var a = e.target && e.target.closest ? e.target.closest('a') : null;
+                if (a && a.href && a.href.indexOf('/dashboard') !== -1) {{
+                    showLoader();
+                    /* Watch for dashboard to finish, then hide */
+                    var tries = 0;
+                    (function wait() {{
+                        tries++;
+                        if (dashboardIsFullyLoaded()) hideLoaderSoon();
+                        else if (tries < 80) setTimeout(wait, 150);
+                        else hideLoaderSoon();
+                    }})();
+                }}
+            }}, true);
         }})();
 
         /* ── Bojket polling JS — pure DOM, no Dash callback machinery ── */
@@ -664,6 +700,7 @@ def handle_navigation(login_sub,login_enter,signup_link,back_btn,logo_btn,ob_ans
             if not register_session(e, sid):
                 return dash.no_update, s
             _register_user(e,"veteran","monthly")
+            _mark_login(e)
             s.update({"logged_in":True,"plan":"veteran","onboarding_done":True,"pending_email":e,"session_id":sid})
             return "/dashboard",s
         if e and p and len(p)>=6:
@@ -671,6 +708,7 @@ def handle_navigation(login_sub,login_enter,signup_link,back_btn,logo_btn,ob_ans
                 sid = secrets.token_urlsafe(16)
                 if not register_session(e, sid):
                     return dash.no_update, s
+                _mark_login(e)
                 s.update({"logged_in":True,"plan":None,"onboarding_done":False,"ob_step":0,"ob_answers":[],"pending_email":e,"session_id":sid})
                 return "/onboarding",s
             else:

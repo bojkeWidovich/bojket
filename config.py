@@ -141,19 +141,32 @@ def _register_user(email, plan, billing="monthly"):
     if not email or email.lower() == ADMIN_EMAIL.lower():
         return
     username = email.split("@")[0]
+    now_str  = datetime.now().strftime("%d %b %Y  %H:%M")
     if email not in REGISTERED_USERS:
         REGISTERED_USERS[email] = {
             "email":      email,
             "username":   username,
             "plan":       plan,
             "billing":    billing,
-            "joined":     datetime.now().strftime("%d %b %Y  %H:%M"),
+            "joined":     now_str,
+            "last_login": now_str,
+            "last_login_iso": datetime.now().isoformat(),
             "trades":     [],
             "last_trade": "—",
         }
     else:
         REGISTERED_USERS[email]["plan"]    = plan
         REGISTERED_USERS[email]["billing"] = billing
+
+def _mark_login(email):
+    """Update last_login timestamp whenever a user signs in."""
+    if not email or email.lower() == ADMIN_EMAIL.lower():
+        return
+    if email not in REGISTERED_USERS:
+        return
+    now = datetime.now()
+    REGISTERED_USERS[email]["last_login"]     = now.strftime("%d %b %Y  %H:%M")
+    REGISTERED_USERS[email]["last_login_iso"] = now.isoformat()
 
 def send_verification_email(to_email, token):
     if not EMAIL_ENABLED: return True

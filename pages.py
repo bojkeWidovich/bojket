@@ -1053,76 +1053,85 @@ def render_forecast_card(forecast):
 
 
 def build_admin_content():
-    """Render the admin members table grouped by plan."""
-    users  = list(REGISTERED_USERS.values())
-    hustlers         = [u for u in users if u.get("plan")=="hustler"]
-    veterans         = [u for u in users if u.get("plan")=="veteran"]
-    hustlers_monthly = [u for u in hustlers if u.get("billing")!="annual"]
-    hustlers_annual  = [u for u in hustlers if u.get("billing")=="annual"]
-    veterans_monthly = [u for u in veterans if u.get("billing")!="annual"]
-    veterans_annual  = [u for u in veterans if u.get("billing")=="annual"]
+    """Render list of customers who purchased the program."""
+    from datetime import datetime, timedelta
 
-    def stat(num, label, color, sublabel=None):
+    users = [u for u in REGISTERED_USERS.values() if u.get("plan") in ("hustler","veteran")]
+    # Sort newest first by joined date
+    try:
+        users.sort(key=lambda u: u.get("last_login_iso",""), reverse=True)
+    except Exception:
+        pass
+
+    now = datetime.now()
+    active_count = 0
+    for u in users:
+        try:
+            last = datetime.fromisoformat(u.get("last_login_iso",""))
+            if (now - last) < timedelta(hours=24):
+                active_count += 1
+        except Exception:
+            pass
+
+    # ── stat cards ─────────────────────────────────────────────────────────
+    def stat(num, label, color):
         return html.Div([
-            html.Div(str(num), style={"color":color,"fontWeight":"800","fontSize":"2.2em","letterSpacing":"-1px","lineHeight":"1"}),
-            html.Div(label,   style={"color":TEXT_MUTED,"fontSize":"0.6em","letterSpacing":"2px","marginTop":"4px","fontWeight":"600"}),
-            *([html.Div(sublabel, style={"color":color,"fontSize":"0.58em","marginTop":"2px","opacity":"0.7"})] if sublabel else []),
-        ], style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 20px","flex":"1","textAlign":"center"})
+            html.Div(str(num), style={"color":color,"fontWeight":"800","fontSize":"2.4em","letterSpacing":"-1px","lineHeight":"1"}),
+            html.Div(label, style={"color":TEXT_MUTED,"fontSize":"0.62em","letterSpacing":"2.5px","marginTop":"5px","fontWeight":"700"}),
+        ], style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"12px",
+                  "padding":"20px 24px","flex":"1","textAlign":"center"})
 
     stats_row = html.Div([
-        stat(len(users),             "TOTAL MEMBERS",    TEXT_MAIN),
-        stat(len(hustlers_monthly),  "SIMPLE / MO",     "#facc15"),
-        stat(len(hustlers_annual),   "SIMPLE / ANNUAL", "#facc15", "€290 / yr"),
-        stat(len(veterans_monthly),  "PREMIUM / MO",     BULL),
-        stat(len(veterans_annual),   "PREMIUM / ANNUAL", BULL,     "€500 / yr"),
+        stat(len(users), "TOTAL CUSTOMERS", TEXT_MAIN),
+        stat(active_count, "ACTIVE (LAST 24H)", BULL),
+        stat(len(users) - active_count, "INACTIVE", TEXT_MUTED),
     ], style={"display":"flex","gap":"10px","marginBottom":"28px"})
 
-    def tbl_header():
-        cols = ["USERNAME","EMAIL","PLAN","BILLING","JOINED"]
-        return html.Div([
-            html.Div(c, style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"1.5px","flex":w})
-            for c,w in zip(cols,["1","2","1","1","1.2"])
-        ], style={"display":"flex","padding":"8px 14px","borderBottom":f"1px solid {BORDER}","marginBottom":"4px"})
+    # ── table header ───────────────────────────────────────────────────────
+    tbl_header = html.Div([
+        html.Div("",         style={"width":"16px","flexShrink":"0"}),
+        html.Div("USERNAME", style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"1"}),
+        html.Div("EMAIL",    style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"2"}),
+        html.Div("DATE BOUGHT", style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"1.4"}),
+        html.Div("LAST ACTIVE", style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"1.4"}),
+    ], style={"display":"flex","alignItems":"center","padding":"10px 18px",
+              "borderBottom":f"1px solid {BORDER}","gap":"12px","marginBottom":"4px"})
 
-    def user_row(u, accent):
-        billing_txt = ("Annual 🔁" if u.get("billing")=="annual" else "Monthly")
-        plan_labels = {"hustler":"Simple","veteran":"Premium"}
-        return html.Div([
-            html.Div(u.get("username","—"),          style={"color":TEXT_MAIN,"fontSize":"0.82em","fontWeight":"600","flex":"1","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
-            html.Div(u.get("email","—"),              style={"color":TEXT_DIM, "fontSize":"0.78em","flex":"2","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
-            html.Div([
-                html.Span(plan_labels.get(u.get("plan",""),"—"),
-                          style={"backgroundColor":f"{accent}18","border":f"1px solid {accent}40","color":accent,"borderRadius":"20px","padding":"2px 10px","fontSize":"0.65em","fontWeight":"700","letterSpacing":"0.5px"})
-            ], style={"flex":"1"}),
-            html.Div(billing_txt,                    style={"color":TEXT_MUTED,"fontSize":"0.75em","flex":"1"}),
-            html.Div(u.get("joined","—"),             style={"color":TEXT_MUTED,"fontSize":"0.72em","flex":"1.2"}),
-        ], style={"display":"flex","alignItems":"center","padding":"10px 14px","borderBottom":f"1px solid rgba(30,26,46,0.5)","gap":"8px"})
+    # ── rows ───────────────────────────────────────────────────────────────
+    rows = []
+    for u in users:
+        is_active = False
+        try:
+            last = datetime.fromisoformat(u.get("last_login_iso",""))
+            is_active = (now - last) < timedelta(hours=24)
+        except Exception:
+            pass
+        dot = html.Div(style={
+            "width":"9px","height":"9px","borderRadius":"50%","flexShrink":"0",
+            "backgroundColor": BULL if is_active else "rgba(255,255,255,0.12)",
+            "boxShadow": f"0 0 8px {BULL}" if is_active else "none",
+        })
+        rows.append(html.Div([
+            dot,
+            html.Div(u.get("username","—"), style={"color":TEXT_MAIN,"fontSize":"0.82em","fontWeight":"700","flex":"1","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
+            html.Div(u.get("email","—"),    style={"color":TEXT_DIM,"fontSize":"0.76em","flex":"2","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
+            html.Div(u.get("joined","—"),   style={"color":TEXT_MUTED,"fontSize":"0.72em","flex":"1.4"}),
+            html.Div(u.get("last_login","—"),style={"color":BULL if is_active else TEXT_MUTED,"fontSize":"0.72em","flex":"1.4","fontWeight":"600" if is_active else "400"}),
+        ], style={"display":"flex","alignItems":"center","padding":"12px 18px",
+                  "borderBottom":f"1px solid rgba(30,26,46,0.5)","gap":"12px"}))
 
-    def plan_section(icon, title, price, user_list, accent):
-        sec_header = html.Div([
-            html.Span(icon, style={"fontSize":"1em","marginRight":"8px"}),
-            html.Span(title, style={"color":"white","fontWeight":"700","fontSize":"0.78em","letterSpacing":"2px"}),
-            html.Span(f"  {price}", style={"color":TEXT_MUTED,"fontSize":"0.7em","fontStyle":"italic","marginLeft":"6px"}),
-            html.Span(f"  ·  {len(user_list)} member{'s' if len(user_list)!=1 else ''}",
-                      style={"color":accent,"fontSize":"0.68em","fontWeight":"600","marginLeft":"8px"}),
-        ], style={"display":"flex","alignItems":"center","padding":"10px 14px","backgroundColor":f"{accent}08","border":f"1px solid {accent}20"})
-        sec_children = [sec_header]
-        if user_list:
-            sec_children.append(tbl_header())
-            for u in user_list:
-                sec_children.append(user_row(u, accent))
-        else:
-            sec_children.append(html.Div("No members yet.",
-                style={"color":TEXT_MUTED,"fontSize":"0.78em","fontStyle":"italic","padding":"12px 14px"}))
-        return html.Div(sec_children,
-            style={"marginBottom":"24px","backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"12px","overflow":"hidden"})
+    if not rows:
+        body = html.Div("NO CUSTOMERS YET.", style={
+            "color":TEXT_MUTED,"fontSize":"0.82em","fontStyle":"italic",
+            "padding":"36px 18px","textAlign":"center","letterSpacing":"2px","fontWeight":"600",
+        })
+    else:
+        body = html.Div([tbl_header] + rows)
 
     return html.Div([
         stats_row,
-        plan_section("⚡","SIMPLE — MONTHLY",  "€29.99 / mo",  hustlers_monthly, "#facc15"),
-        plan_section("⚡","SIMPLE — ANNUAL",   "€290 / yr",    hustlers_annual,  "#f59e0b"),
-        plan_section("🏆","PREMIUM — MONTHLY",  "€49.99 / mo",  veterans_monthly, BULL),
-        plan_section("🏆","PREMIUM — ANNUAL",   "€500 / yr",    veterans_annual,  "#10b981"),
+        html.Div(body, style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}",
+                              "borderRadius":"12px","overflow":"hidden"}),
     ], style={"padding":"20px 22px 40px 22px"})
 
 
