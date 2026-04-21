@@ -80,13 +80,12 @@ app.layout = html.Div([
         html.Button("",id="skip-verify-btn",     n_clicks=0),
         html.Div("",id="payment-msg"),
         # Trade modal stubs — kept in root layout so callbacks always find them
-        html.Button("",id="confirm-trade-btn", n_clicks=0),
-        html.Button("",id="cancel-trade-btn",  n_clicks=0),
-        html.Button("",id="i-bought-btn",      n_clicks=0),
+        html.Div("",id="confirm-trade-btn", style={"display":"none"}),
+        html.Div("",id="cancel-trade-btn",  style={"display":"none"}),        
         html.Button("",id="what-is-btn",       n_clicks=0),
         html.Div("",   id="what-is-answer"),
         html.Span("",  id="what-is-arrow"),
-        html.Button("",id="exit-btn",          n_clicks=0),
+        html.Div("",id="exit-btn",          style={"display":"none"}),
         html.Div("",id="trade-status"),
         html.Div("",id="trade-status-hint"),
         html.Div("",id="copy-tp-feedback",     style={"display":"none"}),
@@ -983,22 +982,6 @@ def set_alert(sn,cn,price,store):
     if "clear" in trig: return {"price":None,"active":False},"Alert cleared"
     if price: return {"price":float(price),"active":True},f"Alert set at {price}"
     return store,"Enter a price first"
-
-@app.callback(Output("trade-modal","children"),Output("trade-modal","style"),Output("pending-trade-store","data"),Input("i-bought-btn","n_clicks"),Input("cancel-trade-btn","n_clicks"),State("trade-store","data"),State("symbol-input","value"),State("interval-dropdown","value"),State("session-store","data"),prevent_initial_call=True)
-def open_trade_modal(buy_clicks,cancel_clicks,trade_store,symbol,interval,session):
-    trig=dash.callback_context.triggered[0]["prop_id"]; hidden={"display":"none"}
-    if "cancel-trade-btn" in trig: return [],hidden,None
-    if "i-bought-btn" in trig and buy_clicks:
-        period_map={"1m":"5d","5m":"5d","15m":"1mo","30m":"1mo","1h":"3mo","2h":"6mo","3h":"6mo","4h":"6mo","1d":"2y"}
-        df=fetch_data((symbol or "BTC-USD").upper().strip(),interval=interval or "5m",period=period_map.get(interval or "5m","5d"))
-        if df is None or df.empty: return [],hidden,None
-        plan=session.get("plan","hustler"); patterns=detect_patterns(df)
-        signal,_,_,_,_=superintelligent_signal(df,symbol or "BTC-USD",interval or "5m",patterns,plan)
-        if signal=="WAIT": return [],hidden,None
-        entry,default_tp,default_sl=get_levels(df,signal); atr=get_atr(df)
-        pending={"signal":signal,"entry":entry,"default_tp":default_tp,"default_sl":default_sl,"symbol":symbol,"atr":atr}
-        return trade_entry_modal(signal,entry,default_tp,default_sl,atr),{"display":"block"},pending
-    return [],hidden,None
 
 @app.callback(Output("trade-store","data"),Output("trade-modal","style",allow_duplicate=True),Output("trade-modal","children",allow_duplicate=True),Output("journal-store","data"),Input("confirm-trade-btn","n_clicks"),Input("exit-btn","n_clicks"),State("pending-trade-store","data"),State("trade-store","data"),State("journal-store","data"),State("pos-size-input","value"),State("custom-tp-input","value"),State("custom-sl-input","value"),State("trade-status","children"),State("session-store","data"),prevent_initial_call=True)
 def handle_trade(confirm_n,exit_n,pending,store,journal,pos_size,custom_tp,custom_sl,status,session):
