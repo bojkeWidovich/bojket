@@ -374,7 +374,10 @@ def landing_page():
                 html.Span("📍", style={"fontSize":"0.9em","marginRight":"7px"}),
                 html.Span("BASED IN VIENNA, AUSTRIA", style={"color":"white","fontWeight":"700","fontSize":"0.72em","letterSpacing":"2.5px"}),
             ], style={"flex":"1","display":"flex","alignItems":"center","justifyContent":"center"}),
-            html.Div(tr("footer_copy"), style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","flex":"1","textAlign":"right"}),
+            html.Div([
+                html.Div(tr("footer_copy"), style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","marginBottom":"6px"}),
+                html.A("contact@bojket.com", href="mailto:contact@bojket.com", style={"color":PURPLE_LIGHT,"fontSize":"0.72em","letterSpacing":"2px","fontWeight":"700","textDecoration":"none"}),
+            ], style={"flex":"1","textAlign":"right"}),
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
     ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
 
@@ -448,12 +451,16 @@ def book_call_page():
                 "color":"rgba(255,255,255,0.4)","fontSize":"0.82em","textAlign":"center","marginTop":"8px",
                 "display":"inline-block","width":"100%",
             }),
-            html.Div(
+      html.Div(
                 html.A("Open calendar in a new window →", href="https://cal.com/bojket/private-call", target="_blank", style={
                     "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"700","textDecoration":"none","letterSpacing":"0.5px",
                 }),
-                className="reveal", style={"textAlign":"center","marginTop":"4px","marginBottom":"40px"}
+                className="reveal", style={"textAlign":"center","marginTop":"4px","marginBottom":"14px"}
             ),
+            html.Div([
+                html.Span("Prefer email? ", style={"color":"rgba(255,255,255,0.4)","fontSize":"0.82em","fontWeight":"500"}),
+                html.A("contact@bojket.com", href="mailto:contact@bojket.com", style={"color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"700","textDecoration":"none","letterSpacing":"0.5px"}),
+            ], className="reveal", style={"textAlign":"center","marginBottom":"40px"}),
 
         ], style={"padding":"72px 24px 80px 24px","maxWidth":"1200px","margin":"0 auto"}),
 
@@ -481,9 +488,12 @@ def book_call_page():
             ], style={"flex":"1"}),
             html.Div([
                 html.Span("📍", style={"fontSize":"0.9em","marginRight":"7px"}),
-                html.Span("BASED IN VIENNA, AUSTRIA", style={"color":"white","fontWeight":"700","fontSize":"0.72em","letterSpacing":"2.5px"}),
+             html.Span("BASED IN VIENNA, AUSTRIA", style={"color":"white","fontWeight":"700","fontSize":"0.72em","letterSpacing":"2.5px"}),
             ], style={"flex":"1","display":"flex","alignItems":"center","justifyContent":"center"}),
-            html.Div("© 2026 BOJKET  ·  NOT FINANCIAL ADVICE.", style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","flex":"1","textAlign":"right"}),
+            html.Div([
+                html.Div("© 2026 BOJKET  ·  NOT FINANCIAL ADVICE.", style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","marginBottom":"6px"}),
+                html.A("contact@bojket.com", href="mailto:contact@bojket.com", style={"color":PURPLE_LIGHT,"fontSize":"0.72em","letterSpacing":"2px","fontWeight":"700","textDecoration":"none"}),
+            ], style={"flex":"1","textAlign":"right"}),
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
 
     ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
@@ -2150,6 +2160,13 @@ def dashboard_page(plan="admin"):
                 }),
 
                 # Sign Out
+                html.A("✉  Support", href="mailto:contact@bojket.com", title="Email contact@bojket.com",
+                    className="topbar-pill-btn",
+                    style={"color":"rgba(255,255,255,0.65)","fontSize":"0.7em",
+                           "marginRight":"10px","fontWeight":"600","padding":"5px 12px",
+                           "border":"1px solid rgba(147,51,234,0.22)","borderRadius":"7px",
+                           "background":"rgba(147,51,234,0.05)",
+                           "textDecoration":"none","transition":"all 0.18s ease"}),
                 html.Span("Sign Out", id="signout-btn", n_clicks=0, title="Log out of your account",
                     className="topbar-pill-btn",
                     style={"color":"rgba(255,255,255,0.55)","fontSize":"0.7em","cursor":"pointer",
