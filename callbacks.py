@@ -369,7 +369,7 @@ app.index_string = f"""<!DOCTYPE html>
             /* ── Scroll reveal: opacity 0 → 1 as element enters viewport ── */
             .reveal {{ opacity: 0; transform: translateY(24px); transition: opacity 0.9s ease-out, transform 0.9s ease-out; }}
             .reveal.in-view {{ opacity: 1; transform: translateY(0); }}
-            /* ── Floating money symbols (scroll-reactive)
+            /* ── Floating money symbols (scroll-reactive) ── */
             .money-field {{ position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }}
             .money {{ position: absolute; color: rgba(168,85,247,0.10); font-weight: 900; font-size: 4em; filter: blur(0.3px); transition: transform 0.1s linear; user-select: none; }}
             .money.m1  {{ left:  4%;  top:   8%; font-size: 3.2em; }}
