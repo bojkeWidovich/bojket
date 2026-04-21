@@ -748,13 +748,14 @@ def make_active_list(active):
     return items
 
 def lbl(text):
-    return html.Div(text,style={"color":TEXT_MAIN,"fontSize":"0.6em","fontWeight":"600","letterSpacing":"1.2px","textTransform":"uppercase","marginBottom":"3px","opacity":"0.85"})
-
+ return html.Div(text,style={"color":"rgba(168,85,247,0.7)","fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","textTransform":"uppercase","marginBottom":"4px"})
 def tbtn(label,bid,active=False,tip=""):
-    return dbc.Button(label,id=bid,color="dark",outline=True,title=tip,
-        style={"border":f"1px solid {PURPLE if active else 'rgba(255,255,255,0.22)'}",
-               "color":PURPLE_LIGHT if active else "rgba(255,255,255,0.72)",
-               "padding":"5px 11px","fontSize":"0.85em","borderRadius":"6px","minWidth":"0"})
+    return dbc.Button(label,id=bid,color="dark",outline=True,title=tip,className="tool-btn",
+        style={"border":f"1px solid {PURPLE if active else 'rgba(255,255,255,0.14)'}",
+               "color":PURPLE_LIGHT if active else "rgba(255,255,255,0.78)",
+               "background":"rgba(147,51,234,0.06)" if active else "rgba(255,255,255,0.02)",
+               "padding":"5px 12px","fontSize":"0.85em","borderRadius":"7px","minWidth":"0",
+               "transition":"all 0.18s ease","fontWeight":"600"})
 
 TUTORIAL_CHIPS = [
     ("🎯 How do the signals work?",    "Explain how BUY, SELL and WAIT signals work on the dashboard, what the score means, and how to act on them."),
@@ -1371,7 +1372,7 @@ def dashboard_page(plan="admin"):
         # ── PANEL AREA (market / journal / alert — NOT pattern, that's beside the chart) ──
         html.Div([
             html.Div(id="market-panel",style={"display":"none"},children=[html.Div([html.Div([html.Div(f"{CATEGORY_ICONS.get(cat,'')}  {cat.upper()}",style={"color":TEXT_MUTED,"fontSize":"0.58em","letterSpacing":"1.5px","marginBottom":"7px","fontWeight":"500"}),html.Div([html.Span(LABELS.get(s,s),id={"type":"sym-btn","index":s},n_clicks=0,className="sym-pill",style={"cursor":"pointer","display":"inline-block","color":TEXT_DIM,"fontSize":"0.76em","padding":"3px 12px","margin":"2px 3px 2px 0","borderRadius":"20px","border":f"1px solid {BORDER}","transition":"all 0.15s ease"}) for s in syms])],style={"marginBottom":"12px"}) for cat,syms in SYMBOLS.items()],style={"display":"flex","flexWrap":"wrap","gap":"0 28px"})]),
-            html.Div(id="journal-panel",style={"display":"none"},children=[html.Div([html.Div(id="streak-display",style={"marginBottom":"8px"}),html.Div("TRADE JOURNAL",style={"color":TEXT_MUTED,"fontSize":"0.58em","letterSpacing":"1.5px","marginBottom":"10px","fontWeight":"500"}),html.Div(id="journal-table")])]),
+            html.Div(id="journal-panel",style={"display":"none"},children=[html.Div([html.Div(id="streak-display",style={"marginBottom":"8px"}),html.Div("TRADE JOURNAL",style={"color":PURPLE_LIGHT,"fontSize":"0.62em","letterSpacing":"3px","marginBottom":"12px","fontWeight":"800"}),html.Div(id="journal-table")])]),
         ],id="panel-area",style={"borderBottom":f"1px solid {BORDER}","backgroundColor":"#050508"}),
 
         # ── PRICE ALERT FLOATING CARD (near bell, top-right) ───────────────────
