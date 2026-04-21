@@ -85,12 +85,19 @@ def landing_page():
                 html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
                 html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
             ]),
-            html.A(tr("signin"), href="/login", style={
-                "color":"rgba(255,255,255,0.75)","padding":"9px 22px","fontSize":"0.72em","fontWeight":"700",
-                "letterSpacing":"2.5px","textDecoration":"none","display":"inline-block",
-                "border":"1px solid rgba(255,255,255,0.18)","borderRadius":"8px",
-                "transition":"all 0.2s ease",
-            }),
+            html.Div([
+                html.A("FOR TEAMS", href="/for-teams", style={
+                    "color":"rgba(255,255,255,0.55)","fontSize":"0.72em","fontWeight":"700",
+                    "letterSpacing":"2.5px","textDecoration":"none","marginRight":"20px",
+                    "transition":"color 0.2s ease",
+                }),
+                html.A(tr("signin"), href="/login", style={
+                    "color":"rgba(255,255,255,0.75)","padding":"9px 22px","fontSize":"0.72em","fontWeight":"700",
+                    "letterSpacing":"2.5px","textDecoration":"none","display":"inline-block",
+                    "border":"1px solid rgba(255,255,255,0.18)","borderRadius":"8px",
+                    "transition":"all 0.2s ease",
+                }),
+            ], style={"display":"flex","alignItems":"center"}),
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
                   "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
                   "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
@@ -365,6 +372,300 @@ def landing_page():
             ], style={"flex":"1","display":"flex","alignItems":"center","justifyContent":"center"}),
             html.Div(tr("footer_copy"), style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","flex":"1","textAlign":"right"}),
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+    ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
+
+def for_teams_page():
+    """Enterprise landing: prop firms, family offices, crypto funds."""
+    tiers = [
+        {
+            "name": "TEAM",
+            "price": "€15,000",
+            "period": "/ year",
+            "seats": "Up to 5 traders",
+            "desc": "For small trading desks and emerging firms.",
+            "features": [
+                "5 full-access seats",
+                "Admin dashboard with per-trader analytics",
+                "Priority email support",
+                "Audit log & CSV export",
+                "Private Discord channel",
+                "Lifetime access to platform updates",
+            ],
+            "cta": "Request a Call →",
+            "highlight": False,
+        },
+        {
+            "name": "FIRM",
+            "price": "€45,000",
+            "period": "/ year",
+            "seats": "Up to 25 traders",
+            "desc": "For established prop firms and fund managers.",
+            "features": [
+                "25 full-access seats",
+                "Multi-trader admin controls",
+                "REST API access for signal integration",
+                "Dedicated account manager",
+                "Custom signal weighting & calibration",
+                "Quarterly strategy review calls",
+                "SLA-backed response times",
+            ],
+            "cta": "Request a Call →",
+            "highlight": True,
+        },
+        {
+            "name": "ENTERPRISE",
+            "price": "Custom",
+            "period": "",
+            "seats": "50+ traders",
+            "desc": "For institutional capital and white-label partners.",
+            "features": [
+                "Unlimited seats",
+                "White-label & custom branding",
+                "Private deployment option",
+                "Custom compliance & audit features",
+                "Direct founder access",
+                "On-site or virtual onboarding",
+                "Full data residency control",
+            ],
+            "cta": "Speak with Founder →",
+            "highlight": False,
+        },
+    ]
+
+    def tier_card(t):
+        bg = "linear-gradient(135deg,#12102a,#1a1238)" if t["highlight"] else "#0a0910"
+        border = f"2px solid {PURPLE}" if t["highlight"] else "1px solid rgba(255,255,255,0.08)"
+        glow = f"0 0 60px rgba(147,51,234,0.35)" if t["highlight"] else "none"
+        return html.Div([
+            *([html.Div("MOST POPULAR", style={
+                "position":"absolute","top":"-12px","left":"50%","transform":"translateX(-50%)",
+                "background":"linear-gradient(135deg,#A855F7,#9333EA)","color":"white",
+                "fontSize":"0.62em","fontWeight":"900","letterSpacing":"3px",
+                "padding":"5px 16px","borderRadius":"100px","whiteSpace":"nowrap",
+                "boxShadow":"0 4px 16px rgba(147,51,234,0.5)",
+            })] if t["highlight"] else []),
+            html.Div(t["name"], style={
+                "color":PURPLE_LIGHT if t["highlight"] else "rgba(255,255,255,0.55)",
+                "fontSize":"0.78em","fontWeight":"800","letterSpacing":"4px","marginBottom":"14px",
+            }),
+            html.Div([
+                html.Span(t["price"], style={"color":"white","fontWeight":"900","fontSize":"2.4em","letterSpacing":"-1.5px"}),
+                html.Span(t["period"], style={"color":"rgba(255,255,255,0.4)","fontSize":"0.9em","marginLeft":"6px","fontWeight":"600"}),
+            ], style={"marginBottom":"6px"}),
+            html.Div(t["seats"], style={
+                "color":"rgba(255,255,255,0.55)","fontSize":"0.78em","fontWeight":"600",
+                "letterSpacing":"1.5px","marginBottom":"18px",
+            }),
+            html.Div(t["desc"], style={
+                "color":"rgba(255,255,255,0.7)","fontSize":"0.88em","lineHeight":"1.65","marginBottom":"22px",
+            }),
+            html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","marginBottom":"22px"}),
+            *[html.Div([
+                html.Span("✓", style={"color":BULL,"fontWeight":"900","marginRight":"10px","flexShrink":"0"}),
+                html.Span(f, style={"color":"rgba(255,255,255,0.82)","fontSize":"0.86em","lineHeight":"1.5"}),
+            ], style={"display":"flex","alignItems":"flex-start","marginBottom":"11px"}) for f in t["features"]],
+            html.A(t["cta"], href="/book-call?source=enterprise", style={
+                "display":"block","width":"100%","textAlign":"center","padding":"15px",
+                "marginTop":"28px","borderRadius":"11px",
+                "background":"linear-gradient(135deg,#A855F7,#9333EA)" if t["highlight"] else "transparent",
+                "border":"2px solid " + (PURPLE if t["highlight"] else "rgba(168,85,247,0.4)"),
+                "color":"white","fontWeight":"800","fontSize":"0.88em","letterSpacing":"2px",
+                "textDecoration":"none","boxShadow":"0 8px 28px rgba(147,51,234,0.4)" if t["highlight"] else "none",
+                "transition":"all 0.2s ease",
+            }),
+        ], className="reveal plan-card", style={
+            "background":bg,"border":border,"borderRadius":"20px",
+            "padding":"38px 30px","flex":"1","maxWidth":"360px",
+            "boxShadow":glow,"position":"relative",
+        })
+
+    return html.Div([
+        html.Div(className="hero-glow"),
+
+        # ── Navbar ──────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Span("BOJKET", style={
+                    "background":"linear-gradient(135deg,#ffffff 0%,#A855F7 100%)",
+                    "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
+                    "fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px",
+                }),
+                html.Div("FOR TEAMS & INSTITUTIONS", style={
+                    "color":PURPLE_LIGHT,"fontSize":"0.55em","letterSpacing":"3px","marginTop":"3px","fontWeight":"700",
+                }),
+            ]),
+            html.Div([
+                html.A("SOLO", href="/", style={
+                    "color":"rgba(255,255,255,0.55)","fontSize":"0.72em","fontWeight":"700","letterSpacing":"2.5px",
+                    "textDecoration":"none","marginRight":"20px",
+                }),
+                html.A("SIGN IN", href="/login", style={
+                    "color":"rgba(255,255,255,0.75)","padding":"9px 22px","fontSize":"0.72em","fontWeight":"700",
+                    "letterSpacing":"2.5px","textDecoration":"none","display":"inline-block",
+                    "border":"1px solid rgba(255,255,255,0.18)","borderRadius":"8px",
+                }),
+            ], style={"display":"flex","alignItems":"center"}),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
+                  "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
+                  "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
+                  "zIndex":"100","backdropFilter":"blur(20px)"}),
+
+        # ── Hero ────────────────────────────────────────────────────────────
+        html.Div([
+            html.Div("ENTERPRISE ACCESS", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.85em","fontWeight":"800",
+                "letterSpacing":"5px","marginBottom":"28px",
+            }),
+            html.H1("BUILT FOR FIRMS THAT TRADE SERIOUSLY.", className="reveal", style={
+                "color":"white","fontWeight":"900","fontSize":"3.8em","lineHeight":"1.05",
+                "letterSpacing":"-2px","margin":"0 0 28px 0","maxWidth":"900px","textTransform":"uppercase",
+            }),
+            html.Div("BOJKET FOR PROP FIRMS, FAMILY OFFICES, AND CRYPTO FUNDS. MULTI-SEAT ACCESS, ADMIN CONTROLS, API INTEGRATION, AND DIRECT SUPPORT.",
+                className="reveal", style={
+                    "color":"rgba(255,255,255,0.6)","fontSize":"0.9em","fontWeight":"600",
+                    "letterSpacing":"2.5px","lineHeight":"1.8","maxWidth":"700px","marginBottom":"44px",
+                }),
+            html.A("BOOK A PRIVATE CALL", href="/book-call?source=enterprise", className="reveal cta-mega", style={
+                "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                "color":"white","padding":"20px 48px","borderRadius":"14px",
+                "fontWeight":"800","fontSize":"1em","letterSpacing":"3px",
+                "textDecoration":"none","display":"inline-block",
+                "boxShadow":"0 12px 48px rgba(147,51,234,0.55), 0 0 0 1px rgba(168,85,247,0.7) inset",
+            }),
+        ], style={"padding":"80px 64px 60px 64px","maxWidth":"1200px","margin":"0 auto"}),
+
+        # ── Trust strip ─────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.Div(icon, style={"fontSize":"1.3em","marginBottom":"8px"}),
+                    html.Div(title, style={"color":"white","fontWeight":"700","fontSize":"0.82em","letterSpacing":"2px","marginBottom":"4px"}),
+                    html.Div(desc, style={"color":"rgba(255,255,255,0.5)","fontSize":"0.76em","lineHeight":"1.5"}),
+                ], style={"flex":"1","textAlign":"center"})
+                for icon, title, desc in [
+                    ("🔒", "PRIVATE & SECURE", "No public data. Your signals and trades stay yours."),
+                    ("⚡", "INSTITUTIONAL-GRADE", "10-factor signal engine, XGBoost ML, backtesting."),
+                    ("🛠", "FULL SUPPORT", "Dedicated account manager. SLA-backed response."),
+                    ("📊", "AUDIT-READY", "Full audit log. CSV export. Compliance-friendly."),
+                ]
+            ], className="reveal", style={"display":"flex","gap":"32px","maxWidth":"1100px","margin":"0 auto"}),
+        ], style={"borderTop":"1px solid rgba(255,255,255,0.05)","borderBottom":"1px solid rgba(255,255,255,0.05)",
+                  "padding":"48px 64px","backgroundColor":"rgba(147,51,234,0.03)"}),
+
+        # ── Pricing tiers ───────────────────────────────────────────────────
+        html.Div([
+            html.Div("PRICING", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.8em","fontWeight":"800","letterSpacing":"5px",
+                "textAlign":"center","marginBottom":"18px",
+            }),
+            html.H2("TRANSPARENT PRICING. REAL VALUE.", className="reveal", style={
+                "color":"white","fontWeight":"900","fontSize":"2.6em","textAlign":"center",
+                "margin":"0 0 18px 0","letterSpacing":"-1.5px","textTransform":"uppercase",
+            }),
+            html.Div("EVERY ENGAGEMENT BEGINS WITH A PRIVATE CALL. NO SURPRISES.",
+                className="reveal", style={
+                    "color":"rgba(255,255,255,0.5)","fontSize":"0.85em","fontWeight":"600",
+                    "letterSpacing":"2.5px","textAlign":"center","marginBottom":"64px",
+                }),
+            html.Div([tier_card(t) for t in tiers],
+                style={"display":"flex","gap":"24px","justifyContent":"center","flexWrap":"wrap","maxWidth":"1200px","margin":"0 auto"}),
+        ], style={"padding":"96px 64px","backgroundColor":"#050507","borderTop":"1px solid rgba(255,255,255,0.04)"}),
+
+        # ── What firms get ──────────────────────────────────────────────────
+        html.Div([
+            html.Div("WHAT YOUR FIRM GETS", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.8em","fontWeight":"800","letterSpacing":"5px",
+                "textAlign":"center","marginBottom":"18px",
+            }),
+            html.H2("EVERYTHING YOUR TRADERS NEED.", className="reveal", style={
+                "color":"white","fontWeight":"900","fontSize":"2.4em","textAlign":"center",
+                "margin":"0 0 56px 0","letterSpacing":"-1.5px","textTransform":"uppercase",
+            }),
+            html.Div([
+                html.Div([
+                    html.Div(icon, style={"fontSize":"2em","marginBottom":"14px"}),
+                    html.Div(title, style={"color":"white","fontWeight":"700","fontSize":"1em","marginBottom":"10px","letterSpacing":"0.5px"}),
+                    html.Div(desc, style={"color":"rgba(255,255,255,0.55)","fontSize":"0.86em","lineHeight":"1.7"}),
+                ], className="reveal feature-card", style={
+                    "background":"rgba(147,51,234,0.06)","border":"1px solid rgba(255,255,255,0.07)",
+                    "borderRadius":"16px","padding":"28px","flex":"1","minWidth":"280px",
+                })
+                for icon, title, desc in [
+                    ("👥", "Multi-Seat Admin", "One admin controls every trader's access. Add, remove, audit — in seconds."),
+                    ("🔌", "REST API Access", "Pipe signals directly into your OMS, Slack, or internal dashboards. One endpoint, zero friction."),
+                    ("📈", "Per-Trader Analytics", "See every trader's performance — win rate, streaks, preferred assets — in one view."),
+                    ("📑", "Audit Logs & Export", "Every signal, every trade, every login. Downloadable CSV. Compliance-ready."),
+                    ("🎯", "Custom Signal Calibration", "Tune the engine to your firm's strategies. Weight factors. Set thresholds."),
+                    ("🚀", "Priority Support", "Dedicated account manager. SLA-backed response times. Quarterly reviews."),
+                ]
+            ], style={"display":"grid","gridTemplateColumns":"repeat(auto-fit, minmax(280px, 1fr))","gap":"20px","maxWidth":"1100px","margin":"0 auto"}),
+        ], style={"padding":"96px 64px","borderTop":"1px solid rgba(255,255,255,0.04)"}),
+
+        # ── Who it's for ────────────────────────────────────────────────────
+        html.Div([
+            html.Div("WHO IT'S FOR", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.8em","fontWeight":"800","letterSpacing":"5px",
+                "textAlign":"center","marginBottom":"18px",
+            }),
+            html.H2("SERIOUS CAPITAL. SERIOUS TOOLS.", className="reveal", style={
+                "color":"white","fontWeight":"900","fontSize":"2.4em","textAlign":"center",
+                "margin":"0 0 56px 0","letterSpacing":"-1.5px","textTransform":"uppercase",
+            }),
+            html.Div([
+                html.Div([
+                    html.Div(label, style={"color":PURPLE_LIGHT,"fontWeight":"800","fontSize":"0.72em","letterSpacing":"3px","marginBottom":"12px"}),
+                    html.Div(title, style={"color":"white","fontWeight":"800","fontSize":"1.2em","marginBottom":"12px","lineHeight":"1.3"}),
+                    html.Div(desc, style={"color":"rgba(255,255,255,0.55)","fontSize":"0.88em","lineHeight":"1.7"}),
+                ], className="reveal", style={
+                    "flex":"1","minWidth":"260px","padding":"32px 28px",
+                    "background":"linear-gradient(180deg, rgba(147,51,234,0.04), transparent)",
+                    "border":"1px solid rgba(147,51,234,0.18)","borderRadius":"16px",
+                })
+                for label, title, desc in [
+                    ("PROP FIRMS", "Prop Trading Firms", "Give every trader an institutional edge. Track performance across the desk. Scale without hiring analysts."),
+                    ("FAMILY OFFICES", "Family Offices", "Professional-grade market intelligence without Bloomberg's price tag. Private, secure, yours."),
+                    ("CRYPTO FUNDS", "Crypto Hedge Funds", "Purpose-built for 24/7 markets. ML model learns your asset class. Backtesting over 2 years of data."),
+                ]
+            ], style={"display":"flex","gap":"22px","flexWrap":"wrap","maxWidth":"1100px","margin":"0 auto"}),
+        ], style={"padding":"96px 64px","borderTop":"1px solid rgba(255,255,255,0.04)","backgroundColor":"rgba(147,51,234,0.02)"}),
+
+        # ── Bottom CTA ──────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div("THE NEXT STEP", className="reveal", style={
+                    "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"800","letterSpacing":"5px","marginBottom":"24px",
+                }),
+                html.H2("TALK TO THE FOUNDER.", className="reveal", style={
+                    "color":"white","fontWeight":"900","fontSize":"3.4em","margin":"0 0 22px 0",
+                    "letterSpacing":"-2px","lineHeight":"1.05","textTransform":"uppercase",
+                }),
+                html.Div("ONE CALL. NO SALES DECK. WE FIGURE OUT IF BOJKET FITS YOUR FIRM — TOGETHER.",
+                    className="reveal",
+                    style={"color":"rgba(255,255,255,0.55)","fontSize":"0.85em","fontWeight":"600",
+                           "letterSpacing":"2.5px","marginBottom":"44px","lineHeight":"1.9"}),
+                html.A("BOOK A PRIVATE CALL", href="/book-call?source=enterprise", className="reveal cta-mega", style={
+                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                    "color":"white","padding":"22px 52px","borderRadius":"14px",
+                    "fontWeight":"800","fontSize":"1.05em","letterSpacing":"3px",
+                    "textDecoration":"none","display":"inline-block",
+                    "boxShadow":"0 12px 48px rgba(147,51,234,0.55), 0 0 0 1px rgba(168,85,247,0.7) inset",
+                }),
+            ], style={"textAlign":"center"}),
+        ], style={"padding":"120px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+
+        # ── Footer ──────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1em","letterSpacing":"5px","marginBottom":"4px"}),
+                html.Div("THE FUTURE OF TRADING.", style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600"}),
+            ], style={"flex":"1"}),
+            html.Div([
+                html.Span("📍", style={"fontSize":"0.9em","marginRight":"7px"}),
+                html.Span("BASED IN VIENNA, AUSTRIA", style={"color":"white","fontWeight":"700","fontSize":"0.72em","letterSpacing":"2.5px"}),
+            ], style={"flex":"1","display":"flex","alignItems":"center","justifyContent":"center"}),
+            html.Div("© 2026 BOJKET  ·  NOT FINANCIAL ADVICE.", style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","flex":"1","textAlign":"right"}),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+
     ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
 
 def _feature_card(icon,title,desc):

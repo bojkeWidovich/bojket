@@ -38,6 +38,7 @@ from data import (
 # (ml imports merged above)
 from pages import (
     landing_page, login_page, email_sent_page, onboarding_page,
+    for_teams_page,
     pricing_page, dashboard_page,
     make_toggles, make_active_list, lbl, tbtn,
     _typing_bubble, render_chat_messages, render_breakdown,
@@ -694,6 +695,7 @@ def render_page(path,search,session):
         if plan is None: return pricing_page(billing)
         return dashboard_page(plan)
     elif path=="/login":       return login_page()
+    elif path=="/for-teams":   return for_teams_page()
     elif path=="/pricing":
         # URL search param takes precedence (set by billing toggle links)
         pg_billing = "annual" if (search and "billing=annual" in search) else "monthly"
