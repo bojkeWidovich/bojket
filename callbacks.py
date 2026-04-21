@@ -1689,6 +1689,36 @@ def update(n,clicks,symbol,interval,trade_store,active_patterns,theme,show_bb,sh
     now=datetime.now().strftime("%H:%M:%S")
     return (fig,display_signal,{"color":display_color,"fontSize":sig_font_size,"fontWeight":"700","letterSpacing":"-2px","lineHeight":"1"},conf_el,ml_score_el,sig_sub,trend_label,{"color":trend_col,"fontWeight":"600","fontSize":"1.05em"},str(rsi) if rsi else "—",{"color":rsi_color,"fontWeight":"600"},rsi_hint,str(macd) if macd else "—",macd_txt,{"color":macd_col},entry_txt,tp_txt,sl_txt,pos_display,tp_preview,sl_preview,t_status,t_hint,trade_style,buy_btn,summary,breakdown_content,pattern_badges,tips_list,hist_el,new_history,forecast_el,alert_triggered,f"Updated  {now}")
 
-
+# ── Show the Bojket loader whenever route changes to /dashboard ──────────────
+app.clientside_callback(
+    """
+    function(pathname) {
+        var loader = document.getElementById('bojket-loader');
+        if (!loader) return '';
+        if (pathname === '/dashboard') {
+            loader.style.display = 'flex';
+            loader.style.opacity = '1';
+            // Hide once the chart canvas is ready, or after 8s as a hard cap
+            var tries = 0;
+            function check() {
+                tries++;
+                var chart = document.getElementById('live-chart');
+                var svg = chart && chart.querySelector('.main-svg');
+                if (svg || tries > 55) {
+                    loader.style.opacity = '0';
+                    setTimeout(function(){ loader.style.display = 'none'; }, 500);
+                } else {
+                    setTimeout(check, 150);
+                }
+            }
+            setTimeout(check, 100);
+        }
+        return '';
+    }
+    """,
+    Output("zoom-guard-sink", "children", allow_duplicate=True),
+    Input("url", "pathname"),
+    prevent_initial_call=True,
+)
 if __name__ == "__main__":
     app.run(debug=True)
