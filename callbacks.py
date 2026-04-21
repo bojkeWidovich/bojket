@@ -369,13 +369,49 @@ app.index_string = f"""<!DOCTYPE html>
             /* ── Scroll reveal: opacity 0 → 1 as element enters viewport ── */
             .reveal {{ opacity: 0; transform: translateY(24px); transition: opacity 0.9s ease-out, transform 0.9s ease-out; }}
             .reveal.in-view {{ opacity: 1; transform: translateY(0); }}
+            /* ── Floating money symbols (scroll-reactive)
+            .money-field {{ position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }}
+            .money {{ position: absolute; color: rgba(168,85,247,0.10); font-weight: 900; font-size: 4em; filter: blur(0.3px); transition: transform 0.1s linear; user-select: none; }}
+            .money.m1  {{ left:  4%;  top:   8%; font-size: 3.2em; }}
+            .money.m2  {{ left: 88%;  top:  14%; font-size: 4.6em; }}
+            .money.m3  {{ left: 18%;  top:  32%; font-size: 2.6em; }}
+            .money.m4  {{ left: 74%;  top:  44%; font-size: 3.8em; }}
+            .money.m5  {{ left:  8%;  top:  62%; font-size: 4.2em; }}
+            .money.m6  {{ left: 92%;  top:  72%; font-size: 3em;   }}
+            .money.m7  {{ left: 28%;  top:  88%; font-size: 3.4em; }}
+            .money.m8  {{ left: 64%;  top:  96%; font-size: 4em;   }}
+            .money.m9  {{ left: 42%;  top: 118%; font-size: 2.8em; }}
+            .money.m10 {{ left: 82%;  top: 138%; font-size: 3.6em; }}
+            .money.m11 {{ left: 12%;  top: 158%; font-size: 4.4em; }}
+            .money.m12 {{ left: 56%;  top: 176%; font-size: 3em;   }}
             /* ── Mega CTA hover lift ── */
             .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
             /* ── Topbar refinements ── */
             .topbar-icon-btn:hover {{ border-color: rgba(168,85,247,0.45) !important; color:white !important; background-color: rgba(147,51,234,0.08) !important; }}
             .topbar-pill-btn:hover {{ color:white !important; border-color: rgba(168,85,247,0.35) !important; background: rgba(147,51,234,0.06) !important; }}
             .topbar-pill-btn.discord:hover {{ border-color: rgba(88,101,242,0.7) !important; background: linear-gradient(135deg,rgba(88,101,242,0.25),rgba(88,101,242,0.08)) !important; }}
-            .spinning {{ animation: spin 1.2s linear infinite; display:inline-block; }}
+            /* ── Tool buttons (market/journal/news/ailab/bell) hover ── */
+            .tool-btn:hover {{ border-color: rgba(168,85,247,0.45) !important; color:white !important; background: rgba(147,51,234,0.1) !important; transform: translateY(-1px); }}
+            /* ── Symbol pills hover ── */
+            .sym-pill:hover {{ color: white !important; border-color: rgba(168,85,247,0.4) !important; background: rgba(147,51,234,0.08) !important; }}
+            /* ── Journal rows subtle hover ── */
+            #journal-table tr:hover {{ background-color: rgba(147,51,234,0.04) !important; }}
+            /* ── Copy button hover ── */
+            #copy-tp-btn:hover {{ background-color: rgba(52,211,153,0.12) !important; border-color: rgba(52,211,153,0.7) !important; }}
+            #copy-sl-btn:hover {{ background-color: rgba(248,113,113,0.12) !important; border-color: rgba(248,113,113,0.7) !important; }}
+            /* ── Exit & Log button hover ── */
+            .exit-log-btn:hover {{ background-color: rgba(248,113,113,0.15) !important; border-color: rgba(248,113,113,0.55) !important; }}            /* ── Tool buttons (market/journal/news/ailab/bell) hover ── */
+            .tool-btn:hover {{ border-color: rgba(168,85,247,0.45) !important; color:white !important; background: rgba(147,51,234,0.1) !important; transform: translateY(-1px); }}
+            /* ── Symbol pills hover ── */
+            .sym-pill:hover {{ color: white !important; border-color: rgba(168,85,247,0.4) !important; background: rgba(147,51,234,0.08) !important; }}
+            /* ── Journal rows subtle hover ── */
+            #journal-table tr:hover {{ background-color: rgba(147,51,234,0.04) !important; }}
+            /* ── Copy button hover ── */
+            #copy-tp-btn:hover {{ background-color: rgba(52,211,153,0.12) !important; border-color: rgba(52,211,153,0.7) !important; }}
+            #copy-sl-btn:hover {{ background-color: rgba(248,113,113,0.12) !important; border-color: rgba(248,113,113,0.7) !important; }}
+            /* ── Exit & Log button hover ── */
+            .exit-log-btn:hover {{ background-color: rgba(248,113,113,0.15) !important; border-color: rgba(248,113,113,0.55) !important; }}
+             .spinning {{ animation: spin 1.2s linear infinite; display:inline-block; }}
             .hero-glow {{
                 position: absolute; width: 900px; height: 900px; border-radius: 50%;
                 background: radial-gradient(circle, rgba(147,51,234,0.12) 0%, transparent 65%);
@@ -481,6 +517,29 @@ app.index_string = f"""<!DOCTYPE html>
         }});
 
         /* Video is now a YouTube iframe — no JS injection needed */
+
+        /* ── Money symbols parallax: each one drifts at its own speed ── */
+        (function() {{
+            var speeds = [0.12, -0.22, 0.18, -0.14, 0.26, -0.18, 0.2, -0.26, 0.14, -0.2, 0.22, -0.16];
+            var drifts = [];
+            function bind() {{
+                drifts = [];
+                var items = document.querySelectorAll('.money');
+                items.forEach(function(el, i) {{ drifts.push({{el: el, sp: speeds[i % speeds.length]}}); }});
+            }}
+            function onScroll() {{
+                var y = window.scrollY || window.pageYOffset;
+                for (var i = 0; i < drifts.length; i++) {{
+                    var d = drifts[i];
+                    var ty = y * d.sp;
+                    d.el.style.transform = 'translateY(' + ty.toFixed(1) + 'px)';
+                }}
+            }}
+            if (document.readyState === 'complete') bind();
+            else window.addEventListener('load', bind);
+            setInterval(bind, 1500); /* re-bind if Dash swapped the landing */
+            window.addEventListener('scroll', onScroll, {{ passive: true }});
+        }})();
 
         /* ── Scroll reveal observer — fade in elements as they enter viewport ── */
         (function() {{
