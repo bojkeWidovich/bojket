@@ -1407,7 +1407,7 @@ def dashboard_page(plan="admin"):
                     "boxShadow":"0 4px 16px rgba(147,51,234,0.4)",
                 }),
                 html.Button("Clear", id="clear-alert-btn", n_clicks=0, style={
-                    "backgroundColor":"transparent","border":f"1px solid rgba(255,255,255,0.12)",
+                    "backgroundColor":"transparent","border":"1px solid rgba(255,255,255,0.12)",
                     "color":TEXT_MUTED,"padding":"10px 18px","borderRadius":"8px","fontSize":"0.82em","cursor":"pointer",
                 }),
             ], style={"display":"flex","gap":"8px","marginBottom":"10px"}),
@@ -1484,7 +1484,7 @@ def dashboard_page(plan="admin"):
         html.Div([
             html.Div([
                 html.Div([
-                    html.Div(id="signal-text",style={"fontSize":"3.2em","fontWeight":"700","letterSpacing":"-2px","lineHeight":"1"}),
+                    html.Div(id="signal-text",style={"fontSize":"3.4em","fontWeight":"900","letterSpacing":"-2.5px","lineHeight":"1"}),
                     html.Div(id="confidence-div",style={"marginTop":"6px"}),
                     html.Div(id="ml-score-div",style={"marginTop":"5px"}),
                     html.Div(id="signal-sub",style={"color":TEXT_DIM,"fontSize":"0.7em","marginTop":"4px"}),
@@ -1493,7 +1493,7 @@ def dashboard_page(plan="admin"):
                         html.Span("⚡ ", style={"color":NEUTRAL,"fontSize":"0.55em"}),
                         html.Span("Engine is a guide, not a guarantee. Your intuition counts.", style={"color":TEXT_MUTED,"fontSize":"0.55em","fontStyle":"italic","lineHeight":"1.5"}),
                     ], style={"marginTop":"10px","paddingTop":"8px","borderTop":f"1px solid {BORDER}","lineHeight":"1.5"}),
-                ],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"18px 20px","minWidth":"165px","boxShadow":PURPLE_GLOW}),
+                ],style={"background":"linear-gradient(135deg,#12101d 0%,#0d0c18 100%)","border":"1px solid rgba(147,51,234,0.22)","borderRadius":"14px","padding":"20px 22px","minWidth":"175px","boxShadow":"0 8px 40px rgba(147,51,234,0.15), inset 0 1px 0 rgba(255,255,255,0.04)"}),
                 html.Div([
                     html.Div([lbl("Trend"),html.Div(id="trend-text",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"1.05em"})],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"13px 16px","flex":"1"}),
                     html.Div([lbl("RSI  14"),html.Div(id="rsi-text",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"1.05em"}),html.Div(id="rsi-hint",style={"color":TEXT_DIM,"fontSize":"0.68em","marginTop":"1px"})],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"13px 16px","flex":"1"}),
@@ -1525,9 +1525,8 @@ def dashboard_page(plan="admin"):
                     html.Div(id="sl-text",style={"color":BEAR,"fontWeight":"600","fontSize":"1.08em"}),
                     html.Div(id="sl-pnl-preview",style={"color":BEAR,"fontSize":"0.65em"}),
                 ],style={"backgroundColor":BG_CARD2,"border":"1px solid rgba(248,113,113,0.2)","borderRadius":"8px","padding":"11px 15px","flex":"1"}),
-                html.Div([lbl("Live P&L  📊"),html.Div(id="trade-status",style={"color":NEUTRAL,"fontWeight":"600","fontSize":"1.08em"}),html.Div(id="trade-status-hint",style={"color":TEXT_DIM,"fontSize":"0.65em"}),html.Button("Exit & Log Trade",id="exit-btn",n_clicks=0,style={"backgroundColor":"transparent","border":"1px solid rgba(248,113,113,0.3)","color":BEAR,"fontSize":"0.7em","padding":"3px 10px","borderRadius":"4px","marginTop":"6px","width":"100%","cursor":"pointer"})],style={"backgroundColor":BG_CARD2,"border":"1px solid rgba(167,139,250,0.2)","borderRadius":"8px","padding":"11px 15px","flex":"1"}),
-            ],style={"display":"flex","gap":"7px","marginBottom":"7px"})]),
-
+                html.Button("EXIT & LOG TRADE",id="exit-btn",n_clicks=0,className="exit-log-btn",style={"backgroundColor":"rgba(248,113,113,0.08)","border":"1px solid rgba(248,113,113,0.35)","color":BEAR,"fontSize":"0.7em","fontWeight":"700","letterSpacing":"1.2px","padding":"6px 10px","borderRadius":"6px","marginTop":"9px","width":"100%","cursor":"pointer","transition":"all 0.18s ease"})
+],style={"display":"flex","gap":"8px","marginBottom":"8px"})]),
             # ── CHART ROW: [pattern sidebar] + [chart card] ──────────────────
             html.Div([
                 # ── PATTERN SIDEBAR (hidden by default, shown beside chart) ──
