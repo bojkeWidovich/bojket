@@ -378,7 +378,115 @@ def landing_page():
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
     ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
 
-def for_teams_page():
+def book_call_page():
+    """Cal.com-embedded booking page for private calls."""
+    return html.Div([
+        html.Div(className="hero-glow"),
+
+        # ── Navbar ──────────────────────────────────────────────────────────
+        html.Div([
+            html.A([
+                html.Span("BOJKET", style={
+                    "background":"linear-gradient(135deg,#ffffff 0%,#A855F7 100%)",
+                    "-webkit-background-clip":"text","-webkit-text-fill-color":"transparent","background-clip":"text",
+                    "fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px",
+                }),
+                html.Div("THE FUTURE OF TRADING.", style={
+                    "color":PURPLE_LIGHT,"fontSize":"0.55em","letterSpacing":"3px","marginTop":"3px","fontWeight":"700",
+                }),
+            ], href="/", style={"textDecoration":"none"}),
+            html.A("← BACK", href="/", style={
+                "color":"rgba(255,255,255,0.6)","fontSize":"0.72em","fontWeight":"700",
+                "letterSpacing":"2.5px","textDecoration":"none",
+            }),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
+                  "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
+                  "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
+                  "zIndex":"100","backdropFilter":"blur(20px)"}),
+
+        # ── Hero ────────────────────────────────────────────────────────────
+        html.Div([
+            html.Div("BOOK A PRIVATE CALL", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"800",
+                "letterSpacing":"5px","marginBottom":"22px","textAlign":"center",
+            }),
+            html.H1("Let's have a real conversation.", className="reveal", style={
+                "color":"white","fontWeight":"900","fontSize":"2.8em","lineHeight":"1.1",
+                "letterSpacing":"-1.5px","margin":"0 auto 20px auto","maxWidth":"780px",
+                "textAlign":"center",
+            }),
+            html.Div("30 minutes. No sales pitch. We figure out if Bojket is the right fit — solo trader or firm.",
+                className="reveal", style={
+                    "color":"rgba(255,255,255,0.6)","fontSize":"1em","fontWeight":"500",
+                    "lineHeight":"1.7","maxWidth":"600px","margin":"0 auto 50px auto",
+                    "textAlign":"center","fontStyle":"italic",
+                }),
+
+            # ── Cal.com embed ────────────────────────────────────────────────
+            html.Div(
+                html.Iframe(
+                    src="https://cal.com/bojket/private-call?embed=true&theme=dark",
+                    style={"width":"100%","height":"760px","border":"none","borderRadius":"16px","display":"block","backgroundColor":"#0a0910"},
+                    allow="camera; microphone; autoplay; encrypted-media; fullscreen; payment",
+                ),
+                className="reveal",
+                style={
+                    "maxWidth":"960px","margin":"0 auto","borderRadius":"20px","padding":"4px",
+                    "background":"linear-gradient(135deg, rgba(147,51,234,0.35), rgba(147,51,234,0.08))",
+                    "boxShadow":"0 24px 80px rgba(0,0,0,0.75), 0 0 60px rgba(147,51,234,0.18)",
+                },
+            ),
+
+            # ── Small reassurance line below calendar ───────────────────────
+            html.Div([
+                html.Span("🔒  ", style={"marginRight":"4px"}),
+                html.Span("All calls are private and confidential.", style={
+                    "color":"rgba(255,255,255,0.45)","fontSize":"0.85em","fontWeight":"500","fontStyle":"italic",
+                }),
+            ], className="reveal", style={"textAlign":"center","marginTop":"36px"}),
+            html.Div("Can't see the calendar? ", className="reveal", style={
+                "color":"rgba(255,255,255,0.4)","fontSize":"0.82em","textAlign":"center","marginTop":"8px",
+                "display":"inline-block","width":"100%",
+            }),
+            html.Div(
+                html.A("Open calendar in a new window →", href="https://cal.com/bojket/private-call", target="_blank", style={
+                    "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"700","textDecoration":"none","letterSpacing":"0.5px",
+                }),
+                className="reveal", style={"textAlign":"center","marginTop":"4px","marginBottom":"40px"}
+            ),
+
+        ], style={"padding":"72px 24px 80px 24px","maxWidth":"1200px","margin":"0 auto"}),
+
+        # ── Trust strip ─────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div([
+                    html.Div(icon, style={"fontSize":"1.4em","marginBottom":"10px"}),
+                    html.Div(title, style={"color":"white","fontWeight":"800","fontSize":"0.85em","letterSpacing":"1.5px","marginBottom":"6px"}),
+                    html.Div(desc, style={"color":"rgba(255,255,255,0.5)","fontSize":"0.78em","lineHeight":"1.6"}),
+                ], style={"flex":"1","textAlign":"center"})
+                for icon, title, desc in [
+                    ("🎯", "No Pressure", "If it's not a fit, we both move on."),
+                    ("⏱", "30 Minutes", "Enough time to get to the real question."),
+                    ("🤝", "Founder-Led", "You'll be talking to me directly."),
+                ]
+            ], className="reveal", style={"display":"flex","gap":"32px","maxWidth":"900px","margin":"0 auto"}),
+        ], style={"borderTop":"1px solid rgba(255,255,255,0.05)","padding":"48px 64px","backgroundColor":"rgba(147,51,234,0.03)"}),
+
+        # ── Footer ──────────────────────────────────────────────────────────
+        html.Div([
+            html.Div([
+                html.Div("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1em","letterSpacing":"5px","marginBottom":"4px"}),
+                html.Div("THE FUTURE OF TRADING.", style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600"}),
+            ], style={"flex":"1"}),
+            html.Div([
+                html.Span("📍", style={"fontSize":"0.9em","marginRight":"7px"}),
+                html.Span("BASED IN VIENNA, AUSTRIA", style={"color":"white","fontWeight":"700","fontSize":"0.72em","letterSpacing":"2.5px"}),
+            ], style={"flex":"1","display":"flex","alignItems":"center","justifyContent":"center"}),
+            html.Div("© 2026 BOJKET  ·  NOT FINANCIAL ADVICE.", style={"color":TEXT_MUTED,"fontSize":"0.68em","letterSpacing":"2px","fontWeight":"600","flex":"1","textAlign":"right"}),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+
+    ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
     """Enterprise landing: prop firms, family offices, crypto funds."""
     tiers = [
         {
