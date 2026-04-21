@@ -70,7 +70,14 @@ def landing_page():
     def tr(k): return strings.get(k, k)
 
     return html.Div([
-        html.Div(className="hero-glow"),
+        html.Div(className="money-field", children=[
+            html.Span("$",className="money m1"),html.Span("€",className="money m2"),
+            html.Span("$",className="money m3"),html.Span("€",className="money m4"),
+            html.Span("$",className="money m5"),html.Span("€",className="money m6"),
+            html.Span("$",className="money m7"),html.Span("€",className="money m8"),
+            html.Span("$",className="money m9"),html.Span("€",className="money m10"),
+            html.Span("$",className="money m11"),html.Span("€",className="money m12"),
+        ]),
 
         # ── Navbar ───────────────────────────────────────────────────────────
         html.Div([
@@ -167,7 +174,7 @@ def landing_page():
                     "alignSelf":"center","position":"relative","zIndex":"0","mixBlendMode":"screen",
                     "filter":"blur(0.45px) contrast(18) brightness(1.2)","imageRendering":"auto"}),
                 html.Div([
-                    html.Div("₿  BITCOIN", style={"color":TEXT_MUTED,"fontSize":"0.7em","letterSpacing":"2px","marginBottom":"12px","fontWeight":"700"}),
+                    html.Div([html.Span("🔒  ",style={"fontSize":"0.9em","marginRight":"3px"}),html.Span("CRYPTO · LIVE SIGNAL",style={"color":PURPLE_LIGHT,"fontSize":"0.62em","letterSpacing":"3px","fontWeight":"700"}),html.Div("MEMBERS-ONLY PREVIEW",style={"color":"rgba(255,255,255,0.32)","fontSize":"0.52em","letterSpacing":"2px","marginTop":"2px","fontWeight":"600"})],style={"marginBottom":"14px","paddingBottom":"10px","borderBottom":"1px solid rgba(147,51,234,0.15)"}),
                     html.Div("BUY", style={"color":BULL,"fontWeight":"900","fontSize":"2.8em","letterSpacing":"-1px","lineHeight":"1"}),
                     html.Div("84% ENGINE SCORE", style={"color":TEXT_MUTED,"fontSize":"0.65em","marginTop":"4px","marginBottom":"10px","letterSpacing":"1.5px","fontWeight":"600"}),
                     html.Div(html.Div(style={"width":"84%","background":"linear-gradient(90deg,#34d399,#10b981)","height":"4px","borderRadius":"4px"}),
