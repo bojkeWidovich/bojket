@@ -86,7 +86,7 @@ app.layout = html.Div([
         html.Button("",id="what-is-btn",       n_clicks=0),
         html.Div("",   id="what-is-answer"),
         html.Span("",  id="what-is-arrow"),
-        html.Div("",id="exit-btn",          style={"display":"none"}),
+        html.Button("",id="exit-btn", n_clicks=0, style={"display":"none"}),
         html.Button("",id="confirm-trade-btn", n_clicks=0, style={"display":"none"}),
         html.Button("",id="cancel-trade-btn",  n_clicks=0, style={"display":"none"}),
         dcc.Input(id="pos-size-input",  type="number", value=""),

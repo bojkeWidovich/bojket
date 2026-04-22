@@ -2090,8 +2090,7 @@ def dashboard_page(plan="admin"):
 
                 tbtn("📓","journal-btn",tip="Trade Journal — log & review your trades"),
                 html.Div(style={"width":"4px"}),
-                tbtn("📰","news-btn",tip="Market News — live global headlines"),
-                html.Div(style={"width":"4px"}),
+            
 
                 # Bell with dropdown
                 html.Div([
