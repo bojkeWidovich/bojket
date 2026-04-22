@@ -24,9 +24,10 @@ from config import (
     register_session, unregister_session,
 )
 from ml import (
-    _ML_LOCK, _ML_STATE, _BT_STATE, _ML_MODEL, _ML_SCALER,
+    _ML_LOCK, _BT_LOCK, _ML_STATE, _BT_STATE, _ML_MODEL, _ML_SCALER,
     ml_predict, start_ml_training, start_backtest, load_ml_model,
     render_backtest_results, render_feat_importance, _prog_bar, _stat_mini,
+    HAS_SKLEARN,
 )
 from data import (
     fetch_data, get_atr, get_indicators, get_bollinger_bands,
@@ -46,6 +47,7 @@ from pages import (
     ADMIN_PANEL_HIDDEN, ADMIN_PANEL_SHOWN,
     NEWS_PANEL_HIDDEN, NEWS_PANEL_SHOWN,
     BREAKDOWN_HIDDEN, BREAKDOWN_SHOWN,
+    AILAB_PANEL_HIDDEN, AILAB_PANEL_SHOWN,
     compute_short_term_forecast, render_forecast_card,
     ONBOARDING_QUESTIONS,
 )
@@ -86,7 +88,6 @@ app.layout = html.Div([
         html.Button("",id="what-is-btn",       n_clicks=0),
         html.Div("",   id="what-is-answer"),
         html.Span("",  id="what-is-arrow"),
-        html.Div("",id="exit-btn",          style={"display":"none"}),
         html.Div("",id="trade-status"),
         html.Div("",id="trade-status-hint"),
         html.Div("",id="copy-tp-feedback",     style={"display":"none"}),
@@ -950,8 +951,14 @@ def open_trade_modal(buy_clicks,cancel_clicks,trade_store,symbol,interval,sessio
         if df is None or df.empty: return [],hidden,None
         plan=session.get("plan","hustler"); patterns=detect_patterns(df)
         signal,_,_,_,_=superintelligent_signal(df,symbol or "BTC-USD",interval or "5m",patterns,plan)
-        if signal=="WAIT": return [],hidden,None
-        entry,default_tp,default_sl=get_levels(df,signal); atr=get_atr(df)
+        if signal=="WAIT": signal="BUY"
+        entry,default_tp,default_sl=get_levels(df,signal)
+        atr=get_atr(df)
+        if entry is None:
+            entry=float(df['close'].iloc[-1])
+            default_tp=entry*1.02 if signal=="BUY" else entry*0.98
+            default_sl=entry*0.99 if signal=="BUY" else entry*1.01
+        if entry is None: return [],hidden,None
         pending={"signal":signal,"entry":entry,"default_tp":default_tp,"default_sl":default_sl,"symbol":symbol,"atr":atr}
         return trade_entry_modal(signal,entry,default_tp,default_sl,atr),{"display":"block"},pending
     return [],hidden,None

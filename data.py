@@ -465,7 +465,13 @@ def _parse_news_item(item):
         return {"title":title,"source":source,"link":link or "#","time":dt}
     except: return None
 
+_NEWS_CACHE = {}
 def fetch_category_news(symbols,limit=4):
+    key = tuple(symbols)
+    now = time.time()
+    cached = _NEWS_CACHE.get(key)
+    if cached and (now - cached["ts"]) < 300:
+        return cached["data"]
     seen=set(); result=[]
     for sym in symbols:
         try:
@@ -473,7 +479,9 @@ def fetch_category_news(symbols,limit=4):
                 p=_parse_news_item(item)
                 if p and p["title"] not in seen: seen.add(p["title"]); result.append(p)
         except: pass
-    return result[:6]
+    result = result[:6]
+    _NEWS_CACHE[key] = {"data": result, "ts": now}
+    return result
 
 def render_news_section(cat,items,cat_color,cat_icon):
     if not items: return html.Div()
