@@ -1589,6 +1589,8 @@ TUTORIAL_CHIPS = [
     ("🧠 What is the AI Lab?",          "Explain the AI Lab in simple terms — what ML training does, how it improves my signals, and what backtesting shows me."),
     ("🛠️ What tools do I have?",        "Give me a quick tour of all the tools in the dashboard — Patterns, Journal, News, Alerts, AI Lab — what each one does in one sentence."),
     ("📓 How do I use the journal?",    "Explain how the trade journal works, how trades get logged, and how it helps me improve over time."),
+    ("⚡ Analyze the current signal", "Analyze the current signal on my screen right now. Tell me what the indicators are saying, whether it looks strong or weak, and what a disciplined trader would do."),
+    ("🎯 Should I enter now?",        "Based on what's on my screen right now — the current signal, RSI, MACD, and price — should I consider entering a trade? Walk me through the reasoning, pros and cons."),
 ]
 
 def _typing_bubble():

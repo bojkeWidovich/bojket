@@ -197,22 +197,35 @@ def send_verification_email(to_email, token):
         print(f"Email error: {e}"); return False
 
 # ── Groq AI call ──────────────────────────────────────────────────────────────
-def call_bojket(messages):
-    if GROQ_KEY == "your_groq_api_key_here":
-        return "⚠️ Get your free API key at console.groq.com and paste it into GROQ_KEY in config.py"
+def call_bojket(messages, context=""):
+    if not GROQ_KEY or GROQ_KEY.startswith("your_") or GROQ_KEY == "":
+        return "⚠️ Bojket AI isn't connected yet. A Groq API key needs to be added — ask the admin."
+    system_prompt = BOJKET_SYSTEM
+    if context:
+        system_prompt = BOJKET_SYSTEM + f"\n\n--- USER'S CURRENT DASHBOARD STATE ---\n{context}\n\nWhen the user asks about their current chart, signal, or trade, reference the state above. Be specific, not generic."
     try:
         r = http_req.post(
             "https://api.groq.com/openai/v1/chat/completions",
             headers={"Authorization": f"Bearer {GROQ_KEY}", "Content-Type": "application/json"},
             json={"model":"llama-3.3-70b-versatile","max_tokens":800,
-                  "messages":[{"role":"system","content":BOJKET_SYSTEM}]+messages},
-            timeout=30)
+                  "messages":[{"role":"system","content":system_prompt}]+messages},
+            timeout=25)
+        if r.status_code == 401:
+            return "⚠️ The Groq API key looks invalid or expired. It needs to be updated."
+        if r.status_code == 429:
+            return "I'm thinking really hard right now — give me a few seconds and try again."
+        if r.status_code >= 500:
+            return "Groq's servers are having a moment. Try again in a bit."
         data = r.json()
         if "choices" in data and data["choices"]:
             return data["choices"][0]["message"]["content"]
-        return f"Error: {data.get('error',{}).get('message','Unknown')}"
-    except Exception as e:
-        return f"Connection error: {str(e)}"
+        return "Hmm, something went sideways. Try rephrasing or try again in a sec."
+    except http_req.exceptions.Timeout:
+        return "That took too long. Try a shorter question or try again in a moment."
+    except http_req.exceptions.ConnectionError:
+        return "Can't reach my brain right now. Check your connection or try again in a sec."
+    except Exception:
+        return "Something broke on my end. Try again in a moment."
 
 # ── Asset / market data constants ─────────────────────────────────────────────
 HIGHER_TF     = {"1m":"15m","5m":"1h","15m":"4h","30m":"4h","1h":"1d","2h":"1d","3h":"1d","4h":"1d","1d":"1wk"}

@@ -1056,7 +1056,6 @@ def confirm_trade(confirm_n, pending, store, pos_size, custom_tp, custom_sl):
     prevent_initial_call=True,
 )
 def exit_trade(n, store, journal, status, session):
-    print(f"[EXIT] fired, n={n}, in_trade={(store or {}).get('in_trade')}")
     if not n:
         return dash.no_update, dash.no_update
     store = store or {}
@@ -1143,9 +1142,16 @@ def send_message_phase1(sn, sub, user_text, messages):
     Output("chat-input","value"),
     Input("chat-pending-store","data"),
     State("session-store","data"),
+    State("symbol-input","value"),
+    State("interval-dropdown","value"),
+    State("signal-text","children"),
+    State("rsi-text","children"),
+    State("macd-text","children"),
+    State("entry-text","children"),
+    State("trade-store","data"),
     prevent_initial_call=True,
 )
-def send_message_phase2(pending, session):
+def send_message_phase2(pending, session, symbol, interval, signal, rsi, macd, entry, trade_store):
     if not pending or not pending.get("text"):
         return dash.no_update, dash.no_update, dash.no_update
     user_text = pending["text"]
@@ -1159,7 +1165,29 @@ def send_message_phase2(pending, session):
         messages.append({"role":"assistant","content":limit_msg})
         return messages, render_chat_messages(messages), ""
     messages.append({"role":"user","content":user_text})
-    ai_reply = call_bojket([{"role":m["role"],"content":m["content"]} for m in messages[-10:]])
+    ctx_parts = []
+    if symbol: ctx_parts.append(f"Symbol: {symbol}")
+    if interval: ctx_parts.append(f"Timeframe: {interval}")
+    try:
+        if signal: ctx_parts.append(f"Current signal: {str(signal)}")
+    except: pass
+    try:
+        if rsi: ctx_parts.append(f"RSI: {str(rsi)}")
+    except: pass
+    try:
+        if macd: ctx_parts.append(f"MACD: {str(macd)}")
+    except: pass
+    try:
+        if entry: ctx_parts.append(f"Entry price: {str(entry)}")
+    except: pass
+    if trade_store and trade_store.get("in_trade"):
+        ctx_parts.append(
+            f"User is IN an active {trade_store.get('signal','?')} trade on "
+            f"{trade_store.get('symbol','?')} from entry {trade_store.get('entry','?')}, "
+            f"TP {trade_store.get('tp','?')}, SL {trade_store.get('sl','?')}"
+        )
+    context = "\n".join(ctx_parts) if ctx_parts else ""
+    ai_reply = call_bojket([{"role":m["role"],"content":m["content"]} for m in messages[-10:]], context=context)
     messages.append({"role":"assistant","content":ai_reply})
     return messages, render_chat_messages(messages), ""
 
