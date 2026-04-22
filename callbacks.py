@@ -1011,64 +1011,86 @@ def set_alert(sn,cn,price,store):
     State("session-store","data"),
     prevent_initial_call=True,
 )
-def handle_trade(confirm_n, exit_n, pending, store, journal, pos_size, custom_tp, custom_sl, status, session):
-    trig = dash.callback_context.triggered[0]["prop_id"] if dash.callback_context.triggered else ""
-    hidden = {"display": "none"}
+@app.callback(
+    Output("trade-store","data"),
+    Output("trade-modal","style",allow_duplicate=True),
+    Output("trade-modal","children",allow_duplicate=True),
+    Input("confirm-trade-btn","n_clicks"),
+    State("pending-trade-store","data"),
+    State("trade-store","data"),
+    State("pos-size-input","value"),
+    State("custom-tp-input","value"),
+    State("custom-sl-input","value"),
+    prevent_initial_call=True,
+)
+def confirm_trade(confirm_n, pending, store, pos_size, custom_tp, custom_sl):
+    if not confirm_n or not pending:
+        return dash.no_update, dash.no_update, dash.no_update
+    store = store or {}
+    try: tp = float(custom_tp) if custom_tp else pending.get("default_tp")
+    except: tp = pending.get("default_tp")
+    try: sl = float(custom_sl) if custom_sl else pending.get("default_sl")
+    except: sl = pending.get("default_sl")
+    try: ps = float(pos_size) if pos_size else None
+    except: ps = None
+    new_store = {
+        "in_trade": True, "entry": pending.get("entry"),
+        "signal": pending.get("signal","BUY"), "symbol": pending.get("symbol","?"),
+        "time": datetime.now().strftime("%H:%M"), "position_size": ps,
+        "custom_tp": tp, "custom_sl": sl, "tp": tp, "sl": sl,
+        "cooldown": False, "cooldown_since": None,
+        "last_result": store.get("last_result"),
+        "consecutive_losses": store.get("consecutive_losses", 0),
+    }
+    return new_store, {"display":"none"}, []
+
+
+@app.callback(
+    Output("trade-store","data",allow_duplicate=True),
+    Output("journal-store","data"),
+    Input("exit-btn","n_clicks"),
+    State("trade-store","data"),
+    State("journal-store","data"),
+    State("trade-status","children"),
+    State("session-store","data"),
+    prevent_initial_call=True,
+)
+def exit_trade(n, store, journal, status, session):
+    print(f"[EXIT] fired, n={n}, in_trade={(store or {}).get('in_trade')}")
+    if not n:
+        return dash.no_update, dash.no_update
     store = store or {}
     journal = journal or []
-
-    if "exit-btn" in trig and exit_n and store.get("in_trade"):
-        if isinstance(status, str) and status not in ["-", "Active", "—", "Monitoring..."]:
-            result = status
-        else:
-            result = "Manual exit"
-        is_win = "TP" in str(result)
-        if is_win:
-            new_losses = 0
-        elif "SL" in str(result):
-            new_losses = store.get("consecutive_losses", 0) + 1
-        else:
-            new_losses = store.get("consecutive_losses", 0)
-        trade_entry = {
-            "symbol": store.get("symbol","?"), "signal": store.get("signal","?"),
-            "entry": store.get("entry","?"), "size": store.get("position_size","?"),
-            "tp": store.get("tp","?"), "sl": store.get("sl","?"),
-            "in": store.get("time","?"), "out": datetime.now().strftime("%H:%M"),
-            "result": result, "date": datetime.now().strftime("%d %b %Y"),
-        }
-        new_journal = journal + [trade_entry]
-        email = (session or {}).get("pending_email", "")
-        if email and email in REGISTERED_USERS:
-            REGISTERED_USERS[email].setdefault("trades", []).append(trade_entry)
-            REGISTERED_USERS[email]["last_trade"] = datetime.now().strftime("%d %b %Y  %H:%M")
-        new_store = {
-            "in_trade": False, "entry": None, "signal": None, "symbol": None,
-            "time": None, "position_size": None, "custom_tp": None, "custom_sl": None,
-            "tp": None, "sl": None, "cooldown": True,
-            "cooldown_since": datetime.now().isoformat(),
-            "last_result": result, "consecutive_losses": new_losses,
-        }
-        return new_store, hidden, [], new_journal
-
-    if "confirm-trade-btn" in trig and confirm_n and pending:
-        try: tp = float(custom_tp) if custom_tp else pending.get("default_tp")
-        except: tp = pending.get("default_tp")
-        try: sl = float(custom_sl) if custom_sl else pending.get("default_sl")
-        except: sl = pending.get("default_sl")
-        try: ps = float(pos_size) if pos_size else None
-        except: ps = None
-        new_store = {
-            "in_trade": True, "entry": pending.get("entry"),
-            "signal": pending.get("signal","BUY"), "symbol": pending.get("symbol","?"),
-            "time": datetime.now().strftime("%H:%M"), "position_size": ps,
-            "custom_tp": tp, "custom_sl": sl, "tp": tp, "sl": sl,
-            "cooldown": False, "cooldown_since": None,
-            "last_result": store.get("last_result"),
-            "consecutive_losses": store.get("consecutive_losses", 0),
-        }
-        return new_store, hidden, [], journal
-
-    return dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    if not store.get("in_trade"):
+        return dash.no_update, dash.no_update
+    if isinstance(status, str) and status not in ["-", "Active", "—", "Monitoring..."]:
+        result = status
+    else:
+        result = "Manual exit"
+    is_win = "TP" in str(result)
+    if is_win: new_losses = 0
+    elif "SL" in str(result): new_losses = store.get("consecutive_losses", 0) + 1
+    else: new_losses = store.get("consecutive_losses", 0)
+    trade_entry = {
+        "symbol": store.get("symbol","?"), "signal": store.get("signal","?"),
+        "entry": store.get("entry","?"), "size": store.get("position_size","?"),
+        "tp": store.get("tp","?"), "sl": store.get("sl","?"),
+        "in": store.get("time","?"), "out": datetime.now().strftime("%H:%M"),
+        "result": result, "date": datetime.now().strftime("%d %b %Y"),
+    }
+    new_journal = journal + [trade_entry]
+    email = (session or {}).get("pending_email", "")
+    if email and email in REGISTERED_USERS:
+        REGISTERED_USERS[email].setdefault("trades", []).append(trade_entry)
+        REGISTERED_USERS[email]["last_trade"] = datetime.now().strftime("%d %b %Y  %H:%M")
+    new_store = {
+        "in_trade": False, "entry": None, "signal": None, "symbol": None,
+        "time": None, "position_size": None, "custom_tp": None, "custom_sl": None,
+        "tp": None, "sl": None, "cooldown": True,
+        "cooldown_since": datetime.now().isoformat(),
+        "last_result": result, "consecutive_losses": new_losses,
+    }
+    return new_store, new_journal
 
 @app.callback(Output("journal-table","children"),Output("streak-display","children"),Input("journal-store","data"))
 def render_journal(journal):
