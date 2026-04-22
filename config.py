@@ -364,7 +364,7 @@ NEWS_CAT_COLORS = {"Crypto":"#f7931a","Markets":"#34d399","Commodities":"#facc15
 
 # ── Device session tracking (max 2 devices per account) ──────────────────────
 ACTIVE_SESSIONS = {}  # {email: set of session_ids}
-MAX_DEVICES = 2
+MAX_DEVICES = 1
 
 def register_session(email, session_id):
     """Register a new session. Returns True if allowed, False if device limit reached."""

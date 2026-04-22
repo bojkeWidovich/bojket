@@ -301,6 +301,7 @@ app.index_string = f"""<!DOCTYPE html>
 <html>
     <head>
         {{%metas%}}
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
         <title>{{%title%}}</title>
         {{%favicon%}}
         {{%css%}}
@@ -311,7 +312,39 @@ app.index_string = f"""<!DOCTYPE html>
             body {{ background-color: #060608 !important; margin: 0; overflow-x: hidden; }}
             ::-webkit-scrollbar {{ width: 4px; height: 4px; }}
             ::-webkit-scrollbar-track {{ background: #0d0d0d; }}
-            ::-webkit-scrollbar-thumb {{ background: #2a2040; border-radius: 4px; }}
+            /* ── MOBILE RESPONSIVE RULES ──────────────────────────────── */
+            @media (max-width: 768px) {{
+                body {{ font-size: 14px !important; }}
+                /* Force any container wider than screen to fit */
+                div[style*="width"] {{ max-width: 100vw !important; }}
+                /* Stack side-by-side panels vertically */
+                div[style*="flex"] {{ flex-wrap: wrap !important; }}
+                /* Reduce oversized headings */
+                div[style*="font-size: 3"] {{ font-size: 1.6em !important; }}
+                div[style*="font-size: 4"] {{ font-size: 1.8em !important; }}
+                div[style*="font-size: 5"] {{ font-size: 2em !important; }}
+                div[style*="font-size: 6"] {{ font-size: 2.2em !important; }}
+                /* Shrink large paddings */
+                div[style*="padding: 40"] {{ padding: 16px !important; }}
+                div[style*="padding: 60"] {{ padding: 20px !important; }}
+                div[style*="padding: 80"] {{ padding: 24px !important; }}
+                /* Hide desktop-only panels on phone */
+                #pattern-panel, #breakdown-panel, #chat-panel {{ display: none !important; }}
+                /* Chart fits screen */
+                #candle-chart, #candle-chart > div, .js-plotly-plot {{
+                    width: 100% !important; max-width: 100vw !important;
+                }}
+                /* Buttons: better touch targets */
+                button {{ min-height: 40px !important; }}
+                /* News/Admin/AI Lab overlay panels: full width on phone */
+                #news-panel, #ailab-panel, #admin-panel {{
+                    width: 100vw !important; max-width: 100vw !important;
+                }}
+                /* Trade modal */
+                #trade-modal > div {{ width: 92vw !important; max-width: 92vw !important; }}
+                /* Topbar compact */
+                [id$="topbar"] {{ flex-wrap: wrap !important; padding: 8px !important; }}
+            }}
             .Select-control {{ background-color: #0f0e18 !important; border-color: #1e1a2e !important; color: #f1f0f5 !important; }}
             .Select-menu-outer {{ background-color: #0f0e18 !important; border-color: #1e1a2e !important; z-index: 9999 !important; }}
             .Select-option {{ background-color: #0f0e18 !important; color: #c4c0d4 !important; font-size: 0.82em !important; }}
@@ -813,7 +846,7 @@ def login_error(n,ns,email,password):
     if len(p)<6: return "Password must be at least 6 characters."
     from config import ACTIVE_SESSIONS, MAX_DEVICES
     if len(ACTIVE_SESSIONS.get(e.strip().lower(), set())) >= MAX_DEVICES:
-        return "⚠️ This account is already active on 2 devices. Sign out on another device first."
+        return "⚠️ This account is already signed in on another device. Sign out there first."
     return ""
 
 # ── LANGUAGE CALLBACKS ────────────────────────────────────────────────────────
