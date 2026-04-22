@@ -5,6 +5,7 @@
 import pickle
 import threading
 import numpy as np
+import ta
 from datetime import datetime
 from dash import html
 import plotly.graph_objects as go
