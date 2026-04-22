@@ -60,7 +60,8 @@ VERIFIED_ACCOUNTS     = set()
 
 # ── API keys ──────────────────────────────────────────────────────────────────
 # Get your free key at: https://console.groq.com
-GROQ_KEY = "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"
+import os
+GROQ_KEY = os.environ.get("GROQ_KEY", "")
 
 # ── PayPal payment config ─────────────────────────────────────────────────────
 # Step 1: Create a PayPal Business account at https://paypal.com/business
