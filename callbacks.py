@@ -82,9 +82,7 @@ app.layout = html.Div([
         html.Button("",id="signout-btn",         n_clicks=0),
         html.Button("",id="skip-verify-btn",     n_clicks=0),
         html.Div("",id="payment-msg"),
-        # Trade modal stubs — kept in root layout so callbacks always find them
-        html.Div("",id="confirm-trade-btn", style={"display":"none"}),
-        html.Div("",id="cancel-trade-btn",  style={"display":"none"}),        
+        # Trade modal stubs — kept in root layout so callbacks always find them     
         html.Button("",id="what-is-btn",       n_clicks=0),
         html.Div("",   id="what-is-answer"),
         html.Span("",  id="what-is-arrow"),
@@ -98,9 +96,6 @@ app.layout = html.Div([
         # Clientside-callback sinks — must live in root layout so they exist on every page
         dcc.Store(id="prev-signal",       data=""),
         dcc.Store(id="chat-scroll-dummy", data=0),
-        dcc.Input(id="pos-size-input",  type="number", value=""),
-        dcc.Input(id="custom-tp-input", type="number", value=""),
-        dcc.Input(id="custom-sl-input", type="number", value=""),
     ],style={"position":"fixed","opacity":"0","pointerEvents":"none","height":"0","overflow":"hidden","zIndex":"-1"}),
 
 ])
@@ -996,21 +991,27 @@ def set_alert(sn,cn,price,store):
 @app.callback(Output("trade-store","data"),Output("trade-modal","style",allow_duplicate=True),Output("trade-modal","children",allow_duplicate=True),Output("journal-store","data"),Input("confirm-trade-btn","n_clicks"),Input("exit-btn","n_clicks"),State("pending-trade-store","data"),State("trade-store","data"),State("journal-store","data"),State("pos-size-input","value"),State("custom-tp-input","value"),State("custom-sl-input","value"),State("trade-status","children"),State("session-store","data"),prevent_initial_call=True)
 def handle_trade(confirm_n,exit_n,pending,store,journal,pos_size,custom_tp,custom_sl,status,session):
     trig=dash.callback_context.triggered[0]["prop_id"]; hidden={"display":"none"}
-    if "exit-btn" in trig and store.get("in_trade"):
+    if not (confirm_n or exit_n):
+        return dash.no_update, dash.no_update, dash.no_update, dash.no_update
+    if "exit-btn" in trig and exit_n and store.get("in_trade"):
         result=status if status not in ["-","Active","—","Monitoring..."] else "Manual exit"
-        is_win="TP" in str(result); new_losses=0 if is_win else store.get("consecutive_losses",0)+1
+        is_win="TP" in str(result)
+        if is_win: new_losses=0
+        elif "SL" in str(result): new_losses=store.get("consecutive_losses",0)+1
+        else: new_losses=store.get("consecutive_losses",0)
         trade_entry={"symbol":store.get("symbol","?"),"signal":store.get("signal","?"),"entry":store.get("entry","?"),"size":store.get("position_size","?"),"tp":store.get("tp","?"),"sl":store.get("sl","?"),"in":store.get("time","?"),"out":datetime.now().strftime("%H:%M"),"result":result,"date":datetime.now().strftime("%d %b %Y")}
         journal=(journal or [])+[trade_entry]
-        # ── Push to server-side registry so admin analytics can see it ──────
         email=(session or {}).get("pending_email","")
         if email and email in REGISTERED_USERS:
             REGISTERED_USERS[email]["trades"].append(trade_entry)
             REGISTERED_USERS[email]["last_trade"]=datetime.now().strftime("%d %b %Y  %H:%M")
         return {"in_trade":False,"entry":None,"signal":None,"symbol":None,"time":None,"position_size":None,"custom_tp":None,"custom_sl":None,"tp":None,"sl":None,"cooldown":True,"cooldown_since":datetime.now().isoformat(),"last_result":result,"consecutive_losses":new_losses},hidden,[],journal
-    if "confirm-trade-btn" in trig and pending:
-        tp=float(custom_tp) if custom_tp else pending.get("default_tp"); sl=float(custom_sl) if custom_sl else pending.get("default_sl"); ps=float(pos_size) if pos_size else None
+    if "confirm-trade-btn" in trig and confirm_n and pending:
+        tp=float(custom_tp) if custom_tp else pending.get("default_tp")
+        sl=float(custom_sl) if custom_sl else pending.get("default_sl")
+        ps=float(pos_size) if pos_size else None
         return {"in_trade":True,"entry":pending.get("entry"),"signal":pending.get("signal","BUY"),"symbol":pending.get("symbol","?"),"time":datetime.now().strftime("%H:%M"),"position_size":ps,"custom_tp":tp,"custom_sl":sl,"tp":tp,"sl":sl,"cooldown":False,"cooldown_since":None,"last_result":store.get("last_result"),"consecutive_losses":store.get("consecutive_losses",0)},hidden,[],journal or []
-    return store,hidden,[],journal or []
+    return dash.no_update, dash.no_update, dash.no_update, dash.no_update
 
 @app.callback(Output("journal-table","children"),Output("streak-display","children"),Input("journal-store","data"))
 def render_journal(journal):

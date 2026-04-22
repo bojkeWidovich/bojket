@@ -480,7 +480,8 @@ def fetch_category_news(symbols,limit=4):
                 if p and p["title"] not in seen: seen.add(p["title"]); result.append(p)
         except: pass
     result = result[:6]
-    _NEWS_CACHE[key] = {"data": result, "ts": now}
+    if result:
+        _NEWS_CACHE[key] = {"data": result, "ts": now} = {"data": result, "ts": now}
     return result
 
 def render_news_section(cat,items,cat_color,cat_icon):
