@@ -481,7 +481,8 @@ def fetch_category_news(symbols,limit=4):
         except: pass
     result = result[:6]
     if result:
-        _NEWS_CACHE[key] = {"data": result, "ts": now} = {"data": result, "ts": now}
+        if result:
+         _NEWS_CACHE[key] = {"data": result, "ts": now}
     return result
 
 def render_news_section(cat,items,cat_color,cat_icon):
