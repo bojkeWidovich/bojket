@@ -52,7 +52,7 @@ from pages import (
     ONBOARDING_QUESTIONS,
 )
 
-
+from ranks import RANKS, render_rank_badge, get_rank_for_user_email
 # ══════════════════════════════════════════════════════════════════════════════
 #  ROOT LAYOUT
 # ══════════════════════════════════════════════════════════════════════════════
@@ -109,6 +109,27 @@ app.layout = html.Div([
 # Bypasses window.dash_clientside entirely — no "dc[namespace] is undefined" ever.
 _POLLING_JS = """
 (function() {
+/* ── Rank change detector ── */
+    var _lastRankTier = null;
+    var _tierOrder = {"BRONZE":1, "SILVER":2, "GOLD":3, "PLATINUM":4, "DIAMOND":5};
+    setInterval(function() {
+        var badge = document.getElementById('rank-badge');
+        if (!badge) return;
+        var tierEl = badge.querySelector('div > div:first-child');
+        if (!tierEl) return;
+        var tier = (tierEl.textContent || '').trim();
+        if (!tier) return;
+        if (_lastRankTier === null) { _lastRankTier = tier; return; }
+        if (tier !== _lastRankTier) {
+            var oldR = _tierOrder[_lastRankTier] || 0;
+            var newR = _tierOrder[tier]           || 0;
+            badge.classList.remove('rank-up-anim','rank-down-anim');
+            void badge.offsetWidth; /* reflow so the anim restarts */
+            if (newR > oldR)      badge.classList.add('rank-up-anim');
+            else if (newR < oldR) badge.classList.add('rank-down-anim');
+            _lastRankTier = tier;
+        }
+    }, 800);
     /* ── Chat auto-scroll: watch scrollHeight, jump on change ── */
     var _lastH = 0;
     setInterval(function() {
@@ -292,6 +313,29 @@ _LIGHT_CSS = """
 /* ── Scrollbars ── */
 .bojket-light ::-webkit-scrollbar-track { background: #F0EEF8; }
 .bojket-light ::-webkit-scrollbar-thumb { background: #C8C4E0; border-radius: 4px; }
+/* ── Rank badge animations ────────────────────────────────── */
+            @keyframes rankPulse {{
+                0%, 100% {{ transform: scale(1); }}
+                50% {{ transform: scale(1.04); }}
+            }}
+            .rank-badge-pulse {{ animation: rankPulse 2.8s ease-in-out infinite; }}
+            .rank-badge-pulse:hover {{ transform: scale(1.06) !important; }}
+            @keyframes rankUp {{
+                0% {{ transform: scale(1); filter: brightness(1); }}
+                20% {{ transform: scale(1.3) rotate(-6deg); filter: brightness(1.6); }}
+                40% {{ transform: scale(1.15) rotate(4deg); filter: brightness(1.4); }}
+                60% {{ transform: scale(1.25) rotate(-2deg); filter: brightness(1.5); }}
+                100% {{ transform: scale(1); filter: brightness(1); }}
+            }}
+            @keyframes rankDown {{
+                0% {{ transform: scale(1); filter: brightness(1); }}
+                15% {{ transform: translateY(-4px) scale(1.05); filter: brightness(0.7); }}
+                30% {{ transform: translateY(6px) scale(0.92); filter: brightness(0.6); }}
+                50% {{ transform: translateY(-2px) scale(0.98); filter: brightness(0.8); }}
+                100% {{ transform: scale(1); filter: brightness(1); }}
+            }}
+            .rank-up-anim {{ animation: rankUp 1.4s ease-out !important; }}
+            .rank-down-anim {{ animation: rankDown 1.2s ease-out !important; }}
 
 /* ── Keep intentional signal / accent colors unchanged ── */
 /* PURPLE #9333EA, BULL #34d399, BEAR #f87171, NEUTRAL #c084fc are preserved */
@@ -870,6 +914,23 @@ _PAT_SIDEBAR_SHOWN={"display":"block","width":"170px","flexShrink":"0","backgrou
 def tog_patterns(n,s): return _PAT_SIDEBAR_HIDDEN if s.get("display")=="block" else _PAT_SIDEBAR_SHOWN
 @app.callback(Output("journal-panel","style"), Input("journal-btn","n_clicks"), State("journal-panel","style"), prevent_initial_call=True)
 def tog_journal(n,s): return _toggle(s)
+# ── Rank badge live update ────────────────────────────────────────────────────
+@app.callback(
+    Output("rank-badge-container", "children"),
+    Input("trade-store", "data"),
+    Input("journal-store", "data"),
+    State("session-store", "data"),
+    prevent_initial_call=False,
+)
+def update_rank_badge(trade_store, journal, session):
+    email = (session or {}).get("pending_email", "")
+    if email and email in REGISTERED_USERS:
+        trades = REGISTERED_USERS[email].get("trades", [])
+    else:
+        trades = journal or []
+    from ranks import get_rank
+    rank = get_rank(trades)
+    return [render_rank_badge(rank)]
 # ── Bell dropdown open/close ──────────────────────────────────────────────────
 @app.callback(
     Output("bell-dd-store","data"),

@@ -15,6 +15,7 @@ from config import (
     SYMBOLS, LABELS, ASSET_ICONS, CATEGORY_ICONS, ALL_OPTIONS,
     ALL_PATTERNS, PAT_COLOR, PAT_ABBR, SEN_EMOJI, SEN_LABEL, MAX_IND, DESCS,
 )
+from ranks import RANKS, render_rank_badge, get_rank, get_rank_for_user_email
 
 def _review_card(initials, name, country_flag, plan, quote, accent=PURPLE, avatar_url=None):
     # Avatar: photo if URL provided, else coloured initials circle
@@ -78,7 +79,18 @@ def landing_page():
             html.Span("$",className="money m9"),html.Span("€",className="money m10"),
             html.Span("$",className="money m11"),html.Span("€",className="money m12"),
         ]),
-
+        
+        # ── Country flags strip ──────────────────────────────────────────────
+        html.Div([
+            html.Span(f, style={"fontSize":"1.4em","margin":"0 10px","filter":"drop-shadow(0 2px 6px rgba(0,0,0,0.5))"})
+            for f in ["🇺🇸","🇬🇧","🇩🇪","🇦🇹","🇨🇭","🇫🇷","🇮🇹","🇪🇸","🇳🇱","🇸🇪","🇳🇴","🇮🇪","🇦🇺"]
+        ], style={
+            "display":"flex","justifyContent":"center","alignItems":"center",
+            "padding":"12px 20px","backgroundColor":"rgba(6,6,8,0.95)",
+            "borderBottom":"1px solid rgba(168,85,247,0.18)",
+            "position":"sticky","top":"0","zIndex":"101","backdropFilter":"blur(20px)",
+        }),
+    
         # ── Navbar ───────────────────────────────────────────────────────────
         html.Div([
             html.Div([
@@ -1924,6 +1936,7 @@ def build_admin_content():
         html.Div("EMAIL",    style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"2"}),
         html.Div("DATE BOUGHT", style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"1.4"}),
         html.Div("LAST ACTIVE", style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"1.4"}),
+        html.Div("RANK",     style={"color":TEXT_MUTED,"fontSize":"0.58em","fontWeight":"700","letterSpacing":"2px","flex":"1.2","textAlign":"right"}),
     ], style={"display":"flex","alignItems":"center","padding":"10px 18px",
               "borderBottom":f"1px solid {BORDER}","gap":"12px","marginBottom":"4px"})
 
@@ -1947,6 +1960,10 @@ def build_admin_content():
             html.Div(u.get("email","—"),    style={"color":TEXT_DIM,"fontSize":"0.76em","flex":"2","overflow":"hidden","textOverflow":"ellipsis","whiteSpace":"nowrap"}),
             html.Div(u.get("joined","—"),   style={"color":TEXT_MUTED,"fontSize":"0.72em","flex":"1.4"}),
             html.Div(u.get("last_login","—"),style={"color":BULL if is_active else TEXT_MUTED,"fontSize":"0.72em","flex":"1.4","fontWeight":"600" if is_active else "400"}),
+            html.Div(
+                render_rank_badge(get_rank(u.get("trades", [])), size="small"),
+                style={"flex":"1.2","display":"flex","justifyContent":"flex-end"}
+            ),
         ], style={"display":"flex","alignItems":"center","padding":"12px 18px",
                   "borderBottom":f"1px solid rgba(30,26,46,0.5)","gap":"12px"}))
 
@@ -2131,6 +2148,8 @@ def dashboard_page(plan="admin"):
                     "margin":"0 12px","flexShrink":"0"}),
 
                 tbtn("🧠  AI Lab","ailab-btn",tip="AI Lab — ML training, backtesting & insights"),
+                html.Div(style={"width":"14px"}),
+                html.Div(id="rank-badge-container", children=[render_rank_badge(RANKS[0])]),
                 html.Div(style={"width":"4px"}),
             ], style={"display":"flex","alignItems":"center"}),
 
