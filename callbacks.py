@@ -924,13 +924,17 @@ def tog_journal(n,s): return _toggle(s)
 )
 def update_rank_badge(trade_store, journal, session):
     email = (session or {}).get("pending_email", "")
+    if email == "admin@bojket.com":
+        from ranks import RANKS, render_rank_badge
+        return [render_rank_badge(RANKS[-1])]
     if email and email in REGISTERED_USERS:
         trades = REGISTERED_USERS[email].get("trades", [])
     else:
         trades = journal or []
-    from ranks import get_rank
+    from ranks import get_rank, render_rank_badge
     rank = get_rank(trades)
     return [render_rank_badge(rank)]
+
 # ── Bell dropdown open/close ──────────────────────────────────────────────────
 @app.callback(
     Output("bell-dd-store","data"),

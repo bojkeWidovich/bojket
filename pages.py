@@ -79,17 +79,7 @@ def landing_page():
             html.Span("$",className="money m9"),html.Span("€",className="money m10"),
             html.Span("$",className="money m11"),html.Span("€",className="money m12"),
         ]),
-        
-        # ── Country flags strip ──────────────────────────────────────────────
-        html.Div([
-            html.Span(f, style={"fontSize":"1.4em","margin":"0 10px","filter":"drop-shadow(0 2px 6px rgba(0,0,0,0.5))"})
-            for f in ["🇺🇸","🇬🇧","🇩🇪","🇦🇹","🇨🇭","🇫🇷","🇮🇹","🇪🇸","🇳🇱","🇸🇪","🇳🇴","🇮🇪","🇦🇺"]
-        ], style={
-            "display":"flex","justifyContent":"center","alignItems":"center",
-            "padding":"12px 20px","backgroundColor":"rgba(6,6,8,0.95)",
-            "borderBottom":"1px solid rgba(168,85,247,0.18)",
-            "position":"sticky","top":"0","zIndex":"101","backdropFilter":"blur(20px)",
-        }),
+    
     
         # ── Navbar ───────────────────────────────────────────────────────────
         html.Div([
