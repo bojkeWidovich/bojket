@@ -464,6 +464,13 @@ app.index_string = f"""<!DOCTYPE html>
             .money.m12 {{ left: 56%;  top: 176%; font-size: 3em;   }}
             /* ── Mega CTA hover lift ── */
             .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
+            .social-icon-link:hover {{
+                background-color: rgba(168,85,247,0.15) !important;
+                border-color: rgba(168,85,247,0.8) !important;
+                transform: translateY(-3px);
+                box-shadow: 0 6px 20px rgba(147,51,234,0.4);
+            }}
+            .social-icon-link {{ text-decoration: none; }}
             /* ── Topbar refinements ── */
             .topbar-icon-btn:hover {{ border-color: rgba(168,85,247,0.45) !important; color:white !important; background-color: rgba(147,51,234,0.08) !important; }}
             .topbar-pill-btn:hover {{ color:white !important; border-color: rgba(168,85,247,0.35) !important; background: rgba(147,51,234,0.06) !important; }}

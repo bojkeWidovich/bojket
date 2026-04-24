@@ -366,6 +366,42 @@ def landing_page():
             ], style={"textAlign":"center"}),
         ], style={"padding":"120px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
 
+        # ── Our socials ──────────────────────────────────────────────────────
+        html.Div([
+            html.Div("OUR SOCIALS", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.75em","fontWeight":"800",
+                "letterSpacing":"5px","textAlign":"center","marginBottom":"28px",
+            }),
+            html.Div([
+                html.A(
+                    html.Img(src="https://cdn.simpleicons.org/x/ffffff",
+                            style={"width":"26px","height":"26px","opacity":"0.9"}),
+                    href="https://x.com/bojkett", target="_blank",
+                    className="social-icon-link",
+                    title="Follow on X",
+                    style={"width":"60px","height":"60px","display":"flex","alignItems":"center","justifyContent":"center",
+                           "borderRadius":"50%","backgroundColor":"rgba(255,255,255,0.04)",
+                           "border":"1px solid rgba(168,85,247,0.3)","transition":"all 0.25s ease"}),
+                html.A(
+                    html.Img(src="https://cdn.simpleicons.org/instagram/ffffff",
+                            style={"width":"26px","height":"26px","opacity":"0.9"}),
+                    href="https://www.instagram.com/bojkett/", target="_blank",
+                    className="social-icon-link",
+                    title="Follow on Instagram",
+                    style={"width":"60px","height":"60px","display":"flex","alignItems":"center","justifyContent":"center",
+                           "borderRadius":"50%","backgroundColor":"rgba(255,255,255,0.04)",
+                           "border":"1px solid rgba(168,85,247,0.3)","transition":"all 0.25s ease","margin":"0 18px"}),
+                html.A(
+                    html.Img(src="https://cdn.simpleicons.org/linkedin/ffffff",
+                            style={"width":"26px","height":"26px","opacity":"0.9"}),
+                    href="https://www.linkedin.com/in/bojke-vidovic-5710303b4/", target="_blank",
+                    className="social-icon-link",
+                    title="Connect on LinkedIn",
+                    style={"width":"60px","height":"60px","display":"flex","alignItems":"center","justifyContent":"center",
+                           "borderRadius":"50%","backgroundColor":"rgba(255,255,255,0.04)",
+                           "border":"1px solid rgba(168,85,247,0.3)","transition":"all 0.25s ease"}),
+            ], className="reveal", style={"display":"flex","justifyContent":"center","alignItems":"center"}),
+        ], style={"padding":"70px 64px","borderTop":"1px solid rgba(255,255,255,0.05)","textAlign":"center"}),
         # ── Footer ────────────────────────────────────────────────────────────
         html.Div([
             html.Div([
