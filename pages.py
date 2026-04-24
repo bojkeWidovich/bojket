@@ -392,7 +392,7 @@ def landing_page():
                            "borderRadius":"50%","backgroundColor":"rgba(255,255,255,0.04)",
                            "border":"1px solid rgba(168,85,247,0.3)","transition":"all 0.25s ease","margin":"0 18px"}),
                 html.A(
-                    html.Img(src="https://cdn.simpleicons.org/linkedin/ffffff",
+                    html.Img(src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/linkedin.svg",
                             style={"width":"26px","height":"26px","opacity":"0.9"}),
                     href="https://www.linkedin.com/in/bojke-vidovic-5710303b4/", target="_blank",
                     className="social-icon-link",
