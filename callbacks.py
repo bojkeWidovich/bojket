@@ -313,6 +313,165 @@ _LIGHT_CSS = """
 /* ── Scrollbars ── */
 .bojket-light ::-webkit-scrollbar-track { background: #F0EEF8; }
 .bojket-light ::-webkit-scrollbar-thumb { background: #C8C4E0; border-radius: 4px; }
+/* ═══════════════════════════════════════════════════════════════ */
+            /* ═══ MOBILE RESPONSIVE — phones up to 768px wide ════════════════ */
+            /* ═══════════════════════════════════════════════════════════════ */
+            @media (max-width: 768px) {{
+                /* ── Base sizing ─────────────────────────────────────── */
+                html, body {{
+                    font-size: 14px !important;
+                    overflow-x: hidden !important;
+                    -webkit-text-size-adjust: 100% !important;
+                }}
+                * {{ max-width: 100vw !important; box-sizing: border-box !important; }}
+
+                /* ── Force everything to fit screen width ────────────── */
+                div[style*="width"] {{ max-width: 100vw !important; }}
+                div[style*="minWidth"] {{ min-width: 0 !important; }}
+
+                /* ── Typography: shrink huge headings ─────────────────── */
+                div[style*="font-size: 6"], div[style*="fontSize: 6"] {{ font-size: 2em !important; }}
+                div[style*="font-size: 5"], div[style*="fontSize: 5"] {{ font-size: 1.8em !important; }}
+                div[style*="font-size: 4"], div[style*="fontSize: 4"] {{ font-size: 1.6em !important; }}
+                div[style*="font-size: 3"], div[style*="fontSize: 3"] {{ font-size: 1.4em !important; }}
+                h1 {{ font-size: 1.8em !important; line-height: 1.2 !important; }}
+                h2 {{ font-size: 1.5em !important; line-height: 1.25 !important; }}
+                h3 {{ font-size: 1.25em !important; }}
+
+                /* ── Reduce big paddings ────────────────────────────── */
+                div[style*="padding: 120"] {{ padding: 32px 20px !important; }}
+                div[style*="padding: 100"] {{ padding: 28px 20px !important; }}
+                div[style*="padding: 80"]  {{ padding: 24px 18px !important; }}
+                div[style*="padding: 60"]  {{ padding: 20px 18px !important; }}
+                div[style*="padding: 40"]  {{ padding: 16px 14px !important; }}
+
+                /* ── Stack horizontal flex layouts vertically ─────────── */
+                div[style*="display:flex"][style*="flex-direction:row"],
+                div[style*="display: flex"]:not([style*="flex-direction:column"]):not([style*="flex-direction: column"]) {{
+                    flex-wrap: wrap !important;
+                }}
+
+                /* ── Buttons: better touch targets ─────────────────────── */
+                button, a[role="button"], .btn {{
+                    min-height: 44px !important;
+                    font-size: 0.95em !important;
+                    padding: 10px 16px !important;
+                }}
+                .cta-mega {{
+                    padding: 16px 28px !important;
+                    font-size: 0.85em !important;
+                    letter-spacing: 1.5px !important;
+                }}
+
+                /* ── Topbar: compact, wraps to 2 rows ─────────────────── */
+                #dashboard-topbar, [id$="topbar"], div[style*="position:sticky"] {{
+                    flex-wrap: wrap !important;
+                    padding: 6px 8px !important;
+                    gap: 4px !important;
+                }}
+                .topbar-pill-btn, .topbar-icon-btn {{
+                    font-size: 0.7em !important;
+                    padding: 6px 10px !important;
+                }}
+                #rank-badge {{
+                    transform: scale(0.85) !important;
+                    margin: 4px !important;
+                }}
+
+                /* ── Hide non-essential dashboard panels on phone ───── */
+                #pattern-panel, #breakdown-panel, #chat-panel,
+                #news-panel, #ailab-panel {{
+                    display: none !important;
+                }}
+
+                /* ── Stat cards on dashboard: stack 2 per row ─────────── */
+                .stat-card-row, [id*="stat-row"] {{
+                    flex-wrap: wrap !important;
+                    gap: 8px !important;
+                }}
+                .stat-card-row > div {{
+                    flex: 1 1 calc(50% - 8px) !important;
+                    min-width: 140px !important;
+                }}
+
+                /* ── Chart container: full width, smaller height ─────── */
+                #candle-chart, #candle-chart > div, .js-plotly-plot, .plot-container {{
+                    width: 100% !important;
+                    max-width: 100vw !important;
+                    height: 380px !important;
+                }}
+                .js-plotly-plot .plotly {{ width: 100% !important; }}
+
+                /* ── Trade modal: full screen on phone ─────────────────── */
+                #trade-modal > div {{
+                    width: 92vw !important;
+                    max-width: 92vw !important;
+                    margin: 4vh auto !important;
+                    padding: 18px !important;
+                }}
+
+                /* ── Forms / inputs: full width, bigger touch ─────────── */
+                input, textarea, select, .Select-control {{
+                    font-size: 16px !important;  /* prevents iOS zoom on focus */
+                    min-height: 44px !important;
+                    width: 100% !important;
+                    padding: 10px 12px !important;
+                }}
+
+                /* ── Pricing cards: stack vertically ───────────────────── */
+                #pricing-grid, .pricing-row {{
+                    flex-direction: column !important;
+                    gap: 16px !important;
+                }}
+                #pricing-grid > div {{ width: 100% !important; }}
+
+                /* ── Landing page hero ────────────────────────────────── */
+                .hero-headline {{
+                    font-size: 2em !important;
+                    line-height: 1.15 !important;
+                    letter-spacing: 1px !important;
+                }}
+                .money-field {{ display: none !important; }}  /* hide parallax on mobile, perf */
+
+                /* ── Footer: stack vertically ─────────────────────────── */
+                footer, [id*="footer"] {{
+                    flex-direction: column !important;
+                    text-align: center !important;
+                    gap: 18px !important;
+                }}
+                footer > div {{ flex: unset !important; text-align: center !important; }}
+
+                /* ── Socials section ──────────────────────────────────── */
+                .social-icon-link {{
+                    width: 50px !important;
+                    height: 50px !important;
+                }}
+
+                /* ── Cal.com booking iframe full width ─────────────────── */
+                iframe {{ width: 100% !important; }}
+
+                /* ── Admin panel: scroll horizontally if too wide ─────── */
+                #admin-panel {{
+                    width: 100vw !important;
+                    max-width: 100vw !important;
+                    overflow-x: auto !important;
+                }}
+            }}
+
+            /* ═══ EXTRA SMALL — phones under 380px (iPhone SE, etc.) ═══ */
+            @media (max-width: 380px) {{
+                html, body {{ font-size: 13px !important; }}
+                .cta-mega {{ padding: 14px 20px !important; font-size: 0.78em !important; }}
+                #candle-chart, .js-plotly-plot {{ height: 320px !important; }}
+                #rank-badge {{ transform: scale(0.75) !important; }}
+            }}
+
+            /* ═══ TABLET — 769-1024px ═══════════════════════════════════ */
+            @media (min-width: 769px) and (max-width: 1024px) {{
+                #pattern-panel, #breakdown-panel {{ display: none !important; }}
+                .topbar-pill-btn {{ font-size: 0.75em !important; }}
+                #candle-chart, .js-plotly-plot {{ height: 480px !important; }}
+            }}
 /* ── Rank badge animations ────────────────────────────────── */
             @keyframes rankPulse {{
                 0%, 100% {{ transform: scale(1); }}
