@@ -1080,6 +1080,132 @@ _PAT_SIDEBAR_SHOWN={"display":"block","width":"170px","flexShrink":"0","backgrou
 def tog_patterns(n,s): return _PAT_SIDEBAR_HIDDEN if s.get("display")=="block" else _PAT_SIDEBAR_SHOWN
 @app.callback(Output("journal-panel","style"), Input("journal-btn","n_clicks"), State("journal-panel","style"), prevent_initial_call=True)
 def tog_journal(n,s): return _toggle(s)
+# ══════════════════════════════════════════════════════════════════════════════
+#  Trading Style picker — open modal, render options, pick one, persist
+# ══════════════════════════════════════════════════════════════════════════════
+from trading_styles import TRADING_STYLES, get_style, style_context_for_ai
+
+@app.callback(
+    Output("style-modal","style"),
+    Output("style-options-list","children"),
+    Output("style-expanded-store","data"),
+    Input("style-picker-btn","n_clicks"),
+    Input("style-modal-close-btn","n_clicks"),
+    Input({"type":"style-option-btn","index":ALL},"n_clicks"),
+    Input({"type":"style-option-arrow","index":ALL},"n_clicks"),
+    State("session-store","data"),
+    State("style-expanded-store","data"),
+    prevent_initial_call=True,
+)
+def style_picker_handler(open_n, close_n, option_clicks, arrow_clicks, session, expanded):
+    trig_full = dash.callback_context.triggered[0]["prop_id"] if dash.callback_context.triggered else ""
+    session = session or {}
+    current_key = session.get("trading_style", "day_trader")
+
+    # ── close modal ──
+    if "style-modal-close-btn" in trig_full:
+        return {"display":"none"}, dash.no_update, dash.no_update
+
+    # ── option (style chosen) ──
+    if "style-option-btn" in trig_full and any(option_clicks):
+        try:
+            import json
+            trig_id = json.loads(trig_full.split(".")[0])
+            chosen_key = trig_id.get("index")
+            if chosen_key in TRADING_STYLES:
+                # we'll persist via the session-update callback below; close modal
+                return {"display":"none"}, dash.no_update, dash.no_update
+        except Exception:
+            pass
+
+    # ── arrow toggle (expand description) ──
+    if "style-option-arrow" in trig_full:
+        try:
+            import json
+            trig_id = json.loads(trig_full.split(".")[0])
+            arrow_key = trig_id.get("index")
+            new_expanded = None if expanded == arrow_key else arrow_key
+        except Exception:
+            new_expanded = expanded
+    else:
+        new_expanded = expanded
+
+    # ── render options list ──
+    options = []
+    for key, s in TRADING_STYLES.items():
+        is_current = (key == current_key)
+        is_expanded = (new_expanded == key)
+        row = html.Div([
+            html.Div([
+                html.Button([
+                    html.Span(s["emoji"], style={"fontSize":"1.4em","marginRight":"10px"}),
+                    html.Div([
+                        html.Div([
+                            html.Span(s["name"], style={"color":TEXT_MAIN,"fontWeight":"800","fontSize":"0.9em"}),
+                            html.Span(" • CURRENT" if is_current else "",
+                                      style={"color":BULL,"fontSize":"0.55em","letterSpacing":"2px","marginLeft":"8px","fontWeight":"800"}),
+                        ]),
+                        html.Div(s["tagline"], style={"color":TEXT_DIM,"fontSize":"0.7em","marginTop":"3px"}),
+                    ], style={"flex":"1","textAlign":"left"}),
+                ],
+                id={"type":"style-option-btn","index":key}, n_clicks=0,
+                style={"flex":"1","display":"flex","alignItems":"center","gap":"8px","padding":"14px 16px",
+                       "backgroundColor":"rgba(147,51,234,0.18)" if is_current else "rgba(255,255,255,0.03)",
+                       "border":f"1.5px solid {'rgba(147,51,234,0.6)' if is_current else BORDER}",
+                       "borderRadius":"10px","cursor":"pointer","color":TEXT_MAIN,
+                       "transition":"all 0.2s ease"}),
+                html.Button("▼" if is_expanded else "▶",
+                            id={"type":"style-option-arrow","index":key}, n_clicks=0,
+                            style={"width":"42px","backgroundColor":"rgba(255,255,255,0.04)",
+                                   "border":f"1px solid {BORDER}","borderRadius":"10px",
+                                   "color":TEXT_DIM,"cursor":"pointer","marginLeft":"8px"}),
+            ], style={"display":"flex","alignItems":"stretch","gap":"6px"}),
+            html.Div(s["description"], style={
+                "display":"block" if is_expanded else "none",
+                "color":TEXT_DIM,"fontSize":"0.78em","lineHeight":"1.6",
+                "padding":"10px 18px 14px 18px","fontStyle":"italic",
+            }),
+        ], style={"marginBottom":"10px"})
+        options.append(row)
+
+    # decide whether to keep modal open
+    if "style-picker-btn" in trig_full or "style-option-arrow" in trig_full:
+        return {"display":"block"}, options, new_expanded
+    return dash.no_update, options, new_expanded
+
+
+@app.callback(
+    Output("session-store","data",allow_duplicate=True),
+    Output("style-current-label","children"),
+    Input({"type":"style-option-btn","index":ALL},"n_clicks"),
+    State("session-store","data"),
+    prevent_initial_call=True,
+)
+def persist_style_choice(option_clicks, session):
+    if not any(option_clicks or []):
+        return dash.no_update, dash.no_update
+    trig_full = dash.callback_context.triggered[0]["prop_id"] if dash.callback_context.triggered else ""
+    try:
+        import json
+        trig_id = json.loads(trig_full.split(".")[0])
+        chosen_key = trig_id.get("index")
+        if chosen_key not in TRADING_STYLES:
+            return dash.no_update, dash.no_update
+        session = session or {}
+        session["trading_style"] = chosen_key
+        return session, TRADING_STYLES[chosen_key]["name"]
+    except Exception:
+        return dash.no_update, dash.no_update
+
+
+@app.callback(
+    Output("style-current-label","children",allow_duplicate=True),
+    Input("session-store","data"),
+    prevent_initial_call='initial_duplicate',
+)
+def init_style_label(session):
+    key = (session or {}).get("trading_style","day_trader")
+    return TRADING_STYLES[key]["name"]
 # ── Rank badge live update ────────────────────────────────────────────────────
 @app.callback(
     Output("rank-badge-container", "children"),
@@ -1215,7 +1341,7 @@ def open_trade_modal(buy_clicks,cancel_clicks,trade_store,symbol,interval,sessio
         if df is None or df.empty:
             return dash.no_update, dash.no_update, dash.no_update
         plan=session.get("plan","hustler"); patterns=detect_patterns(df)
-        signal,_,_,_,_=superintelligent_signal(df,symbol or "BTC-USD",interval or "5m",patterns,plan)
+        signal,_,_,_,_=superintelligent_signal(df,symbol or "BTC-USD",interval or "5m",patterns,plan,(session or {}).get("trading_style","day_trader"))
         if signal=="WAIT": signal="BUY"
         entry,default_tp,default_sl=get_levels(df,signal)
         atr=get_atr(df)
@@ -1449,6 +1575,8 @@ def send_message_phase2(pending, session, symbol, interval, signal, rsi, macd, e
             f"{trade_store.get('symbol','?')} from entry {trade_store.get('entry','?')}, "
             f"TP {trade_store.get('tp','?')}, SL {trade_store.get('sl','?')}"
         )
+    style_key = (session or {}).get("trading_style", "day_trader")
+    ctx_parts.append(style_context_for_ai(style_key))    
     context = "\n".join(ctx_parts) if ctx_parts else ""
     ai_reply = call_bojket([{"role":m["role"],"content":m["content"]} for m in messages[-10:]], context=context)
     messages.append({"role":"assistant","content":ai_reply})
@@ -1946,7 +2074,7 @@ def update(n,clicks,symbol,interval,trade_store,active_patterns,theme,show_bb,sh
     )
 
     patterns=detect_patterns(df)
-    raw_signal,sig_color,confidence,reasons,ema_trend=superintelligent_signal(df,symbol,interval,patterns,plan)
+    raw_signal,sig_color,confidence,reasons,ema_trend=superintelligent_signal(df,symbol,interval,patterns,plan,(session or {}).get("trading_style","day_trader"))
     rsi,macd,macd_sig,last_price=get_indicators(df)
 
     in_trade=(trade_store or {}).get("in_trade",False); in_cooldown=(trade_store or {}).get("cooldown",False)

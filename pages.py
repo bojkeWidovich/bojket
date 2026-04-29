@@ -2370,6 +2370,17 @@ def dashboard_page(plan="admin"):
                     html.Div(id="ml-score-div",style={"marginTop":"5px"}),
                     html.Div(id="signal-sub",style={"color":TEXT_DIM,"fontSize":"0.7em","marginTop":"4px"}),
                     html.Div(id="buy-btn-div",style={"marginTop":"10px"}),
+                    html.Button([
+                        html.Span("🎯 ", style={"fontSize":"0.9em"}),
+                        html.Span("STYLE: ", style={"opacity":"0.6","fontSize":"0.62em","letterSpacing":"1.5px"}),
+                        html.Span(id="style-current-label", children="Day Trader", style={"fontWeight":"700","fontSize":"0.7em"}),
+                    ], id="style-picker-btn", n_clicks=0, style={
+                        "marginTop":"8px","width":"100%","padding":"7px 10px",
+                        "backgroundColor":"rgba(147,51,234,0.12)","border":"1px solid rgba(147,51,234,0.4)",
+                        "borderRadius":"8px","color":TEXT_MAIN,"cursor":"pointer",
+                        "fontFamily":"'Inter',sans-serif","letterSpacing":"0.5px",
+                        "transition":"all 0.2s ease",
+                    }),
                     html.Div([
                         html.Span("⚡ ", style={"color":NEUTRAL,"fontSize":"0.55em"}),
                         html.Span("Engine is a guide, not a guarantee. Your intuition counts.", style={"color":TEXT_MUTED,"fontSize":"0.55em","fontStyle":"italic","lineHeight":"1.5"}),
@@ -2485,6 +2496,30 @@ def dashboard_page(plan="admin"):
         dcc.Interval(id="auto-refresh",    interval=60*1000, n_intervals=0),
         dcc.Interval(id="ml-poll-interval", interval=2500,  n_intervals=0),
         dcc.Store(id="trade-store",data={"in_trade":False,"entry":None,"signal":None,"symbol":None,"time":None,"position_size":None,"custom_tp":None,"custom_sl":None,"tp":None,"sl":None,"cooldown":False,"cooldown_since":None,"last_result":None,"consecutive_losses":0}),
+        # ── Trading Style Picker Modal ──────────────────────────────────────
+        html.Div(id="style-modal", style={"display":"none","position":"fixed","top":"0","left":"0",
+                                          "width":"100vw","height":"100vh","backgroundColor":"rgba(0,0,0,0.85)",
+                                          "zIndex":"500","backdropFilter":"blur(8px)"}, children=[
+            html.Div([
+                html.Div([
+                    html.Span("🎯 ", style={"fontSize":"1.4em"}),
+                    html.Span("CHOOSE YOUR TRADING STYLE", style={"color":TEXT_MAIN,"fontWeight":"800","letterSpacing":"3px","fontSize":"0.85em"}),
+                    html.Button("✕", id="style-modal-close-btn", n_clicks=0, style={
+                        "position":"absolute","top":"14px","right":"18px","background":"transparent",
+                        "border":"none","color":TEXT_DIM,"fontSize":"1.4em","cursor":"pointer",
+                    }),
+                ], style={"position":"relative","padding":"22px 24px","borderBottom":f"1px solid {BORDER}","textAlign":"center"}),
+                html.Div("Pick how you want Bojket to behave. You can change this anytime.",
+                         style={"color":TEXT_DIM,"fontSize":"0.78em","textAlign":"center","padding":"12px 24px","fontStyle":"italic"}),
+                html.Div(id="style-options-list", style={"padding":"8px 18px 22px 18px"}),
+            ], style={
+                "position":"absolute","top":"50%","left":"50%","transform":"translate(-50%,-50%)",
+                "width":"560px","maxWidth":"94vw","maxHeight":"86vh","overflowY":"auto",
+                "backgroundColor":"#0d0c18","border":"1.5px solid rgba(147,51,234,0.45)",
+                "borderRadius":"16px","boxShadow":"0 20px 80px rgba(147,51,234,0.4)",
+            }),
+        ]),
+        dcc.Store(id="style-expanded-store", data=None),
         dcc.Store(id="active-patterns-store",data=[]),
         dcc.Store(id="journal-store",data=[]),
         dcc.Store(id="chart-theme",data="dark"),

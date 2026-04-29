@@ -130,7 +130,9 @@ def get_stoch_rsi(df):
         return round(s.stochrsi_k().iloc[-1],3),round(s.stochrsi_d().iloc[-1],3)
     except: return None,None
 
-def superintelligent_signal(df,symbol,interval,patterns,plan="admin"):
+def superintelligent_signal(df,symbol,interval,patterns,plan="admin",style_key="day_trader"):
+    from trading_styles import get_style
+    style = get_style(style_key)
     if df is None or len(df)<50: return "WAIT",NEUTRAL,0,{},"neutral"
     limits=PLAN_LIMITS.get(plan,PLAN_LIMITS[None])
     bull=0; bear=0; reasons={}; cl=df['close']; last=cl.iloc[-1]
@@ -151,8 +153,8 @@ def superintelligent_signal(df,symbol,interval,patterns,plan="admin"):
     else:
         htf_bias="neutral"; reasons["Higher TF"]="🔒 Upgrade for HTF analysis"
     rsi_val=ta.momentum.RSIIndicator(cl,14).rsi().iloc[-1]
-    if rsi_val<45:   bull+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} oversold"
-    elif rsi_val>55: bear+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} overbought"
+    if rsi_val<style["rsi_low"]:   bull+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} oversold"
+    elif rsi_val>style["rsi_high"]: bear+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} overbought"
     else: reasons["RSI"]=f"↔️ RSI {round(rsi_val,1)} neutral"
     sk,sd=get_stoch_rsi(df)
     if sk is not None and sd is not None:
@@ -223,11 +225,14 @@ def superintelligent_signal(df,symbol,interval,patterns,plan="admin"):
                 ml_note = f"🧠 ML: Bear {bear_prob}%"
             reasons["ML Model"] = ml_note if ml_note else "↔️ ML: neutral"
 
-    if bull>=62 and bull-bear>=15 and htf_ok: return "BUY",BULL,min(int((bull/100)*100),99),reasons,ema_trend
-    elif bear>=62 and bear-bull>=15 and htf_ok: return "SELL",BEAR,min(int((bear/100)*100),99),reasons,ema_trend
+    min_score = style["min_score"]
+    if bull>=min_score and bull-bear>=15 and htf_ok: return "BUY",BULL,min(int((bull/100)*100),99),reasons,ema_trend
+    elif bear>=min_score and bear-bull>=15 and htf_ok: return "SELL",BEAR,min(int((bear/100)*100),99),reasons,ema_trend
     else: return "WAIT",NEUTRAL,min(int((max(bull,bear)/100)*100),55),reasons,ema_trend
 
-def get_levels(df, signal, custom_tp=None, custom_sl=None):
+def get_levels(df, signal, custom_tp=None, custom_sl=None, style_key="day_trader"):
+    from trading_styles import get_style
+    style = get_style(style_key)
     """
     Advanced TP/SL engine — uses market structure, not fixed ATR multiples.
 
