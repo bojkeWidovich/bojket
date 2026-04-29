@@ -373,24 +373,26 @@ def landing_page():
                 "letterSpacing":"5px","textAlign":"center","marginBottom":"28px",
             }),
             html.Div([
-                html.A(
+                html.A([
                     html.Img(src="https://cdn.simpleicons.org/instagram/ffffff",
-                            style={"width":"26px","height":"26px","opacity":"0.9"}),
-                    href="https://www.instagram.com/bojke.w/", target="_blank",
-                    className="social-icon-link",
-                    title="Follow on Instagram",
-                    style={"width":"60px","height":"60px","display":"flex","alignItems":"center","justifyContent":"center",
-                           "borderRadius":"50%","backgroundColor":"rgba(255,255,255,0.04)",
-                           "border":"1px solid rgba(168,85,247,0.3)","transition":"all 0.25s ease","marginRight":"18px"}),
-                html.A(
-                    html.Img(src="https://cdn.jsdelivr.net/npm/simple-icons@latest/icons/linkedin.svg",
-                            style={"width":"26px","height":"26px","opacity":"0.9"}),
-                    href="https://www.linkedin.com/in/bojke-vidovic-5710303b4/", target="_blank",
-                    className="social-icon-link",
-                    title="Connect on LinkedIn",
-                    style={"width":"60px","height":"60px","display":"flex","alignItems":"center","justifyContent":"center",
-                           "borderRadius":"50%","backgroundColor":"rgba(255,255,255,0.04)",
-                           "border":"1px solid rgba(168,85,247,0.3)","transition":"all 0.25s ease"}),
+                            style={"width":"38px","height":"38px","opacity":"0.95","marginRight":"16px"}),
+                    html.Div([
+                        html.Div("PERSONAL INSTAGRAM",
+                                 style={"color":PURPLE_LIGHT,"fontSize":"0.6em","fontWeight":"800",
+                                        "letterSpacing":"3px","marginBottom":"4px"}),
+                        html.Div("Contact from the Founder",
+                                 style={"color":TEXT_MAIN,"fontSize":"0.95em","fontWeight":"700",
+                                        "letterSpacing":"0.5px"}),
+                    ], style={"textAlign":"left"}),
+                ],
+                href="https://www.instagram.com/bojke.w/", target="_blank",
+                className="social-icon-link",
+                title="Follow on Instagram",
+                style={"display":"inline-flex","alignItems":"center","padding":"18px 32px",
+                       "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.04)",
+                       "border":"1.5px solid rgba(168,85,247,0.4)",
+                       "transition":"all 0.25s ease","textDecoration":"none"}),
+                
             ], className="reveal", style={"display":"flex","justifyContent":"center","alignItems":"center"}),
         ], style={"padding":"70px 64px","borderTop":"1px solid rgba(255,255,255,0.05)","textAlign":"center"}),
         # ── Footer ────────────────────────────────────────────────────────────
