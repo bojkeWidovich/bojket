@@ -97,6 +97,7 @@ def landing_page():
                     "textShadow":"0 0 12px rgba(255,255,255,0.15)",
                 }),
             ], style={
+                "position":"absolute","left":"50%","top":"50%","transform":"translate(-50%,-50%)",
                 "display":"inline-flex","alignItems":"center","padding":"6px 16px",
                 "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.03)",
                 "border":"1px solid rgba(168,85,247,0.25)",
