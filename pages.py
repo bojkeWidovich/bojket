@@ -121,32 +121,6 @@ def landing_page():
             ], style={"display":"flex","alignItems":"center"}),
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
                   "padding":"24px 64px","position":"relative","zIndex":"100"}),
-        html.Div([
-            html.Div([
-                html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
-                html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
-            ]),
-            html.Div([
-                html.A("FOR TEAMS →", href="/for-teams", style={
-                    "color":"white","fontSize":"0.82em","fontWeight":"800",
-                    "letterSpacing":"3px","textDecoration":"none","marginRight":"18px",
-                    "padding":"10px 22px","borderRadius":"9px",
-                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
-                    "border":"1px solid rgba(168,85,247,0.7)",
-                    "boxShadow":"0 6px 22px rgba(147,51,234,0.45)",
-                    "display":"inline-block","transition":"all 0.2s ease",
-                }),
-                html.A(tr("signin"), href="/login", style={
-                    "color":"rgba(255,255,255,0.75)","padding":"9px 22px","fontSize":"0.72em","fontWeight":"700",
-                    "letterSpacing":"2.5px","textDecoration":"none","display":"inline-block",
-                    "border":"1px solid rgba(255,255,255,0.18)","borderRadius":"8px",
-                    "transition":"all 0.2s ease",
-                }),
-            ], style={"display":"flex","alignItems":"center"}),
-        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
-                  "padding":"22px 64px","borderBottom":"1px solid rgba(255,255,255,0.06)",
-                  "position":"sticky","top":"0","backgroundColor":"rgba(6,6,8,0.92)",
-                  "zIndex":"100","backdropFilter":"blur(20px)"}),
 
         # ── Intro Video ─────────────────────────────────────────────────────
         html.Div([
