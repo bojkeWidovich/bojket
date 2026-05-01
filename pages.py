@@ -82,7 +82,6 @@ def landing_page():
         ]),
     
     
-        # ── Navbar ───────────────────────────────────────────────────────────
         # ── Vienna pill — centered absolute over navbar ──────────────────────
         html.Div([
             html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
