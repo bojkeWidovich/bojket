@@ -80,9 +80,14 @@ def landing_page():
             html.Span("$",className="money m9"),html.Span("€",className="money m10"),
             html.Span("$",className="money m11"),html.Span("€",className="money m12"),
         ]),
-    
-    # ── Vienna pill — own row above navbar, centered ─────────────────────
+    # ── Navbar ───────────────────────────────────────────────────────────
         html.Div([
+            # Left — BOJKET logo
+            html.Div([
+                html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
+                html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
+            ]),
+            # Center — Vienna pill
             html.Div([
                 html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
                 html.Span("STATIONED IN VIENNA, AUSTRIA", style={
@@ -96,10 +101,26 @@ def landing_page():
                 "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.03)",
                 "border":"1px solid rgba(168,85,247,0.25)",
             }),
-        ], style={
-            "display":"flex","justifyContent":"center","alignItems":"center",
-            "padding":"18px 0 6px 0","position":"relative","zIndex":"50",
-        }),
+            # Right — FOR TEAMS + SIGN IN
+            html.Div([
+                html.A("FOR TEAMS →", href="/for-teams", style={
+                    "color":"white","fontSize":"0.82em","fontWeight":"800",
+                    "letterSpacing":"3px","textDecoration":"none","marginRight":"18px",
+                    "padding":"10px 22px","borderRadius":"9px",
+                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
+                    "border":"1px solid rgba(168,85,247,0.7)",
+                    "boxShadow":"0 6px 22px rgba(147,51,234,0.45)",
+                    "display":"inline-block","transition":"all 0.2s ease",
+                }),
+                html.A(tr("signin"), href="/login", style={
+                    "color":"rgba(255,255,255,0.75)","padding":"9px 22px","fontSize":"0.72em","fontWeight":"700",
+                    "letterSpacing":"2.5px","textDecoration":"none","display":"inline-block",
+                    "border":"1px solid rgba(255,255,255,0.18)","borderRadius":"8px",
+                    "transition":"all 0.2s ease",
+                }),
+            ], style={"display":"flex","alignItems":"center"}),
+        ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
+                  "padding":"24px 64px","position":"relative","zIndex":"100"}),
         html.Div([
             html.Div([
                 html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
