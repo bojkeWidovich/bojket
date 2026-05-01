@@ -56,6 +56,7 @@ def landing_page():
         "lp_cta":        "BOOK A PRIVATE CALL",
         "trust_items":   ["PRIVATE ONBOARDING", "LIFETIME ACCESS", "24/7 DIRECT SUPPORT"],
         "trust_geo":     "TRUSTED BY TRADERS IN GERMANY · SWITZERLAND · AUSTRIA · UK · IRELAND",
+        "support_lang":  "🇬🇧 English  ·  🇩🇪 Deutscher Support verfügbar",
         "built_tag":     "THE SYSTEM THAT CHANGED HOW WE TRADE",
         "built_h2":      "BUILT FOR TRADERS WHO ARE DONE GUESSING.",
         "built_sub":     "A COMPLETE TRADING INTELLIGENCE SUITE. USED BY CAPITAL THAT TAKES ITSELF SERIOUSLY.",
@@ -87,6 +88,17 @@ def landing_page():
                 html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
                 html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
             ]),
+            html.Div([
+                html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
+                html.Span("STATIONED IN VIENNA, AUSTRIA", style={
+                    "color":"#FFFFFF","fontSize":"0.65em","fontWeight":"700",
+                    "letterSpacing":"3.5px","textTransform":"uppercase",
+                    "fontFamily":"'Inter',sans-serif",
+                    "textShadow":"0 0 12px rgba(255,255,255,0.15)",
+                }),
+            ], style={"display":"flex","alignItems":"center","padding":"6px 16px",
+                      "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.03)",
+                      "border":"1px solid rgba(168,85,247,0.25)"}),
             html.Div([
                 html.A("FOR TEAMS →", href="/for-teams", style={
                     "color":"white","fontSize":"0.82em","fontWeight":"800",
@@ -224,6 +236,11 @@ def landing_page():
             html.Div(tr("trust_geo"), className="reveal", style={
                 "color":"rgba(255,255,255,0.4)","fontSize":"0.72em","fontWeight":"600",
                 "letterSpacing":"3px","textAlign":"center",
+            }),
+            html.Div(tr("support_lang"), className="reveal", style={
+                "color":"rgba(255,255,255,0.55)","fontSize":"0.62em","fontWeight":"600",
+                "letterSpacing":"2.5px","textAlign":"center","marginTop":"14px",
+                "textTransform":"uppercase",
             }),
         ], style={"borderTop":"1px solid rgba(255,255,255,0.05)","borderBottom":"1px solid rgba(255,255,255,0.05)",
                   "padding":"48px 64px","backgroundColor":"rgba(147,51,234,0.04)"}),
@@ -987,6 +1004,11 @@ def for_teams_page():
                 html.Div("FOR TEAMS & INSTITUTIONS", style={
                     "color":PURPLE_LIGHT,"fontSize":"0.55em","letterSpacing":"3px","marginTop":"3px","fontWeight":"700",
                 }),
+                html.Div("🇬🇧 ENGLISH  ·  🇩🇪 DEUTSCHER SUPPORT VERFÜGBAR", style={
+                "color":"rgba(255,255,255,0.55)","fontSize":"0.62em","fontWeight":"600",
+                "letterSpacing":"2.5px","textAlign":"center","marginTop":"10px",
+                "textTransform":"uppercase",
+            }),
             ]),
             html.Div([
                 html.A("SOLO", href="/", style={
