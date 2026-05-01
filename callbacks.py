@@ -623,6 +623,25 @@ app.index_string = f"""<!DOCTYPE html>
             .money.m12 {{ left: 56%;  top: 176%; font-size: 3em;   }}
             /* ── Mega CTA hover lift ── */
             .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
+      /* ── Mobile navbar fix ─────────────────────────────────── */
+            @media (max-width: 768px) {{
+                .landing-navbar {{
+                    flex-direction: column !important;
+                    gap: 14px !important;
+                    padding: 18px 16px !important;
+                    align-items: center !important;
+                }}
+                .vienna-pill {{
+                    position: static !important;
+                    transform: none !important;
+                    margin: 4px 0 !important;
+                }}
+                .landing-navbar a[href="/for-teams"],
+                .landing-navbar a[href="/login"] {{
+                    font-size: 0.7em !important;
+                    padding: 8px 14px !important;
+                }}
+            }}
             .social-icon-link:hover {{
                 background-color: rgba(168,85,247,0.15) !important;
                 border-color: rgba(168,85,247,0.8) !important;

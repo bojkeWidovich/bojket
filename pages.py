@@ -81,14 +81,14 @@ def landing_page():
             html.Span("$",className="money m11"),html.Span("€",className="money m12"),
         ]),
     # ── Navbar ───────────────────────────────────────────────────────────
-        html.Div([
+        html.Div(className="landing-navbar", children=[
             # Left — BOJKET logo
             html.Div([
                 html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
                 html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
             ]),
             # Center — Vienna pill
-            html.Div([
+            html.Div(className="vienna-pill", children=[
                 html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
                 html.Span("STATIONED IN VIENNA, AUSTRIA", style={
                     "color":"#FFFFFF","fontSize":"0.65em","fontWeight":"700",
