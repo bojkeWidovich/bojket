@@ -81,21 +81,24 @@ def landing_page():
             html.Span("$",className="money m11"),html.Span("€",className="money m12"),
         ]),
     
-    
-        # ── Vienna pill — centered absolute over navbar ──────────────────────
+    # ── Vienna pill — own row above navbar, centered ─────────────────────
         html.Div([
-            html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
-            html.Span("STATIONED IN VIENNA, AUSTRIA", style={
-                "color":"#FFFFFF","fontSize":"0.65em","fontWeight":"700",
-                "letterSpacing":"3.5px","textTransform":"uppercase",
-                "fontFamily":"'Inter',sans-serif",
-                "textShadow":"0 0 12px rgba(255,255,255,0.15)",
+            html.Div([
+                html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
+                html.Span("STATIONED IN VIENNA, AUSTRIA", style={
+                    "color":"#FFFFFF","fontSize":"0.65em","fontWeight":"700",
+                    "letterSpacing":"3.5px","textTransform":"uppercase",
+                    "fontFamily":"'Inter',sans-serif",
+                    "textShadow":"0 0 12px rgba(255,255,255,0.15)",
+                }),
+            ], style={
+                "display":"inline-flex","alignItems":"center","padding":"6px 16px",
+                "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.03)",
+                "border":"1px solid rgba(168,85,247,0.25)",
             }),
         ], style={
-            "position":"absolute","top":"24px","left":"50%","transform":"translateX(-50%)",
-            "display":"flex","alignItems":"center","padding":"6px 16px",
-            "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.03)",
-            "border":"1px solid rgba(168,85,247,0.25)","zIndex":"50",
+            "display":"flex","justifyContent":"center","alignItems":"center",
+            "padding":"18px 0 6px 0","position":"relative","zIndex":"50",
         }),
         html.Div([
             html.Div([
