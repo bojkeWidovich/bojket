@@ -83,22 +83,26 @@ def landing_page():
     
     
         # ── Navbar ───────────────────────────────────────────────────────────
+        # ── Vienna pill — centered absolute over navbar ──────────────────────
+        html.Div([
+            html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
+            html.Span("STATIONED IN VIENNA, AUSTRIA", style={
+                "color":"#FFFFFF","fontSize":"0.65em","fontWeight":"700",
+                "letterSpacing":"3.5px","textTransform":"uppercase",
+                "fontFamily":"'Inter',sans-serif",
+                "textShadow":"0 0 12px rgba(255,255,255,0.15)",
+            }),
+        ], style={
+            "position":"absolute","top":"24px","left":"50%","transform":"translateX(-50%)",
+            "display":"flex","alignItems":"center","padding":"6px 16px",
+            "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.03)",
+            "border":"1px solid rgba(168,85,247,0.25)","zIndex":"50",
+        }),
         html.Div([
             html.Div([
                 html.Span("BOJKET", style={"color":"white","fontWeight":"900","fontSize":"1.3em","letterSpacing":"6px"}),
                 html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
             ]),
-            html.Div([
-                html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
-                html.Span("STATIONED IN VIENNA, AUSTRIA", style={
-                    "color":"#FFFFFF","fontSize":"0.65em","fontWeight":"700",
-                    "letterSpacing":"3.5px","textTransform":"uppercase",
-                    "fontFamily":"'Inter',sans-serif",
-                    "textShadow":"0 0 12px rgba(255,255,255,0.15)",
-                }),
-            ], style={"display":"flex","alignItems":"center","padding":"6px 16px",
-                      "borderRadius":"100px","backgroundColor":"rgba(255,255,255,0.03)",
-                      "border":"1px solid rgba(168,85,247,0.25)"}),
             html.Div([
                 html.A("FOR TEAMS →", href="/for-teams", style={
                     "color":"white","fontSize":"0.82em","fontWeight":"800",
