@@ -1163,7 +1163,7 @@ def style_picker_handler(open_n, close_n, option_clicks, arrow_clicks, session, 
             html.Div(s["description"], style={
                 "display":"block" if is_expanded else "none",
                 "color":TEXT_DIM,"fontSize":"0.78em","lineHeight":"1.6",
-                "padding":"10px 18px 14px 18px","fontStyle":"italic",
+                "padding":"10px 18px 14px 18px",
             }),
         ], style={"marginBottom":"10px"})
         options.append(row)
