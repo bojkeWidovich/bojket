@@ -629,21 +629,38 @@ app.index_string = f"""<!DOCTYPE html>
             }}
       /* ── Mobile navbar fix ─────────────────────────────────── */
             @media (max-width: 768px) {{
-                .landing-navbar {{
+      .landing-navbar {{
                     flex-direction: column !important;
-                    gap: 14px !important;
-                    padding: 18px 16px !important;
+                    gap: 18px !important;
+                    padding: 22px 14px !important;
                     align-items: center !important;
+                    position: relative !important;
+                }}
+                .landing-navbar > div {{
+                    width: 100% !important;
+                    text-align: center !important;
+                    justify-content: center !important;
                 }}
                 .vienna-pill {{
                     position: static !important;
                     transform: none !important;
-                    margin: 4px 0 !important;
+                    left: auto !important;
+                    top: auto !important;
+                    margin: 4px auto !important;
+                    order: 2 !important;
+                }}
+                .landing-navbar > div:first-child {{ order: 1 !important; }}
+                .landing-navbar > div:last-child {{
+                    order: 3 !important;
+                    display: flex !important;
+                    justify-content: center !important;
+                    gap: 10px !important;
                 }}
                 .landing-navbar a[href="/for-teams"],
                 .landing-navbar a[href="/login"] {{
-                    font-size: 0.7em !important;
-                    padding: 8px 14px !important;
+                    font-size: 0.65em !important;
+                    padding: 9px 16px !important;
+                    margin: 0 !important;
                 }}
             }}
             .social-icon-link:hover {{

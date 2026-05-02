@@ -805,7 +805,7 @@ def book_call_page():
 
                 # CTA
                 html.A("Apply for White-Label →", href="/book-call?source=whitelabel", style={
-                    "display":"block","width":"max-content","margin":"0 auto","padding":"18px 42px",
+                    "display":"block","maxWidth":"360px","width":"100%","margin":"0 auto","padding":"18px 28px","textAlign":"center","boxSizing":"border-box",
                     "background":"linear-gradient(135deg,#B8860B 0%,#FFD700 50%,#DAA520 100%)",
                     "color":"#1a1a1a","fontWeight":"900","fontSize":"0.85em","letterSpacing":"3px",
                     "borderRadius":"12px","textDecoration":"none",
