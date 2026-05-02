@@ -641,14 +641,7 @@ app.index_string = f"""<!DOCTYPE html>
                     text-align: center !important;
                     justify-content: center !important;
                 }}
-                .vienna-pill {{
-                    position: static !important;
-                    transform: none !important;
-                    left: auto !important;
-                    top: auto !important;
-                    margin: 4px auto !important;
-                    order: 2 !important;
-                }}
+                .vienna-pill {{ display: none !important; }}
                 .landing-navbar > div:first-child {{ order: 1 !important; }}
                 .landing-navbar > div:last-child {{
                     order: 3 !important;
