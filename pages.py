@@ -962,8 +962,8 @@ def for_teams_page():
     tiers = [
         {
             "name": "TEAM",
-            "price": "€15,000",
-            "period": "/ year",
+            "price": "Custom Quote",
+            "period": "Discussed on call",
             "seats": "Up to 5 traders",
             "desc": "Small desks. Emerging firms.",
             "features": [
@@ -978,8 +978,8 @@ def for_teams_page():
         },
         {
             "name": "FIRM",
-            "price": "€45,000",
-            "period": "/ year",
+            "price": "Custom Quote",
+            "period": "Discussed on call",
             "seats": "Up to 25 traders",
             "desc": "Established firms. Active capital.",
             "features": [
@@ -1153,26 +1153,83 @@ def for_teams_page():
             html.Div([tier_card(t) for t in tiers],
                 style={"display":"flex","gap":"24px","justifyContent":"center","flexWrap":"wrap","maxWidth":"1200px","margin":"0 auto"}),
 
-            # White-label add-on banner
+            # ── White-Label — Exclusive Premium Section ─────────────────────
             html.Div([
                 html.Div([
+                    html.Span("◆", style={"color":"#FFD700","fontSize":"0.9em","marginRight":"10px","textShadow":"0 0 12px rgba(255,215,0,0.6)"}),
+                    html.Span("EXCLUSIVE — WHITE-LABEL EDITION", style={
+                        "color":"#FFD700","fontSize":"0.7em","fontWeight":"800","letterSpacing":"4px",
+                        "textShadow":"0 0 14px rgba(255,215,0,0.4)",
+                    }),
+                    html.Span("◆", style={"color":"#FFD700","fontSize":"0.9em","marginLeft":"10px","textShadow":"0 0 12px rgba(255,215,0,0.6)"}),
+                ], style={"display":"flex","alignItems":"center","justifyContent":"center","marginBottom":"22px"}),
+
+                html.Div("Your firm. Your brand. Our engine.", style={
+                    "color":"white","fontSize":"2.3em","fontWeight":"900","letterSpacing":"-1.5px",
+                    "textAlign":"center","marginBottom":"18px","lineHeight":"1.1",
+                }),
+
+                html.Div("Bojket — rebuilt as your platform. Your traders see your logo, your name, your domain. The intelligence stays — the brand becomes yours.", style={
+                    "color":"rgba(255,255,255,0.72)","fontSize":"1.02em","lineHeight":"1.7",
+                    "textAlign":"center","maxWidth":"720px","margin":"0 auto 36px auto",
+                }),
+
+                html.Div([
                     html.Div([
-                        html.Span("🎨  ", style={"fontSize":"1.3em","marginRight":"4px"}),
-                        html.Span("WHITE LABEL AVAILABLE", style={
-                            "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"800","letterSpacing":"3px",
-                        }),
-                    ], style={"marginBottom":"10px","display":"flex","alignItems":"center","justifyContent":"center"}),
-                    html.Div("Your logo. Your name. Your domain. Your brand.", style={
-                        "color":"white","fontSize":"1.25em","fontWeight":"800","marginBottom":"10px","letterSpacing":"-0.5px",
+                        html.Span("🎨", style={"fontSize":"1.4em","marginBottom":"10px","display":"block"}),
+                        html.Div("Custom Domain", style={"color":"white","fontWeight":"800","fontSize":"0.92em","marginBottom":"5px"}),
+                        html.Div("trade.yourfirm.com", style={"color":"rgba(255,215,0,0.8)","fontSize":"0.78em","fontFamily":"monospace"}),
+                    ], style={"flex":"1","textAlign":"center","padding":"22px 16px","minWidth":"200px",
+                              "border":"1px solid rgba(255,215,0,0.18)","borderRadius":"14px",
+                              "background":"rgba(255,215,0,0.025)"}),
+                    html.Div([
+                        html.Span("✦", style={"fontSize":"1.4em","marginBottom":"10px","display":"block","color":"#FFD700"}),
+                        html.Div("Your Identity", style={"color":"white","fontWeight":"800","fontSize":"0.92em","marginBottom":"5px"}),
+                        html.Div("Logo. Colors. Voice.", style={"color":"rgba(255,255,255,0.55)","fontSize":"0.78em"}),
+                    ], style={"flex":"1","textAlign":"center","padding":"22px 16px","minWidth":"200px",
+                              "border":"1px solid rgba(255,215,0,0.18)","borderRadius":"14px",
+                              "background":"rgba(255,215,0,0.025)"}),
+                    html.Div([
+                        html.Span("🔒", style={"fontSize":"1.4em","marginBottom":"10px","display":"block"}),
+                        html.Div("Private Deployment", style={"color":"white","fontWeight":"800","fontSize":"0.92em","marginBottom":"5px"}),
+                        html.Div("Isolated. Secure. Yours.", style={"color":"rgba(255,255,255,0.55)","fontSize":"0.78em"}),
+                    ], style={"flex":"1","textAlign":"center","padding":"22px 16px","minWidth":"200px",
+                              "border":"1px solid rgba(255,215,0,0.18)","borderRadius":"14px",
+                              "background":"rgba(255,215,0,0.025)"}),
+                    html.Div([
+                        html.Span("👁", style={"fontSize":"1.4em","marginBottom":"10px","display":"block"}),
+                        html.Div("Invisible Bojket", style={"color":"white","fontWeight":"800","fontSize":"0.92em","marginBottom":"5px"}),
+                        html.Div("Zero attribution. Period.", style={"color":"rgba(255,255,255,0.55)","fontSize":"0.78em"}),
+                    ], style={"flex":"1","textAlign":"center","padding":"22px 16px","minWidth":"200px",
+                              "border":"1px solid rgba(255,215,0,0.18)","borderRadius":"14px",
+                              "background":"rgba(255,215,0,0.025)"}),
+                ], style={"display":"flex","flexWrap":"wrap","gap":"14px","marginBottom":"36px","justifyContent":"center"}),
+
+                html.Div([
+                    html.Span("●", style={"color":"#22c55e","fontSize":"0.7em","marginRight":"10px"}),
+                    html.Span("LIMITED — only 6 white-label partners accepted per year.", style={
+                        "color":"rgba(255,255,255,0.85)","fontSize":"0.82em","fontWeight":"700","letterSpacing":"1.5px",
                     }),
-                    html.Div("White-labeling is an add-on to any tier. Pricing is customised to your firm, scope, and timeline.", style={
-                        "color":"rgba(255,255,255,0.6)","fontSize":"0.9em","lineHeight":"1.65","maxWidth":"640px","margin":"0 auto",
-                    }),
-                ], style={"textAlign":"center"}),
+                ], style={"display":"flex","alignItems":"center","justifyContent":"center","marginBottom":"28px"}),
+
+                html.A("Apply for White-Label →", href="/book-call?source=whitelabel", style={
+                    "display":"block","width":"max-content","margin":"0 auto","padding":"18px 42px",
+                    "background":"linear-gradient(135deg,#B8860B 0%,#FFD700 50%,#DAA520 100%)",
+                    "color":"#1a1a1a","fontWeight":"900","fontSize":"0.85em","letterSpacing":"3px",
+                    "borderRadius":"12px","textDecoration":"none",
+                    "boxShadow":"0 10px 32px rgba(255,215,0,0.35), inset 0 1px 0 rgba(255,255,255,0.4)",
+                    "border":"1px solid rgba(255,215,0,0.6)","transition":"all 0.25s ease",
+                }),
+
+                html.Div("Pricing is custom — discussed on call. Onboarding takes 2–4 weeks.", style={
+                    "color":"rgba(255,255,255,0.4)","fontSize":"0.75em","textAlign":"center",
+                    "marginTop":"20px","fontStyle":"italic","letterSpacing":"0.5px",
+                }),
             ], className="reveal", style={
-                "maxWidth":"780px","margin":"56px auto 0 auto","padding":"32px 28px",
-                "background":"linear-gradient(135deg, rgba(147,51,234,0.07), rgba(147,51,234,0.02))",
-                "border":"1px solid rgba(147,51,234,0.3)","borderRadius":"18px",
+                "maxWidth":"1080px","margin":"72px auto 0 auto","padding":"56px 48px",
+                "background":"radial-gradient(ellipse at top, rgba(255,215,0,0.05), transparent 70%), linear-gradient(135deg, #0a0810 0%, #11091e 100%)",
+                "border":"1.5px solid rgba(255,215,0,0.35)","borderRadius":"24px",
+                "boxShadow":"0 30px 80px rgba(0,0,0,0.5), 0 0 60px rgba(255,215,0,0.08), inset 0 1px 0 rgba(255,215,0,0.1)",
             }),
         ], style={"padding":"92px 64px","backgroundColor":"#050507","borderTop":"1px solid rgba(255,255,255,0.04)"}),
 
