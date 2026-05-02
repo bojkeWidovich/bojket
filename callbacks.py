@@ -623,6 +623,10 @@ app.index_string = f"""<!DOCTYPE html>
             .money.m12 {{ left: 56%;  top: 176%; font-size: 3em;   }}
             /* ── Mega CTA hover lift ── */
             .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
+            .for-teams-gold:hover {{
+                transform: translateY(-1px);
+                box-shadow: 0 10px 28px rgba(255,215,0,0.55), inset 0 1px 0 rgba(255,255,255,0.5) !important;
+            }}
       /* ── Mobile navbar fix ─────────────────────────────────── */
             @media (max-width: 768px) {{
                 .landing-navbar {{

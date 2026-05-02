@@ -104,14 +104,15 @@ def landing_page():
             }),
             # Right — FOR TEAMS + SIGN IN
             html.Div([
-                html.A("FOR TEAMS →", href="/for-teams", style={
-                    "color":"white","fontSize":"0.82em","fontWeight":"800",
+           html.A("FOR TEAMS →", href="/for-teams", className="for-teams-gold", style={
+                    "color":"#1a1a1a","fontSize":"0.82em","fontWeight":"900",
                     "letterSpacing":"3px","textDecoration":"none","marginRight":"18px",
                     "padding":"10px 22px","borderRadius":"9px",
-                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
-                    "border":"1px solid rgba(168,85,247,0.7)",
-                    "boxShadow":"0 6px 22px rgba(147,51,234,0.45)",
+                    "background":"linear-gradient(135deg,#B8860B 0%,#FFD700 50%,#DAA520 100%)",
+                    "border":"1px solid rgba(255,215,0,0.7)",
+                    "boxShadow":"0 6px 22px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.4)",
                     "display":"inline-block","transition":"all 0.2s ease",
+                    "textShadow":"0 1px 0 rgba(255,255,255,0.2)",
                 }),
                 html.A(tr("signin"), href="/login", style={
                     "color":"rgba(255,255,255,0.75)","padding":"9px 22px","fontSize":"0.72em","fontWeight":"700",
