@@ -48,6 +48,7 @@ BETA_ACCOUNTS = {
     "beta13@bojket.com": "Bk!Trade13",
     "beta14@bojket.com": "Bk!Trade14",
     "beta15@bojket.com": "Bk!Trade15",
+    "julkic@bojket.com": "smrditidupa",
 }
 
 # ── Email config ──────────────────────────────────────────────────────────────

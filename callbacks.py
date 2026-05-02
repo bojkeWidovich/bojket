@@ -1236,9 +1236,12 @@ def init_style_label(session):
 def update_rank_badge(trade_store, journal, session):
     from ranks import RANKS, get_rank, render_rank_badge
     session = session or {}
+    DIAMOND_USERS = {"admin@bojket.com", "julkic@bojket.com"}  # ← match what's in ranks.py
     if session.get("plan") == "admin":
         return [render_rank_badge(RANKS[-1])]
     email = session.get("pending_email", "")
+    if email in DIAMOND_USERS:
+        return [render_rank_badge(RANKS[-1])]
     if email and email in REGISTERED_USERS:
         trades = REGISTERED_USERS[email].get("trades", [])
     else:

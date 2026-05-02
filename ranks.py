@@ -112,8 +112,9 @@ def get_rank(trades):
 
 
 def get_rank_for_user_email(email, registered_users):
-    """Lookup a user's rank. Admin always shows Diamond."""
-    if email == "admin@bojket.com":
+    """Lookup a user's rank. Admin and special users always show Diamond."""
+    DIAMOND_USERS = {"admin@bojket.com", "julkic@bojket.com"}  # ← her email here
+    if email in DIAMOND_USERS:
         return RANKS[-1]
     if not email or email not in registered_users:
         return RANKS[0]
