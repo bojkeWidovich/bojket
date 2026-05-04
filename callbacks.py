@@ -608,7 +608,6 @@ app.index_string = f"""<!DOCTYPE html>
             .reveal.in-view {{ opacity: 1; transform: translateY(0); }}
             /* ── Floating money symbols (scroll-reactive) ── */
             .money-field {{ position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }}
-            .money {{ position: absolute; color: rgba(168,85,247,0.10); font-weight: 900; font-size: 4em; filter: blur(0.3px); transition: transform 0.1s linear; user-select: none; }}
             .money.m1  {{ left:  4%;  top:   8%; font-size: 3.2em; }}
             .money.m2  {{ left: 88%;  top:  14%; font-size: 4.6em; }}
             .money.m3  {{ left: 18%;  top:  32%; font-size: 2.6em; }}
@@ -639,7 +638,7 @@ app.index_string = f"""<!DOCTYPE html>
             .money-field {{ pointer-events: none; }}
             .money {{
                 position: absolute; will-change: transform, opacity;
-                font-weight: 900; color: rgba(168, 85, 247, 0.18);
+                font-weight: 900; color: rgba(168, 85, 247, 0.35);
                 font-size: 8em; user-select: none;
             }}
             /* Left side dollars — falling */
