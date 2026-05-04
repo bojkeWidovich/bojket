@@ -88,7 +88,7 @@ def landing_page():
                 html.Div(tr("tagline"), style={"color":PURPLE_LIGHT,"fontSize":"0.58em","letterSpacing":"3px","fontWeight":"600","marginTop":"3px"}),
             ]),
             # Center — Vienna pill
-            html.Div([
+            html.Div(className="vienna-pill", children=[
                 html.Span("●", style={"color":"#A855F7","fontSize":"0.5em","marginRight":"8px","verticalAlign":"middle"}),
                 html.Span("STATIONED IN VIENNA, AUSTRIA", style={
                     "color":"#FFFFFF","fontSize":"0.65em","fontWeight":"700",
@@ -617,17 +617,23 @@ def book_call_page():
                 "color":PURPLE_LIGHT if t["highlight"] else "rgba(255,255,255,0.55)",
                 "fontSize":"0.78em","fontWeight":"800","letterSpacing":"4px","marginBottom":"14px",
             }),
-            html.Div([
-                html.Span(t["price"], style={"color":"white","fontWeight":"900","fontSize":"1.7em","letterSpacing":"-0.5px"}),
-                html.Span(t["period"], style={"color":"rgba(255,255,255,0.4)","fontSize":"0.72em","marginLeft":"8px","fontWeight":"600","fontStyle":"italic"}),
-            ], style={"marginBottom":"4px"}),
+    # Big seat number — the visual focus
             html.Div(t["seats"], style={
-                "color":"rgba(255,255,255,0.55)","fontSize":"0.74em","fontWeight":"700",
-                "letterSpacing":"1.5px","marginBottom":"10px","textTransform":"uppercase",
+                "color":"white","fontWeight":"900","fontSize":"2.2em",
+                "letterSpacing":"-1px","lineHeight":"1.05","marginBottom":"6px",
             }),
+            # Italic tagline
             html.Div(t["desc"], style={
-                "color":"rgba(255,255,255,0.72)","fontSize":"0.88em","marginBottom":"22px","fontStyle":"italic",
+                "color":"rgba(255,255,255,0.7)","fontSize":"0.9em","fontStyle":"italic",
+                "marginBottom":"18px","letterSpacing":"0.3px",
             }),
+            # Premium price line
+            html.Div([
+                html.Span("✦ ", style={"color":"#FFD700","fontSize":"0.9em","marginRight":"4px"}),
+                html.Span("Investment discussed on call", style={
+                    "color":"rgba(255,215,0,0.8)","fontSize":"0.78em","fontWeight":"700","letterSpacing":"1px",
+                }),
+            ], style={"marginBottom":"18px","display":"flex","alignItems":"center"}),
             html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","marginBottom":"22px"}),
             *[html.Div([
                 html.Span("✓", style={"color":BULL,"fontWeight":"900","marginRight":"10px","flexShrink":"0"}),
@@ -1028,17 +1034,23 @@ def for_teams_page():
                 "color":PURPLE_LIGHT if t["highlight"] else "rgba(255,255,255,0.55)",
                 "fontSize":"0.78em","fontWeight":"800","letterSpacing":"4px","marginBottom":"14px",
             }),
-            html.Div([
-                html.Span(t["price"], style={"color":"white","fontWeight":"900","fontSize":"2.4em","letterSpacing":"-1.5px"}),
-                html.Span(t["period"], style={"color":"rgba(255,255,255,0.4)","fontSize":"0.9em","marginLeft":"6px","fontWeight":"600"}),
-            ], style={"marginBottom":"4px"}),
+       # Big seat number — the visual focus
             html.Div(t["seats"], style={
-                "color":"rgba(255,255,255,0.55)","fontSize":"0.74em","fontWeight":"700",
-                "letterSpacing":"1.5px","marginBottom":"10px","textTransform":"uppercase",
+                "color":"white","fontWeight":"900","fontSize":"2.2em",
+                "letterSpacing":"-1px","lineHeight":"1.05","marginBottom":"6px",
             }),
+            # Italic tagline
             html.Div(t["desc"], style={
-                "color":"rgba(255,255,255,0.72)","fontSize":"0.88em","marginBottom":"22px","fontStyle":"italic",
+                "color":"rgba(255,255,255,0.7)","fontSize":"0.9em","fontStyle":"italic",
+                "marginBottom":"18px","letterSpacing":"0.3px",
             }),
+            # Premium price line
+            html.Div([
+                html.Span("✦ ", style={"color":"#FFD700","fontSize":"0.9em","marginRight":"4px"}),
+                html.Span("Investment discussed on call", style={
+                    "color":"rgba(255,215,0,0.8)","fontSize":"0.78em","fontWeight":"700","letterSpacing":"1px",
+                }),
+            ], style={"marginBottom":"18px","display":"flex","alignItems":"center"}),
             html.Div(style={"height":"1px","background":"rgba(255,255,255,0.08)","marginBottom":"22px"}),
             *[html.Div([
                 html.Span("✓", style={"color":BULL,"fontWeight":"900","marginRight":"10px","flexShrink":"0"}),
