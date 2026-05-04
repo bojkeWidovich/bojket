@@ -638,7 +638,7 @@ app.index_string = f"""<!DOCTYPE html>
             .money-field {{ pointer-events: none; }}
             .money {{
                 position: absolute; will-change: transform, opacity;
-                font-weight: 900; color: rgba(168, 85, 247, 0.35);
+                font-weight: 900; color: rgba(168, 85, 247, 0.62); text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
                 font-size: 8em; user-select: none;
             }}
             /* Left side dollars — falling */
