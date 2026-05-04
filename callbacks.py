@@ -623,6 +623,55 @@ app.index_string = f"""<!DOCTYPE html>
             .money.m12 {{ left: 56%;  top: 176%; font-size: 3em;   }}
             /* ── Mega CTA hover lift ── */
             .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
+            /* ── Money parallax: slow vertical drift, GPU-accelerated ─── */
+            @keyframes moneyDown {{
+                0%   {{ transform: translateY(-30vh); opacity: 0; }}
+                10%  {{ opacity: 0.18; }}
+                90%  {{ opacity: 0.18; }}
+                100% {{ transform: translateY(120vh); opacity: 0; }}
+            }}
+            @keyframes moneyUp {{
+                0%   {{ transform: translateY(120vh); opacity: 0; }}
+                10%  {{ opacity: 0.18; }}
+                90%  {{ opacity: 0.18; }}
+                100% {{ transform: translateY(-30vh); opacity: 0; }}
+            }}
+            .money-field {{ pointer-events: none; }}
+            .money {{
+                position: absolute; will-change: transform, opacity;
+                font-weight: 900; color: rgba(168, 85, 247, 0.18);
+                font-size: 8em; user-select: none;
+            }}
+            /* Left side dollars — falling */
+            .money.m1  {{ left: 4%;  animation: moneyDown 22s linear infinite; animation-delay: 0s; }}
+            .money.m3  {{ left: 12%; animation: moneyDown 28s linear infinite; animation-delay: -6s; font-size: 6em; }}
+            .money.m5  {{ left: 6%;  animation: moneyDown 30s linear infinite; animation-delay: -12s; font-size: 10em; }}
+            .money.m7  {{ left: 18%; animation: moneyDown 26s linear infinite; animation-delay: -18s; font-size: 7em; }}
+            .money.m9  {{ left: 9%;  animation: moneyDown 24s linear infinite; animation-delay: -3s; font-size: 9em; }}
+            .money.m11 {{ left: 14%; animation: moneyDown 32s linear infinite; animation-delay: -15s; font-size: 5em; }}
+            /* Right side euros — rising */
+            .money.m2  {{ right: 4%;  animation: moneyUp 24s linear infinite; animation-delay: 0s; }}
+            .money.m4  {{ right: 12%; animation: moneyUp 28s linear infinite; animation-delay: -8s; font-size: 6em; }}
+            .money.m6  {{ right: 6%;  animation: moneyUp 30s linear infinite; animation-delay: -14s; font-size: 10em; }}
+            .money.m8  {{ right: 18%; animation: moneyUp 26s linear infinite; animation-delay: -20s; font-size: 7em; }}
+            .money.m10 {{ right: 9%;  animation: moneyUp 22s linear infinite; animation-delay: -4s; font-size: 9em; }}
+            .money.m12 {{ right: 14%; animation: moneyUp 32s linear infinite; animation-delay: -16s; font-size: 5em; }}
+            /* ── Live activity tickers — opposite-direction marquees ──── */
+            @keyframes tickerLeft {{
+                from {{ transform: translateX(0); }}
+                to   {{ transform: translateX(-50%); }}
+            }}
+            @keyframes tickerRight {{
+                from {{ transform: translateX(-50%); }}
+                to   {{ transform: translateX(0); }}
+            }}
+            .ticker-row-left, .ticker-row-right {{
+                display: flex; width: max-content;
+                will-change: transform;
+            }}
+            .ticker-row-left  {{ animation: tickerLeft  90s linear infinite; }}
+            .ticker-row-right {{ animation: tickerRight 90s linear infinite; }}
+            .ticker-row-left:hover, .ticker-row-right:hover {{ animation-play-state: paused; }}
             .for-teams-gold:hover {{
                 transform: translateY(-1px);
                 box-shadow: 0 10px 28px rgba(255,215,0,0.55), inset 0 1px 0 rgba(255,255,255,0.5) !important;

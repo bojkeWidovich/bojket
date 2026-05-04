@@ -247,7 +247,101 @@ def landing_page():
             }),
         ], style={"borderTop":"1px solid rgba(255,255,255,0.05)","borderBottom":"1px solid rgba(255,255,255,0.05)",
                   "padding":"48px 64px","backgroundColor":"rgba(147,51,234,0.04)"}),
-
+# ── Live activity ticker ─────────────────────────────────────────────
+        html.Div([
+            html.Div("LIVE FROM THE BOJKET FEED", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.72em","fontWeight":"800","letterSpacing":"5px",
+                "textAlign":"center","marginBottom":"22px",
+            }),
+            html.Div([
+                html.Div([
+                    *[html.Div([
+                        html.Span(flag, style={"fontSize":"1.3em","marginRight":"10px"}),
+                        html.Div([
+                            html.Div(name, style={"color":"white","fontWeight":"800","fontSize":"0.82em","letterSpacing":"0.3px"}),
+                            html.Div(action, style={"color":"rgba(255,255,255,0.55)","fontSize":"0.7em","marginTop":"2px"}),
+                        ]),
+                    ], style={
+                        "display":"flex","alignItems":"center","padding":"10px 18px","margin":"0 8px",
+                        "backgroundColor":"rgba(20,17,40,0.8)","border":"1px solid rgba(168,85,247,0.22)",
+                        "borderRadius":"100px","whiteSpace":"nowrap","flexShrink":"0",
+                    }) for flag, name, action in [
+                        ("🇩🇪","Lukas M.","ranked up to 🦫 Capybara Hustler"),
+                        ("🇬🇧","Ethan R.","closed +€2,840 on EURUSD"),
+                        ("🇺🇸","Marcus T.","ranked up to 🦫 Capybara Master"),
+                        ("🇦🇹","Felix W.","closed +€4,120 on Gold"),
+                        ("🇨🇭","David K.","just joined Bojket"),
+                        ("🇨🇦","Tyler J.","closed +€6,750 on BTCUSD"),
+                        ("🇩🇪","Sophie L.","ranked up to 🦫 Capybara Veteran"),
+                        ("🇮🇪","Aoife B.","closed +€1,920 on Nasdaq"),
+                        ("🇦🇺","Riley P.","ranked up to 🦫 Capybara Hustler"),
+                        ("🇬🇧","James H.","closed +€3,400 on EURUSD"),
+                        ("🇺🇸","Brandon S.","just joined Bojket"),
+                        ("🇩🇪","Maximilian K.","closed +€7,210 on Gold"),
+                        ("🇨🇭","Noah Z.","ranked up to 🦫 Capybara Master"),
+                        ("🇦🇹","Anna G.","closed +€2,080 on EURUSD"),
+                        ("🇮🇪","Liam C.","closed +€5,840 on BTCUSD"),
+                        ("🇺🇸","Hailey M.","ranked up to 🦫 Capybara Hustler"),
+                        ("🇬🇧","Charlotte F.","closed +€3,150 on Nasdaq"),
+                        ("🇩🇪","Jonas R.","just joined Bojket"),
+                        ("🇨🇦","Mason D.","closed +€4,560 on Gold"),
+                        ("🇦🇺","Olivia N.","ranked up to 🦫 Capybara Master"),
+                        ("🇨🇭","Elias B.","closed +€1,740 on EURUSD"),
+                        ("🇩🇪","Hannah V.","ranked up to 🦫 Capybara Veteran"),
+                        ("🇺🇸","Logan A.","closed +€8,900 on BTCUSD"),
+                        ("🇬🇧","Oliver E.","just joined Bojket"),
+                        ("🇮🇪","Saoirse M.","closed +€2,310 on Gold"),
+                    ]],
+                ], className="ticker-row-left"),
+            ], style={"overflow":"hidden","width":"100%","marginBottom":"14px",
+                      "maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
+                      "WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}),
+            html.Div([
+                html.Div([
+                    *[html.Div([
+                        html.Span(flag, style={"fontSize":"1.3em","marginRight":"10px"}),
+                        html.Div([
+                            html.Div(name, style={"color":"white","fontWeight":"800","fontSize":"0.82em","letterSpacing":"0.3px"}),
+                            html.Div(action, style={"color":"rgba(255,255,255,0.55)","fontSize":"0.7em","marginTop":"2px"}),
+                        ]),
+                    ], style={
+                        "display":"flex","alignItems":"center","padding":"10px 18px","margin":"0 8px",
+                        "backgroundColor":"rgba(20,17,40,0.8)","border":"1px solid rgba(168,85,247,0.22)",
+                        "borderRadius":"100px","whiteSpace":"nowrap","flexShrink":"0",
+                    }) for flag, name, action in [
+                        ("🇦🇺","Chloe W.","closed +€3,720 on EURUSD"),
+                        ("🇩🇪","Tobias H.","ranked up to 🦫 Capybara Hustler"),
+                        ("🇬🇧","Harry P.","closed +€5,180 on Gold"),
+                        ("🇺🇸","Caleb O.","just joined Bojket"),
+                        ("🇨🇭","Levi T.","closed +€2,640 on Nasdaq"),
+                        ("🇦🇹","Magdalena P.","ranked up to 🦫 Capybara Master"),
+                        ("🇮🇪","Cian Q.","closed +€4,310 on BTCUSD"),
+                        ("🇩🇪","Leon F.","ranked up to 🦫 Capybara Veteran"),
+                        ("🇨🇦","Avery U.","closed +€6,090 on EURUSD"),
+                        ("🇬🇧","Daniel I.","just joined Bojket"),
+                        ("🇺🇸","Ava S.","closed +€1,830 on Gold"),
+                        ("🇦🇺","Jackson L.","ranked up to 🦫 Capybara Hustler"),
+                        ("🇩🇪","Julian E.","closed +€3,560 on EURUSD"),
+                        ("🇨🇭","Robin Y.","ranked up to 🦫 Capybara Master"),
+                        ("🇦🇹","Klara X.","closed +€2,140 on Nasdaq"),
+                        ("🇮🇪","Niamh O.","just joined Bojket"),
+                        ("🇬🇧","George T.","closed +€7,320 on BTCUSD"),
+                        ("🇺🇸","Mia C.","ranked up to 🦫 Capybara Veteran"),
+                        ("🇩🇪","Frieda U.","closed +€4,890 on Gold"),
+                        ("🇨🇦","Owen Q.","closed +€2,210 on EURUSD"),
+                        ("🇦🇺","Isla V.","just joined Bojket"),
+                        ("🇨🇭","Aaron M.","ranked up to 🦫 Capybara Hustler"),
+                        ("🇩🇪","Henrik B.","closed +€5,470 on Nasdaq"),
+                        ("🇺🇸","Sofia D.","closed +€3,180 on Gold"),
+                        ("🇮🇪","Conor F.","ranked up to 🦫 Capybara Master"),
+                    ]],
+                ], className="ticker-row-right"),
+            ], style={"overflow":"hidden","width":"100%",
+                      "maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
+                      "WebkitMaskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)"}),
+        ], style={"padding":"60px 0 50px 0","backgroundColor":"#050507",
+                  "borderTop":"1px solid rgba(255,255,255,0.04)",
+                  "borderBottom":"1px solid rgba(255,255,255,0.04)"}),
         # ── Features ─────────────────────────────────────────────────────────
         html.Div([
             html.Div([
