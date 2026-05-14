@@ -701,6 +701,45 @@ app.index_string = f"""<!DOCTYPE html>
                     font-size: 0.72em !important;
                     box-sizing: border-box !important;
                     justify-content: center !important;
+                    /* ── Tour modal mobile: nav buttons go static at bottom ── */
+                #tour-modal > div {{
+                    padding-bottom: 120px !important;
+                }}
+                #tour-modal > div > div:last-child {{
+                    position: static !important;
+                    transform: none !important;
+                    margin: 30px auto 20px auto !important;
+                    justify-content: center !important;
+                    width: 100% !important;
+                }}
+                #tour-screen-content {{
+                    padding: 80px 20px 20px 20px !important;
+                }}
+                /* ── Tour screen content sizing ── */
+                #tour-screen-content > div:first-child {{
+                    font-size: 1.5em !important;
+                }}
+                /* ── Gallery images: enable pinch-zoom on mobile ── */
+                #gallery-modal img {{
+                    cursor: pointer !important;
+                    touch-action: manipulation !important;
+                }}
+                #lightbox-modal {{
+                    overflow: auto !important;
+                    -webkit-overflow-scrolling: touch !important;
+                }}
+                #lightbox-img {{
+                    touch-action: pinch-zoom !important;
+                    max-width: 100vw !important;
+                    max-height: none !important;
+                    width: 100% !important;
+                    height: auto !important;
+                    position: static !important;
+                    transform: none !important;
+                    margin: 80px auto !important;
+                    display: block !important;
+                    border-radius: 8px !important;
+                }}
                 }}
                 }}
                 .landing-navbar > div {{
