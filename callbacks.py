@@ -1084,6 +1084,54 @@ def tour_handler(open_n, close_n, next_n, prev_n, current):
         new = max(current - 1, 1)
         return visible, _tour_screen(new), f"{new} / 6", new
     return dash.no_update, dash.no_update, dash.no_update, current
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  Gallery + Lightbox
+# ══════════════════════════════════════════════════════════════════════════════
+GALLERY_URLS = [
+    "https://i.imgur.com/Bo66qdQ.png", "https://i.imgur.com/FfSlJqb.png",
+    "https://i.imgur.com/VRGKguR.png", "https://i.imgur.com/fHCHU8w.png",
+    "https://i.imgur.com/u8wJMUr.png", "https://i.imgur.com/UL8l8Yp.png",
+    "https://i.imgur.com/wGDvays.png", "https://i.imgur.com/WaYs9M0.png",
+    "https://i.imgur.com/CaRG04P.png",
+]
+
+@app.callback(
+    Output("gallery-modal","style"),
+    Input("open-gallery-btn","n_clicks"),
+    Input("gallery-close-btn","n_clicks"),
+    prevent_initial_call=True,
+)
+def toggle_gallery(open_n, close_n):
+    trig = (dash.callback_context.triggered[0]["prop_id"] or "").split(".")[0]
+    base = {"position":"fixed","top":"0","left":"0","width":"100vw","height":"100vh","backgroundColor":"rgba(0,0,0,0.95)","zIndex":"500","backdropFilter":"blur(12px)","overflowY":"auto"}
+    if trig == "gallery-close-btn":
+        return {**base, "display":"none"}
+    return {**base, "display":"block"}
+
+
+@app.callback(
+    Output("lightbox-modal","style"),
+    Output("lightbox-img","src"),
+    Input({"type":"gallery-img","index":ALL},"n_clicks"),
+    Input("lightbox-close-btn","n_clicks"),
+    prevent_initial_call=True,
+)
+def toggle_lightbox(img_clicks, close_n):
+    trig = (dash.callback_context.triggered[0]["prop_id"] or "")
+    hidden = {"display":"none","position":"fixed","top":"0","left":"0","width":"100vw","height":"100vh","backgroundColor":"rgba(0,0,0,0.98)","zIndex":"700","cursor":"zoom-out"}
+    visible = {**hidden, "display":"block"}
+    if "lightbox-close-btn" in trig:
+        return hidden, dash.no_update
+    if "gallery-img" in trig and any(img_clicks or []):
+        try:
+            import json
+            trig_id = json.loads(trig.split(".")[0])
+            idx = trig_id.get("index", 0)
+            return visible, GALLERY_URLS[idx]
+        except Exception:
+            pass
+    return dash.no_update, dash.no_update
 @app.callback(
     Output("page-content","children"),
     Input("url","pathname"),
