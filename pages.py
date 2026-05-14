@@ -124,7 +124,7 @@ def landing_page():
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
                   "padding":"24px 64px","position":"relative","zIndex":"100"}),
         
-        # ── Gold "See How Bojket Works" button section ──────────────────────
+        # ── Gold "SEE HOW BOJKET WORKS" button section ──────────────────────
         html.Div([
             html.Button([
                 html.Span("◆  ", style={"color":"#1a1a1a","fontSize":"1em"}),
@@ -144,6 +144,60 @@ def landing_page():
             }),
         ], style={"textAlign":"center","padding":"80px 20px","backgroundColor":"#060608",
                   "borderBottom":"1px solid rgba(255,255,255,0.05)"}), 
+                  # ── Screenshot Gallery ──────────────────────────────────────────────
+        html.Div([
+            html.Div("INSIDE THE DASHBOARD", className="reveal", style={
+                "color":PURPLE_LIGHT,"fontSize":"0.78em","fontWeight":"800","letterSpacing":"5px",
+                "textAlign":"center","marginBottom":"14px",
+            }),
+            html.Div("A look at what your traders see.", className="reveal", style={
+                "color":"white","fontSize":"2em","fontWeight":"900","letterSpacing":"-1px",
+                "textAlign":"center","marginBottom":"60px",
+            }),
+            html.Div([
+                *[html.Div([
+                    html.Img(src=img_url, style={
+                        "width":"100%","display":"block","borderRadius":"14px",
+                        "border":"1px solid rgba(168,85,247,0.2)",
+                        "transition":"all 0.35s ease",
+                    }),
+                    html.Div([
+                        html.Div(label, style={
+                            "color":"#FFD700","fontSize":"0.65em","fontWeight":"800",
+                            "letterSpacing":"3px","marginBottom":"6px","textTransform":"uppercase",
+                        }),
+                        html.Div(caption, style={
+                            "color":"white","fontSize":"1.05em","fontWeight":"700","lineHeight":"1.4",
+                        }),
+                    ], style={"padding":"20px 4px 0 4px"}),
+                ], className="reveal screenshot-card", style={
+                    "padding":"14px","backgroundColor":"rgba(20,17,40,0.4)",
+                    "border":"1px solid rgba(168,85,247,0.15)","borderRadius":"18px",
+                    "transition":"all 0.35s ease",
+                }) for img_url, label, caption in [
+                    ("https://i.imgur.com/Bo66qdQ.png", "Diamond rank · Trade journal",
+                     "Capybara rank system. Trade journal logs every entry & exit automatically."),
+                    ("https://i.imgur.com/FfSlJqb.png", "Live signal · Engine score",
+                     "Real-time WAIT/BUY/SELL signal with engine confidence score and full chart."),
+                    ("https://i.imgur.com/VRGKguR.png", "Adaptive trading style",
+                     "Scalper, Day, Swing or Position. The signal logic adjusts to each trader's style."),
+                    ("https://i.imgur.com/fHCHU8w.png", "Pattern recognition",
+                     "Live candlestick pattern detection with chart annotations and tooltips."),
+                    ("https://i.imgur.com/u8wJMUr.png", "Pattern intelligence",
+                     "Patterns detected, live tips & lessons, and the recent pattern history per asset."),
+                    ("https://i.imgur.com/UL8l8Yp.png", "AI Lab · ML backtesting",
+                     "Train models per asset. Strategy replay on 2 years of real market history."),
+                    ("https://i.imgur.com/wGDvays.png", "Conversational AI coach",
+                     "Bojket AI explains every signal in plain English. Available 24/7."),
+                    ("https://i.imgur.com/WaYs9M0.png", "Trade execution flow",
+                     "Set position size, take profit, stop loss. Defaults pre-filled by the engine."),
+                    ("https://i.imgur.com/CaRG04P.png", "Active trade tracking",
+                     "Live entry, TP and SL boxes. Exit & log trade with one click when done."),
+                ]],
+            ], style={"display":"grid","gridTemplateColumns":"repeat(auto-fill, minmax(380px, 1fr))",
+                      "gap":"28px","maxWidth":"1280px","margin":"0 auto"}),
+        ], style={"padding":"80px 40px 100px 40px","backgroundColor":"#060608",
+                  "borderBottom":"1px solid rgba(255,255,255,0.05)"}),
 
         # ── HERO (big, bold, premium) ───────────────────────────────────────
         html.Div([
