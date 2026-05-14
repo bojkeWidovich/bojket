@@ -622,6 +622,16 @@ app.index_string = f"""<!DOCTYPE html>
             .money.m12 {{ left: 56%;  top: 176%; font-size: 3em;   }}
             /* ── Mega CTA hover lift ── */
             .cta-mega:hover {{ transform: translateY(-2px); box-shadow: 0 16px 56px rgba(147,51,234,0.65), 0 0 0 1px rgba(168,85,247,0.8) inset; }}
+            #open-tour-btn:hover {{
+                transform: translateY(-2px);
+                box-shadow: 0 18px 50px rgba(255,215,0,0.5), inset 0 1px 0 rgba(255,255,255,0.6) !important;
+            }}
+            #open-gallery-btn:hover {{
+                background: rgba(168,85,247,0.12) !important;
+                border-color: rgba(168,85,247,0.7) !important;
+                transform: translateY(-2px);
+                box-shadow: 0 12px 32px rgba(168,85,247,0.25);
+            }}
             /* ── Money parallax: slow vertical drift, GPU-accelerated ─── */
             @keyframes moneyDown {{
                 0%   {{ transform: translateY(-30vh); opacity: 0; }}
@@ -683,6 +693,15 @@ app.index_string = f"""<!DOCTYPE html>
                     padding: 22px 14px !important;
                     align-items: center !important;
                     position: relative !important;
+                    #open-tour-btn, #open-gallery-btn {{
+                    width: 100% !important;
+                    max-width: 320px !important;
+                    margin: 0 auto !important;
+                    padding: 16px 24px !important;
+                    font-size: 0.72em !important;
+                    box-sizing: border-box !important;
+                    justify-content: center !important;
+                }}
                 }}
                 .landing-navbar > div {{
                     width: 100% !important;

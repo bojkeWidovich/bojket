@@ -124,45 +124,40 @@ def landing_page():
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
                   "padding":"24px 64px","position":"relative","zIndex":"100"}),
         
-        # ── Gold "SEE HOW BOJKET WORKS" button section ──────────────────────
+        # ── Hero CTA row: tour + gallery side by side ───────────────────────
         html.Div([
-            html.Button([
-                html.Span("◆  ", style={"color":"#1a1a1a","fontSize":"1em"}),
-                html.Span("SEE HOW BOJKET WORKS", style={"fontWeight":"900","letterSpacing":"3px"}),
-                html.Span("  →", style={"marginLeft":"6px"}),
-            ], id="open-tour-btn", n_clicks=0, style={
-                "display":"inline-flex","alignItems":"center","padding":"20px 46px",
-                "background":"linear-gradient(135deg,#B8860B 0%,#FFD700 50%,#DAA520 100%)",
-                "color":"#1a1a1a","fontSize":"0.92em","border":"1.5px solid rgba(255,215,0,0.7)",
-                "borderRadius":"100px","cursor":"pointer",
-                "boxShadow":"0 14px 38px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.5)",
-                "transition":"all 0.25s ease",
-            }),
-            html.Div("60-second walkthrough · No signup required", style={
-                "color":"rgba(255,255,255,0.5)","fontSize":"0.72em","fontWeight":"600",
-                "letterSpacing":"2px","marginTop":"18px","textTransform":"uppercase",
-            }),
-        ], style={"textAlign":"center","padding":"80px 20px","backgroundColor":"#060608",
-                  "borderBottom":"1px solid rgba(255,255,255,0.05)"}), 
-                 # ── See Inside the Dashboard — gallery trigger ──────────────────────
-        html.Div([
-            html.Button([
-                html.Span("📸  ", style={"fontSize":"1em"}),
-                html.Span("SEE INSIDE THE DASHBOARD", style={"fontWeight":"900","letterSpacing":"3px"}),
-                html.Span("  →", style={"marginLeft":"6px"}),
-            ], id="open-gallery-btn", n_clicks=0, style={
-                "display":"inline-flex","alignItems":"center","padding":"16px 36px",
-                "background":"transparent","color":"white","fontSize":"0.78em",
-                "border":"1.5px solid rgba(168,85,247,0.5)","borderRadius":"100px",
-                "cursor":"pointer","transition":"all 0.25s ease",
-            }),
-            html.Div("9 real screenshots of the live product", style={
+            html.Div([
+                html.Button([
+                    html.Span("◆  ", style={"color":"#1a1a1a","fontSize":"1em"}),
+                    html.Span("SEE HOW BOJKET WORKS", style={"fontWeight":"900","letterSpacing":"3px"}),
+                    html.Span("  →", style={"marginLeft":"6px"}),
+                ], id="open-tour-btn", n_clicks=0, style={
+                    "display":"inline-flex","alignItems":"center","padding":"20px 38px",
+                    "background":"linear-gradient(135deg,#B8860B 0%,#FFD700 50%,#DAA520 100%)",
+                    "color":"#1a1a1a","fontSize":"0.85em","border":"1.5px solid rgba(255,215,0,0.7)",
+                    "borderRadius":"100px","cursor":"pointer",
+                    "boxShadow":"0 14px 38px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.5)",
+                    "transition":"all 0.25s ease",
+                }),
+                html.Button([
+                    html.Span("📸  ", style={"fontSize":"1em"}),
+                    html.Span("REAL SCREENSHOTS", style={"fontWeight":"900","letterSpacing":"3px"}),
+                    html.Span("  →", style={"marginLeft":"6px"}),
+                ], id="open-gallery-btn", n_clicks=0, style={
+                    "display":"inline-flex","alignItems":"center","padding":"20px 38px",
+                    "background":"rgba(168,85,247,0.06)","color":"white","fontSize":"0.85em",
+                    "border":"1.5px solid rgba(168,85,247,0.45)","borderRadius":"100px",
+                    "cursor":"pointer","transition":"all 0.25s ease",
+                    "backdropFilter":"blur(8px)",
+                }),
+            ], style={"display":"flex","gap":"20px","justifyContent":"center","flexWrap":"wrap"}),
+            html.Div("60-SECOND WALKTHROUGH  ·  NO SIGNUP REQUIRED  ·  REAL PRODUCT", style={
                 "color":"rgba(255,255,255,0.4)","fontSize":"0.7em","fontWeight":"600",
-                "letterSpacing":"2px","marginTop":"14px","textTransform":"uppercase",
+                "letterSpacing":"3px","marginTop":"24px","textTransform":"uppercase","textAlign":"center",
             }),
-        ], style={"textAlign":"center","padding":"50px 20px","backgroundColor":"#060608",
-                  "borderBottom":"1px solid rgba(255,255,255,0.05)"}),
-
+        ], style={"textAlign":"center","padding":"100px 20px","backgroundColor":"#060608",
+                  "borderBottom":"1px solid rgba(255,255,255,0.05)",
+                  "background":"radial-gradient(ellipse at center, rgba(168,85,247,0.04), transparent 70%), #060608"}),
         # ── HERO (big, bold, premium) ───────────────────────────────────────
         html.Div([
             html.Div([
