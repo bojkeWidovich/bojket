@@ -124,27 +124,6 @@ def landing_page():
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
                   "padding":"24px 64px","position":"relative","zIndex":"100"}),
 
-        # ── Intro Video ─────────────────────────────────────────────────────
-        html.Div([
-            html.Div([
-                html.Div(tr("built_tag"), className="reveal", style={
-                    "color": PURPLE_LIGHT, "fontSize": "0.82em", "fontWeight": "800",
-                    "letterSpacing": "5px", "textAlign": "center", "marginBottom": "42px",
-                }),
-            ]),
-            html.Div(
-                html.Iframe(
-                    src="https://www.youtube.com/embed/ChICDNSkdGo?rel=0&modestbranding=1",
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen",
-                    style={"width":"100%","aspectRatio":"16/9","border":"none","borderRadius":"18px","display":"block"},
-                ),
-                className="reveal",
-                style={"maxWidth":"960px","margin":"0 auto","borderRadius":"22px","padding":"5px",
-                       "background":"linear-gradient(135deg, rgba(147,51,234,0.3), rgba(147,51,234,0.06))",
-                       "boxShadow":"0 24px 80px rgba(0,0,0,0.75), 0 0 60px rgba(147,51,234,0.18)"},
-            ),
-        ], style={"padding":"72px 64px","borderBottom":"1px solid rgba(255,255,255,0.05)","backgroundColor":"#060608"}),
-
         # ── HERO (big, bold, premium) ───────────────────────────────────────
         html.Div([
             html.Div([
