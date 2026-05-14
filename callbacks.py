@@ -974,6 +974,116 @@ def toggle_what_is(n):
     return closed_style, arrow_style
 
 # ── PAGE ROUTER ───────────────────────────────────────────────────────────────
+# ══════════════════════════════════════════════════════════════════════════════
+#  Tour Modal — open, navigate screens, close
+# ══════════════════════════════════════════════════════════════════════════════
+def _tour_screen(num):
+    screens = {
+        1: {"title":"The system every prop firm wishes their traders used.",
+            "sub":"A 60-second look at how Bojket turns disciplined trading into infrastructure.",
+            "mock":[("🎯","ADAPTIVE SIGNAL","Scalper, Day, Swing or Position — Bojket adjusts."),
+                    ("🛡️","FORCED DISCIPLINE","Every entry locked with TP/SL. No moving stops."),
+                    ("📊","AUTO-JOURNALED","Every trade. Every reason. Reviewable.")]},
+        2: {"title":"The signal that adapts to YOUR trader's style.",
+            "sub":"Different style = different risk-reward, different RSI thresholds, different timeframes.",
+            "mock_signal":{"label":"BUY","conf":78,"symbol":"EURUSD","tf":"15m","entry":"1.0782","tp":"1.0834","sl":"1.0760"}},
+        3: {"title":"The discipline guardrail.",
+            "sub":"Most funded accounts blow because traders widen stops. Bojket prevents that.",
+            "mock_guardrails":["✓ TP/SL enforced on every entry","✓ Position size tied to remaining drawdown",
+                                "✓ Cooldown after consecutive losses","✓ Alert when about to break rules"]},
+        4: {"title":"AI coach that talks like a trader.",
+            "sub":"Available 24/7. Explains every signal in plain English.",
+            "mock_chat":[("user","Should I take this BUY on Gold?"),
+                          ("ai","Yes — confluence is strong. Score 81%, RSI bouncing from 32, 4H EMA bullish. TP set at 1.5R for your Day Trader style.")]},
+        5: {"title":"Every trade. Auto-logged. Reviewable.",
+            "sub":"Your traders' performance, transparent. Pre-payout review built in.",
+            "mock_journal":[("BTC-USD","BUY","TP hit","+€2,840","🇩🇪 Lukas M."),
+                             ("EURUSD","SELL","TP hit","+€1,920","🇬🇧 Ethan R."),
+                             ("Gold","BUY","TP hit","+€4,120","🇦🇹 Felix W."),
+                             ("Nasdaq","BUY","SL hit","−€840","🇨🇭 David K.")]},
+        6: {"title":"Built for your firm. Your brand. Your edge.",
+            "sub":"White-label option turns Bojket into YOUR platform. Custom domain, your logo, your name.",
+            "is_close":True},
+    }
+    s = screens.get(num, screens[1])
+    blocks = [
+        html.Div(s["title"], style={"color":"white","fontSize":"2.4em","fontWeight":"900","letterSpacing":"-1.2px","lineHeight":"1.15","textAlign":"center","marginBottom":"22px"}),
+        html.Div(s["sub"], style={"color":"rgba(255,255,255,0.65)","fontSize":"1em","lineHeight":"1.7","textAlign":"center","marginBottom":"50px","maxWidth":"680px","margin":"0 auto 50px auto"}),
+    ]
+    if "mock" in s:
+        blocks.append(html.Div([
+            *[html.Div([
+                html.Div(icon, style={"fontSize":"2em","marginBottom":"12px"}),
+                html.Div(t, style={"color":"#FFD700","fontWeight":"800","fontSize":"0.72em","letterSpacing":"2.5px","marginBottom":"10px"}),
+                html.Div(d, style={"color":"rgba(255,255,255,0.7)","fontSize":"0.85em","lineHeight":"1.6"}),
+            ], style={"flex":"1","padding":"32px 24px","backgroundColor":"rgba(255,215,0,0.04)","border":"1px solid rgba(255,215,0,0.2)","borderRadius":"16px","textAlign":"center"}) for icon, t, d in s["mock"]],
+        ], style={"display":"flex","gap":"18px","flexWrap":"wrap","justifyContent":"center"}))
+    if "mock_signal" in s:
+        sig = s["mock_signal"]
+        blocks.append(html.Div([
+            html.Div([
+                html.Span(sig["label"], style={"color":"#22c55e","fontSize":"4em","fontWeight":"900","display":"block"}),
+                html.Div(f"{sig['conf']}% confidence · {sig['symbol']} {sig['tf']}", style={"color":"rgba(255,255,255,0.6)","fontSize":"0.85em","letterSpacing":"2px","marginTop":"6px","fontWeight":"700"}),
+            ], style={"textAlign":"center","marginBottom":"30px"}),
+            html.Div([
+                html.Div([html.Div("ENTRY",style={"color":"rgba(255,255,255,0.4)","fontSize":"0.65em","letterSpacing":"3px","marginBottom":"6px","fontWeight":"800"}),html.Div(sig["entry"],style={"color":"white","fontWeight":"900","fontSize":"1.5em"})], style={"flex":"1","textAlign":"center"}),
+                html.Div([html.Div("TARGET",style={"color":"rgba(34,197,94,0.7)","fontSize":"0.65em","letterSpacing":"3px","marginBottom":"6px","fontWeight":"800"}),html.Div(sig["tp"],style={"color":"#22c55e","fontWeight":"900","fontSize":"1.5em"})], style={"flex":"1","textAlign":"center"}),
+                html.Div([html.Div("STOP",style={"color":"rgba(239,68,68,0.7)","fontSize":"0.65em","letterSpacing":"3px","marginBottom":"6px","fontWeight":"800"}),html.Div(sig["sl"],style={"color":"#ef4444","fontWeight":"900","fontSize":"1.5em"})], style={"flex":"1","textAlign":"center"}),
+            ], style={"display":"flex","gap":"12px","padding":"30px","backgroundColor":"rgba(20,17,40,0.6)","border":"1px solid rgba(168,85,247,0.3)","borderRadius":"20px"}),
+        ], style={"maxWidth":"640px","margin":"0 auto"}))
+    if "mock_guardrails" in s:
+        blocks.append(html.Div([
+            *[html.Div(item, style={"color":"white","fontSize":"1em","fontWeight":"700","padding":"18px 24px","marginBottom":"12px","backgroundColor":"rgba(34,197,94,0.06)","border":"1px solid rgba(34,197,94,0.3)","borderRadius":"12px"}) for item in s["mock_guardrails"]],
+        ], style={"maxWidth":"560px","margin":"0 auto"}))
+    if "mock_chat" in s:
+        blocks.append(html.Div([
+            *[html.Div(msg, style={"padding":"16px 22px","marginBottom":"14px","borderRadius":"16px","fontSize":"0.92em","lineHeight":"1.6","backgroundColor":"rgba(168,85,247,0.15)" if who=="user" else "rgba(255,215,0,0.06)","border":"1px solid rgba(168,85,247,0.3)" if who=="user" else "1px solid rgba(255,215,0,0.25)","color":"white","maxWidth":"82%","marginLeft":"auto" if who=="user" else "0"}) for who, msg in s["mock_chat"]],
+        ], style={"maxWidth":"640px","margin":"0 auto"}))
+    if "mock_journal" in s:
+        blocks.append(html.Div([
+            *[html.Div([
+                html.Span(who, style={"flex":"1.6","color":"white","fontSize":"0.85em","fontWeight":"700"}),
+                html.Span(sym, style={"flex":"1","color":"rgba(255,255,255,0.7)","fontSize":"0.85em"}),
+                html.Span(side, style={"flex":"0.6","color":"#22c55e" if side=="BUY" else "#ef4444","fontSize":"0.78em","fontWeight":"800"}),
+                html.Span(res, style={"flex":"1","color":"rgba(255,255,255,0.65)","fontSize":"0.82em"}),
+                html.Span(pnl, style={"flex":"1","color":"#22c55e" if "+" in pnl else "#ef4444","fontWeight":"900","fontSize":"0.92em","textAlign":"right"}),
+            ], style={"display":"flex","alignItems":"center","padding":"14px 20px","borderBottom":"1px solid rgba(255,255,255,0.06)"}) for sym, side, res, pnl, who in s["mock_journal"]],
+        ], style={"maxWidth":"720px","margin":"0 auto","backgroundColor":"rgba(20,17,40,0.5)","border":"1px solid rgba(168,85,247,0.2)","borderRadius":"16px","overflow":"hidden"}))
+    if s.get("is_close"):
+        blocks.append(html.Div([
+            html.A("Book a 15-min Call →", href="/book-call", style={"display":"inline-block","padding":"22px 56px","background":"linear-gradient(135deg,#B8860B,#FFD700,#DAA520)","color":"#1a1a1a","fontWeight":"900","fontSize":"1em","letterSpacing":"3px","borderRadius":"100px","textDecoration":"none","boxShadow":"0 16px 44px rgba(255,215,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5)","border":"1.5px solid rgba(255,215,0,0.7)"}),
+        ], style={"textAlign":"center","marginTop":"20px"}))
+    return blocks
+
+
+@app.callback(
+    Output("tour-modal","style"),
+    Output("tour-screen-content","children"),
+    Output("tour-progress-text","children"),
+    Output("tour-screen-store","data"),
+    Input("open-tour-btn","n_clicks"),
+    Input("tour-close-btn","n_clicks"),
+    Input("tour-next-btn","n_clicks"),
+    Input("tour-prev-btn","n_clicks"),
+    State("tour-screen-store","data"),
+    prevent_initial_call=True,
+)
+def tour_handler(open_n, close_n, next_n, prev_n, current):
+    trig = (dash.callback_context.triggered[0]["prop_id"] or "").split(".")[0]
+    current = current or 1
+    hidden = {"display":"none","position":"fixed","top":"0","left":"0","width":"100vw","height":"100vh","backgroundColor":"rgba(0,0,0,0.92)","zIndex":"500","backdropFilter":"blur(12px)"}
+    visible = {**hidden, "display":"block"}
+    if trig == "tour-close-btn":
+        return hidden, dash.no_update, dash.no_update, 1
+    if trig == "open-tour-btn":
+        return visible, _tour_screen(1), "1 / 6", 1
+    if trig == "tour-next-btn":
+        new = min(current + 1, 6)
+        return visible, _tour_screen(new), f"{new} / 6", new
+    if trig == "tour-prev-btn":
+        new = max(current - 1, 1)
+        return visible, _tour_screen(new), f"{new} / 6", new
+    return dash.no_update, dash.no_update, dash.no_update, current
 @app.callback(
     Output("page-content","children"),
     Input("url","pathname"),

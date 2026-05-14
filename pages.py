@@ -123,6 +123,27 @@ def landing_page():
             ], style={"display":"flex","alignItems":"center"}),
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center",
                   "padding":"24px 64px","position":"relative","zIndex":"100"}),
+        
+        # ── Gold "See How Bojket Works" button section ──────────────────────
+        html.Div([
+            html.Button([
+                html.Span("◆  ", style={"color":"#1a1a1a","fontSize":"1em"}),
+                html.Span("See How Bojket Works", style={"fontWeight":"900","letterSpacing":"3px"}),
+                html.Span("  →", style={"marginLeft":"6px"}),
+            ], id="open-tour-btn", n_clicks=0, style={
+                "display":"inline-flex","alignItems":"center","padding":"20px 46px",
+                "background":"linear-gradient(135deg,#B8860B 0%,#FFD700 50%,#DAA520 100%)",
+                "color":"#1a1a1a","fontSize":"0.92em","border":"1.5px solid rgba(255,215,0,0.7)",
+                "borderRadius":"100px","cursor":"pointer",
+                "boxShadow":"0 14px 38px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.5)",
+                "transition":"all 0.25s ease",
+            }),
+            html.Div("60-second walkthrough · No signup required", style={
+                "color":"rgba(255,255,255,0.5)","fontSize":"0.72em","fontWeight":"600",
+                "letterSpacing":"2px","marginTop":"18px","textTransform":"uppercase",
+            }),
+        ], style={"textAlign":"center","padding":"80px 20px","backgroundColor":"#060608",
+                  "borderBottom":"1px solid rgba(255,255,255,0.05)"}), 
 
         # ── HERO (big, bold, premium) ───────────────────────────────────────
         html.Div([
@@ -503,6 +524,44 @@ def landing_page():
                 html.A("contact@bojket.com", href="mailto:contact@bojket.com", style={"color":PURPLE_LIGHT,"fontSize":"0.72em","letterSpacing":"2px","fontWeight":"700","textDecoration":"none"}),
             ], style={"flex":"1","textAlign":"right"}),
         ], style={"display":"flex","justifyContent":"space-between","alignItems":"center","padding":"32px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
+    # ── Tour Modal Overlay ─────────────────────────────────────────────
+        html.Div(id="tour-modal", style={"display":"none","position":"fixed","top":"0","left":"0",
+                                          "width":"100vw","height":"100vh","backgroundColor":"rgba(0,0,0,0.92)",
+                                          "zIndex":"500","backdropFilter":"blur(12px)"}, children=[
+            html.Div([
+                html.Button("✕", id="tour-close-btn", n_clicks=0, style={
+                    "position":"absolute","top":"24px","right":"32px","background":"transparent",
+                    "border":"none","color":"rgba(255,255,255,0.6)","fontSize":"1.8em","cursor":"pointer",
+                    "zIndex":"10",
+                }),
+                html.Div([
+                    html.Span(id="tour-progress-text", children="1 / 6", style={
+                        "color":"rgba(255,215,0,0.9)","fontSize":"0.7em","fontWeight":"800",
+                        "letterSpacing":"4px",
+                    }),
+                ], style={"position":"absolute","top":"28px","left":"50%","transform":"translateX(-50%)"}),
+                html.Div(id="tour-screen-content", style={
+                    "maxWidth":"880px","margin":"0 auto","padding":"80px 40px",
+                }),
+                html.Div([
+                    html.Button("← PREV", id="tour-prev-btn", n_clicks=0, style={
+                        "backgroundColor":"transparent","border":"1px solid rgba(255,255,255,0.2)",
+                        "color":"rgba(255,255,255,0.7)","padding":"12px 24px","borderRadius":"100px",
+                        "fontSize":"0.72em","fontWeight":"700","letterSpacing":"2px","cursor":"pointer",
+                        "marginRight":"14px",
+                    }),
+                    html.Button("NEXT →", id="tour-next-btn", n_clicks=0, style={
+                        "background":"linear-gradient(135deg,#B8860B,#FFD700,#DAA520)",
+                        "border":"1px solid rgba(255,215,0,0.6)","color":"#1a1a1a",
+                        "padding":"12px 28px","borderRadius":"100px",
+                        "fontSize":"0.72em","fontWeight":"900","letterSpacing":"2px","cursor":"pointer",
+                        "boxShadow":"0 6px 22px rgba(255,215,0,0.35)",
+                    }),
+                ], style={"position":"absolute","bottom":"40px","left":"50%","transform":"translateX(-50%)",
+                          "display":"flex"}),
+            ], style={"position":"relative","width":"100%","height":"100%","overflow":"auto"}),
+        ]),
+        dcc.Store(id="tour-screen-store", data=1),
     ], style={"backgroundColor":BG_DARK,"minHeight":"100vh","color":TEXT_MAIN,"position":"relative","overflow":"hidden"})
 
 def book_call_page():
