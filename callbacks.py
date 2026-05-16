@@ -2531,3 +2531,51 @@ app.clientside_callback(
 )
 if __name__ == "__main__":
     app.run(debug=True)
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  Market Regime Banners
+# ══════════════════════════════════════════════════════════════════════════════
+from data import compute_market_regime, compute_symbol_regime
+
+@app.callback(
+    Output("global-regime-strip","children"),
+    Input("refresh-interval","n_intervals"),
+)
+def update_global_regime(_):
+    r = compute_market_regime()
+    return [
+        html.Span(r["emoji"], style={"fontSize":"1.1em"}),
+        html.Span("MARKETS · ", style={"color":"rgba(255,255,255,0.4)"}),
+        html.Span(r["label"], style={"color":r["color"],"fontWeight":"800"}),
+        html.Span(" · ", style={"color":"rgba(255,255,255,0.25)","margin":"0 4px"}),
+        html.Span(r["detail"], style={"color":"rgba(255,255,255,0.6)",
+                                       "letterSpacing":"0.5px","textTransform":"none","fontSize":"0.95em"}),
+    ]
+
+
+@app.callback(
+    Output("symbol-regime-banner","children"),
+    Output("symbol-regime-banner","style"),
+    Input("refresh-interval","n_intervals"),
+    Input("symbol-dropdown","value"),
+)
+def update_symbol_regime(_, symbol):
+    if not symbol:
+        symbol = "BTC-USD"
+    r = compute_symbol_regime(symbol)
+    base_style = {
+        "padding":"14px 22px","marginBottom":"14px","borderRadius":"14px",
+        "backgroundColor":f"rgba(20,17,40,0.5)","border":f"1px solid {r['color']}40",
+        "display":"flex","alignItems":"center","gap":"14px",
+    }
+    content = [
+        html.Span(r["emoji"], style={"fontSize":"1.6em"}),
+        html.Div([
+            html.Div([
+                html.Span(f"{symbol} CONDITIONS: ", style={"color":"rgba(255,255,255,0.5)","fontSize":"0.7em","fontWeight":"700","letterSpacing":"2.5px"}),
+                html.Span(r["label"], style={"color":r["color"],"fontSize":"0.92em","fontWeight":"900","letterSpacing":"2px"}),
+            ]),
+            html.Div(r["detail"], style={"color":"rgba(255,255,255,0.65)","fontSize":"0.78em","marginTop":"4px","fontStyle":"italic"}),
+        ]),
+    ]
+    return content, base_style

@@ -2471,6 +2471,13 @@ def dashboard_page(plan="admin"):
     plan_label={"admin":"Admin","veteran":"Profitable Veteran","hustler":"Hustler"}.get(plan,"Hustler")
 
     return html.Div([
+# ── Global Market Regime Strip ──────────────────────────────────────
+        html.Div(id="global-regime-strip", style={
+            "padding":"8px 24px","display":"flex","alignItems":"center","justifyContent":"center",
+            "gap":"12px","backgroundColor":"rgba(20,17,40,0.6)",
+            "borderBottom":"1px solid rgba(168,85,247,0.15)","fontSize":"0.72em","fontWeight":"700",
+            "letterSpacing":"2px","textTransform":"uppercase",
+        }),
 # ── TOPBAR ─────────────────────────────────────────────────────────
         html.Div([
             # Left — logo block
@@ -2729,6 +2736,12 @@ def dashboard_page(plan="admin"):
         # ── TRADE MODAL ─────────────────────────────────────────────────────
         html.Div(id="trade-modal",style={"display":"none"}),
         # ── MAIN CONTENT ────────────────────────────────────────────────────
+        # ── Per-Symbol Regime Banner ───────────────────────────────────
+            html.Div(id="symbol-regime-banner", style={
+                "padding":"14px 22px","margin":"0 20px 14px 20px","borderRadius":"14px",
+                "backgroundColor":"rgba(20,17,40,0.5)","border":"1px solid rgba(168,85,247,0.2)",
+                "display":"flex","alignItems":"center","gap":"14px",
+            }),
         html.Div([
             html.Div([
                 html.Div([

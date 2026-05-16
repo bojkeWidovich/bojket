@@ -611,5 +611,120 @@ def build_news_content():
         sections.append(html.Div("News temporarily unavailable. Try refreshing.",
                                  style={"color": TEXT_MUTED, "fontSize": "0.78em", "fontStyle": "italic", "padding": "20px 0"}))
     return sections
+# ══════════════════════════════════════════════════════════════════════════════
+#  Market Conditions / Regime Classifier
+# ══════════════════════════════════════════════════════════════════════════════
+import time as _time
+
+_REGIME_CACHE = {}
+_REGIME_TTL = 900  # 15 min for global, will use 300 for per-symbol
+
+CORE_SYMBOLS = ["BTC-USD", "ETH-USD", "EURUSD=X", "GC=F", "NQ=F"]
+
+
+def _regime_for_symbol(symbol):
+    """Compute regime for a single symbol. Returns dict with label, color, detail."""
+    try:
+        df = fetch(symbol, "1h")
+        if df is None or len(df) < 30:
+            return None
+
+        cl = df["close"]
+        hi = df["high"]
+        lo = df["low"]
+        vol = df["volume"] if "volume" in df.columns else None
+
+        # ATR% (volatility)
+        atr = ta.volatility.AverageTrueRange(hi, lo, cl, window=14).average_true_range().iloc[-1]
+        atr_avg = ta.volatility.AverageTrueRange(hi, lo, cl, window=14).average_true_range().rolling(30).mean().iloc[-1]
+        atr_ratio = (atr / atr_avg) if (atr_avg and atr_avg > 0) else 1.0
+
+        # ADX (trend strength)
+        adx_val = ta.trend.ADXIndicator(hi, lo, cl, window=14).adx().iloc[-1]
+
+        # Volume ratio
+        if vol is not None and len(vol) >= 20:
+            vol_now = vol.iloc[-5:].mean()
+            vol_avg = vol.iloc[-20:].mean()
+            vol_ratio = (vol_now / vol_avg) if (vol_avg and vol_avg > 0) else 1.0
+        else:
+            vol_ratio = 1.0
+
+        # Direction (close vs EMA20)
+        ema20 = ta.trend.EMAIndicator(cl, window=20).ema_indicator().iloc[-1]
+        direction = "up" if cl.iloc[-1] > ema20 else "down"
+
+        return {
+            "atr_ratio": float(atr_ratio),
+            "adx": float(adx_val) if not (adx_val != adx_val) else 25.0,  # NaN guard
+            "vol_ratio": float(vol_ratio),
+            "direction": direction,
+        }
+    except Exception:
+        return None
+
+
+def _classify_regime(metrics):
+    """Map metrics to a regime label."""
+    if not metrics:
+        return ("NEUTRAL", "🎯", "rgba(168,85,247,0.7)", "Reading market conditions.")
+    atr_r = metrics["atr_ratio"]
+    adx = metrics["adx"]
+    vol_r = metrics["vol_ratio"]
+
+    if atr_r >= 1.5 and adx >= 25:
+        return ("TRENDING", "🌊", "#22c55e", "Clean directional move with strong momentum.")
+    if atr_r >= 1.5 and adx < 25:
+        return ("VOLATILE", "⚡", "#FFD700", "Above-average movement. More setups expected.")
+    if atr_r >= 1.5 and adx < 20:
+        return ("CHOPPY", "🌀", "#f59e0b", "Wide ranges, weak trend. Fakeouts more common.")
+    if atr_r < 0.7 and vol_r < 0.7:
+        return ("QUIET", "😴", "rgba(255,255,255,0.55)", "Below-average activity. Fewer signals likely.")
+    if adx >= 25:
+        return ("TRENDING", "🌊", "#22c55e", "Directional move in place.")
+    return ("STABLE", "🎯", "rgba(168,85,247,0.7)", "Normal conditions, balanced volatility.")
+
+
+def compute_market_regime():
+    """Global regime — average across CORE_SYMBOLS. Cached 15 min."""
+    cache = _REGIME_CACHE.get("global")
+    if cache and (_time.time() - cache["ts"] < _REGIME_TTL):
+        return cache["data"]
+
+    metrics_list = [_regime_for_symbol(s) for s in CORE_SYMBOLS]
+    metrics_list = [m for m in metrics_list if m]
+
+    if not metrics_list:
+        result = {"label":"NEUTRAL","emoji":"🎯","color":"rgba(168,85,247,0.7)",
+                  "detail":"Reading market conditions.","active":0}
+    else:
+        avg_atr = sum(m["atr_ratio"] for m in metrics_list) / len(metrics_list)
+        avg_adx = sum(m["adx"] for m in metrics_list) / len(metrics_list)
+        avg_vol = sum(m["vol_ratio"] for m in metrics_list) / len(metrics_list)
+        active = sum(1 for m in metrics_list if m["atr_ratio"] >= 1.2)
+        label, emoji, color, detail = _classify_regime({
+            "atr_ratio":avg_atr,"adx":avg_adx,"vol_ratio":avg_vol,"direction":"up"
+        })
+        detail = f"{active} of {len(metrics_list)} majors active. {detail}"
+        result = {"label":label,"emoji":emoji,"color":color,"detail":detail,"active":active}
+
+    _REGIME_CACHE["global"] = {"ts": _time.time(), "data": result}
+    return result
+
+
+def compute_symbol_regime(symbol):
+    """Per-symbol regime. Cached 5 min per symbol."""
+    key = f"sym:{symbol}"
+    cache = _REGIME_CACHE.get(key)
+    if cache and (_time.time() - cache["ts"] < 300):
+        return cache["data"]
+
+    metrics = _regime_for_symbol(symbol)
+    label, emoji, color, detail = _classify_regime(metrics)
+    if metrics:
+        detail = f"ATR {round(metrics['atr_ratio'],2)}x avg · ADX {round(metrics['adx'],0)} · Vol {round(metrics['vol_ratio'],1)}x. {detail}"
+    result = {"label":label,"emoji":emoji,"color":color,"detail":detail}
+    _REGIME_CACHE[key] = {"ts": _time.time(), "data": result}
+    return result
 
 
