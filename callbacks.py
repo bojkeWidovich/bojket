@@ -2556,8 +2556,8 @@ def update_global_regime(_):
 @app.callback(
     Output("symbol-regime-banner","children"),
     Output("symbol-regime-banner","style"),
-    Input("refresh-interval","n_intervals"),
-    Input("symbol-dropdown","value"),
+    Input("auto-refresh","n_intervals"),
+    Input("symbol-input","value"),
 )
 def update_symbol_regime(_, symbol):
     if not symbol:

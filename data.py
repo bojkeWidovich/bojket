@@ -625,7 +625,7 @@ CORE_SYMBOLS = ["BTC-USD", "ETH-USD", "EURUSD=X", "GC=F", "NQ=F"]
 def _regime_for_symbol(symbol):
     """Compute regime for a single symbol. Returns dict with label, color, detail."""
     try:
-        df = fetch(symbol, "1h")
+        df = fetch_data(symbol, "1h", period="5d")
         if df is None or len(df) < 30:
             return None
 
