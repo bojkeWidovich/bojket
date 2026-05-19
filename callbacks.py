@@ -1624,20 +1624,54 @@ def login_error(n,ns,email,password):
 # ══════════════════════════════════════════════════════════════════════════════
 
 
-def _toggle(style):
-    on=style.get("display")=="block"
-    return {"display":"none"} if on else {"display":"block","padding":"14px 24px"}
+# ── Panel toggles — CLIENTSIDE for instant response (no server roundtrip) ───
+app.clientside_callback(
+    """
+    function(n, s) {
+        if (!n) return window.dash_clientside.no_update;
+        const open = s && s.display === 'block';
+        return open ? {display: 'none'} : {display: 'block', padding: '14px 24px'};
+    }
+    """,
+    Output("market-panel","style"),
+    Input("market-btn","n_clicks"),
+    State("market-panel","style"),
+    prevent_initial_call=True,
+)
 
-@app.callback(Output("market-panel","style"),  Input("market-btn","n_clicks"),  State("market-panel","style"),  prevent_initial_call=True)
-def tog_market(n,s): return _toggle(s)
-_PAT_SIDEBAR_HIDDEN={"display":"none"}
-_PAT_SIDEBAR_SHOWN={"display":"block","width":"170px","flexShrink":"0","backgroundColor":"#07060f",
-    "border":f"1px solid {BORDER}","borderRadius":"10px","overflowY":"auto",
-    "maxHeight":"680px","alignSelf":"flex-start","position":"sticky","top":"0"}
-@app.callback(Output("pattern-panel","style"), Input("pattern-btn","n_clicks"), State("pattern-panel","style"), prevent_initial_call=True)
-def tog_patterns(n,s): return _PAT_SIDEBAR_HIDDEN if s.get("display")=="block" else _PAT_SIDEBAR_SHOWN
-@app.callback(Output("journal-panel","style"), Input("journal-btn","n_clicks"), State("journal-panel","style"), prevent_initial_call=True)
-def tog_journal(n,s): return _toggle(s)
+app.clientside_callback(
+    """
+    function(n, s) {
+        if (!n) return window.dash_clientside.no_update;
+        const open = s && s.display === 'block';
+        if (open) return {display: 'none'};
+        return {
+            display: 'block', width: '170px', flexShrink: '0',
+            backgroundColor: '#07060f', border: '1px solid #1e1a2e',
+            borderRadius: '10px', overflowY: 'auto', maxHeight: '680px',
+            alignSelf: 'flex-start', position: 'sticky', top: '0'
+        };
+    }
+    """,
+    Output("pattern-panel","style"),
+    Input("pattern-btn","n_clicks"),
+    State("pattern-panel","style"),
+    prevent_initial_call=True,
+)
+
+app.clientside_callback(
+    """
+    function(n, s) {
+        if (!n) return window.dash_clientside.no_update;
+        const open = s && s.display === 'block';
+        return open ? {display: 'none'} : {display: 'block', padding: '14px 24px'};
+    }
+    """,
+    Output("journal-panel","style"),
+    Input("journal-btn","n_clicks"),
+    State("journal-panel","style"),
+    prevent_initial_call=True,
+)
 # ══════════════════════════════════════════════════════════════════════════════
 #  Trading Style picker — open modal, render options, pick one, persist
 # ══════════════════════════════════════════════════════════════════════════════
@@ -1788,7 +1822,16 @@ def update_rank_badge(trade_store, journal, session):
     return [render_rank_badge(get_rank(trades))]
 
 # ── Bell dropdown open/close ──────────────────────────────────────────────────
-@app.callback(
+app.clientside_callback(
+    """
+    function(bell_n, price_n, mute_n, is_open) {
+        const ctx = window.dash_clientside.callback_context;
+        if (!ctx.triggered || !ctx.triggered.length) return window.dash_clientside.no_update;
+        const trig = ctx.triggered[0].prop_id;
+        if (trig.indexOf('alert-btn') >= 0) return !is_open;
+        return false;
+    }
+    """,
     Output("bell-dd-store","data"),
     Input("alert-btn","n_clicks"),
     Input("alert-dropdown-price-btn","n_clicks"),
@@ -1796,11 +1839,6 @@ def update_rank_badge(trade_store, journal, session):
     State("bell-dd-store","data"),
     prevent_initial_call=True,
 )
-def toggle_bell_dropdown(bell_n, price_n, mute_n, is_open):
-    trig = dash.callback_context.triggered[0]["prop_id"]
-    if "alert-btn" in trig:
-        return not is_open          # toggle on bell click
-    return False                    # close on any option click
 
 # ── Dropdown visibility + bell icon/style + mute label from stores ────────────
 @app.callback(
@@ -1845,19 +1883,29 @@ _ALERT_SHOWN  = {"display":"block","position":"fixed","top":"62px","right":"230p
                  "boxShadow":"0 16px 48px rgba(0,0,0,0.75), 0 0 0 1px rgba(147,51,234,0.1)"}
 _ALERT_HIDDEN = {**_ALERT_SHOWN, "display":"none"}
 
-@app.callback(
+app.clientside_callback(
+    """
+    function(open_n, close_n, s) {
+        const ctx = window.dash_clientside.callback_context;
+        if (!ctx.triggered || !ctx.triggered.length) return window.dash_clientside.no_update;
+        const trig = ctx.triggered[0].prop_id;
+        const shown = {
+            display: 'block', position: 'fixed', top: '62px', right: '230px', width: '280px',
+            backgroundColor: '#0d0c1a', border: '1px solid rgba(147,51,234,0.45)',
+            borderRadius: '14px', padding: '18px 20px', zIndex: '500',
+            boxShadow: '0 16px 48px rgba(0,0,0,0.75), 0 0 0 1px rgba(147,51,234,0.1)'
+        };
+        const hidden = Object.assign({}, shown, {display: 'none'});
+        if (trig.indexOf('alert-close-btn') >= 0) return hidden;
+        return (s && s.display === 'block') ? hidden : shown;
+    }
+    """,
     Output("alert-panel","style"),
     Input("alert-dropdown-price-btn","n_clicks"),
     Input("alert-close-btn","n_clicks"),
     State("alert-panel","style"),
     prevent_initial_call=True,
 )
-def open_alert_panel(open_n, close_n, s):
-    trig = dash.callback_context.triggered[0]["prop_id"]
-    if "alert-close-btn" in trig:
-        return _ALERT_HIDDEN
-    return _ALERT_SHOWN if s.get("display") != "block" else _ALERT_HIDDEN
-
 # ── "Mute" option → toggle mute store ────────────────────────────────────────
 @app.callback(
     Output("mute-store","data"),
@@ -2052,16 +2100,36 @@ def render_journal(journal):
     rows=[html.Tr([html.Td(t.get("symbol",""),style={"color":TEXT_MAIN,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(t.get("signal",""),style={"color":BULL if "BUY" in str(t.get("signal","")) else BEAR,"fontSize":"0.72em","padding":"5px 8px","fontWeight":"600"}),html.Td(str(t.get("size","")),style={"color":NEUTRAL,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(str(t.get("entry","")),style={"color":TEXT_DIM,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(str(t.get("tp","")),style={"color":BULL,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(str(t.get("sl","")),style={"color":BEAR,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(f"{t.get('in','')} → {t.get('out','')}",style={"color":TEXT_MUTED,"fontSize":"0.65em","padding":"5px 8px"}),html.Td(t.get("result",""),style={"color":BULL if "TP" in str(t.get("result","")) else BEAR if "SL" in str(t.get("result","")) else NEUTRAL,"fontSize":"0.72em","padding":"5px 8px","fontWeight":"600"})],style={"borderBottom":f"1px solid {BORDER}"}) for t in reversed((journal or [])[-20:])]
     return html.Table([html.Thead(html.Tr([html.Th(h,style={"color":TEXT_MUTED,"fontSize":"0.58em","padding":"4px 8px","fontWeight":"500","letterSpacing":"1px","textAlign":"left"}) for h in headers])),html.Tbody(rows)],style={"width":"100%","borderCollapse":"collapse"}),streak_el
 
-@app.callback(Output("chat-open-store","data"),Input("chat-toggle-btn","n_clicks"),Input("chat-close-btn","n_clicks"),State("chat-open-store","data"),prevent_initial_call=True)
-def tog_chat(t,c,is_open):
-    trig=dash.callback_context.triggered[0]["prop_id"]
-    if "close" in trig: return False
-    return not is_open
+app.clientside_callback(
+    """
+    function(toggle_n, close_n, is_open) {
+        const ctx = window.dash_clientside.callback_context;
+        if (!ctx.triggered || !ctx.triggered.length) return window.dash_clientside.no_update;
+        const trig = ctx.triggered[0].prop_id;
+        if (trig.indexOf('chat-close-btn') >= 0) return false;
+        return !is_open;
+    }
+    """,
+    Output("chat-open-store","data"),
+    Input("chat-toggle-btn","n_clicks"),
+    Input("chat-close-btn","n_clicks"),
+    State("chat-open-store","data"),
+    prevent_initial_call=True,
+)
 
-@app.callback(Output("chat-panel","style"),Input("chat-open-store","data"))
-def show_chat(is_open):
-    base={"width":"380px","backgroundColor":"#0a0912","border":f"1px solid {BORDER}","borderRadius":"14px","overflow":"hidden","boxShadow":"0 8px 40px rgba(0,0,0,0.6)"}
-    return {**base,"display":"block" if is_open else "none"}
+app.clientside_callback(
+    """
+    function(is_open) {
+        return {
+            width: '380px', backgroundColor: '#0a0912', border: '1px solid #1e1a2e',
+            borderRadius: '14px', overflow: 'hidden', boxShadow: '0 8px 40px rgba(0,0,0,0.6)',
+            display: is_open ? 'block' : 'none'
+        };
+    }
+    """,
+    Output("chat-panel","style"),
+    Input("chat-open-store","data"),
+)
 
 # ── Chat auto-scroll handled by polling JS in index_string ────────────────────
 
