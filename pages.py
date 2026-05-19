@@ -72,13 +72,19 @@ def landing_page():
     def tr(k): return strings.get(k, k)
 
     return html.Div([
-        html.Div(className="money-field", children=[
+    html.Div(className="money-field", children=[
             html.Span("$",className="money m1"),html.Span("€",className="money m2"),
             html.Span("$",className="money m3"),html.Span("€",className="money m4"),
             html.Span("$",className="money m5"),html.Span("€",className="money m6"),
             html.Span("$",className="money m7"),html.Span("€",className="money m8"),
             html.Span("$",className="money m9"),html.Span("€",className="money m10"),
             html.Span("$",className="money m11"),html.Span("€",className="money m12"),
+        ]),
+        html.Div(className="mandarine-field", children=[
+            html.Span(className="mandarine md1"),
+            html.Span(className="mandarine md2"),
+            html.Span(className="mandarine md3"),
+            html.Span(className="mandarine md4"),
         ]),
     # ── Navbar ───────────────────────────────────────────────────────────
         html.Div(className="landing-navbar", children=[
@@ -657,6 +663,12 @@ def book_call_page():
     """Cal.com-embedded booking page for private calls."""
     return html.Div([
         html.Div(className="hero-glow"),
+        html.Div(className="mandarine-field", children=[
+            html.Span(className="mandarine md1"),
+            html.Span(className="mandarine md2"),
+            html.Span(className="mandarine md3"),
+            html.Span(className="mandarine md4"),
+        ]),
 
         # ── Navbar ──────────────────────────────────────────────────────────
         html.Div([
