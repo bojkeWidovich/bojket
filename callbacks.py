@@ -319,7 +319,268 @@ _LIGHT_CSS = """
             @media (max-width: 768px) {{
                 /* ── Base sizing ─────────────────────────────────────── */
                 html, body {{
+                    font-size: 14px !important;/* ═══ MOBILE RESPONSIVE — phones up to 768px wide ════════════════ */
+            /* ═══════════════════════════════════════════════════════════════ */
+            @media (max-width: 768px) {{
+                /* ── Base sizing ─────────────────────────────────────── */
+                html, body {{
                     font-size: 14px !important;
+                    overflow-x: hidden !important;
+                    -webkit-text-size-adjust: 100% !important;
+                }}
+                * {{ box-sizing: border-box !important; }}
+                body, #_dash-app-content {{ max-width: 100vw !important; overflow-x: hidden !important; }}
+
+                /* ── Inputs: prevent iOS zoom on focus ───────────────── */
+                input, textarea, select, .Select-control {{
+                    font-size: 16px !important;
+                    min-height: 44px !important;
+                }}
+
+                /* ── Buttons: better touch targets ─────────────────────── */
+                button, a[role="button"], .btn {{
+                    min-height: 40px !important;
+                }}
+                .cta-mega {{
+                    padding: 16px 28px !important;
+                    font-size: 0.85em !important;
+                    letter-spacing: 1.5px !important;
+                }}
+
+                /* ───────────────── DASHBOARD: TOPBAR ───────────────── */
+                /* Topbar is the sticky bar at top. Let it wrap. */
+                div[style*="position: sticky"][style*="justify-content: space-between"] {{
+                    flex-wrap: wrap !important;
+                    padding: 6px 8px !important;
+                    gap: 4px !important;
+                    justify-content: center !important;
+                }}
+                /* Hide logo "BOJKET / future of trading" on phone — saves space */
+                div[style*="position: sticky"] > div[style*="min-width: 150px"] {{
+                    display: none !important;
+                }}
+                /* Topbar sub-sections wrap and center */
+                div[style*="position: sticky"] > div[style*="display: flex"] {{
+                    flex-wrap: wrap !important;
+                    justify-content: center !important;
+                    gap: 4px !important;
+                }}
+                .topbar-pill-btn, .topbar-icon-btn {{
+                    font-size: 0.65em !important;
+                    padding: 6px 10px !important;
+                    margin-right: 2px !important;
+                }}
+                #rank-badge {{ transform: scale(0.78) !important; margin-left: 4px !important; }}
+                #symbol-input, #interval-dropdown {{ font-size: 13px !important; }}
+
+                /* ───────────────── REGIME STRIPS ───────────────── */
+                #global-regime-strip {{
+                    padding: 6px 10px !important;
+                    font-size: 0.6em !important;
+                    gap: 6px !important;
+                    flex-wrap: wrap !important;
+                }}
+                #symbol-regime-banner {{
+                    padding: 10px 12px !important;
+                    margin: 0 8px 10px 8px !important;
+                    gap: 8px !important;
+                    flex-wrap: wrap !important;
+                }}
+
+                /* ───────────────── MAIN CONTENT ───────────────── */
+                /* Shrink the dashboard inner padding */
+                div[style*="padding: 10px 24px"] {{ padding: 8px 8px !important; }}
+
+                /* Stack every flex row inside the main dashboard content */
+                div[style*="padding: 10px 24px"] div[style*="display: flex"] {{
+                    flex-wrap: wrap !important;
+                }}
+                div[style*="padding: 10px 24px"] div[style*="display: flex"] > div {{
+                    min-width: 0 !important;
+                    flex-basis: 100% !important;
+                }}
+
+                /* ───────────────── SIGNAL CARD ───────────────── */
+                div[style*="min-width: 175px"] {{
+                    min-width: 100% !important;
+                    width: 100% !important;
+                }}
+                #signal-text {{ font-size: 2.4em !important; letter-spacing: -1.5px !important; }}
+
+                /* ───────────────── TRADE PANEL (Entry/TP/SL/Exit) ───────────────── */
+                #trade-panel > div {{
+                    flex-wrap: wrap !important;
+                    gap: 6px !important;
+                }}
+                #trade-panel > div > div {{
+                    flex: 1 1 100% !important;
+                    min-width: 0 !important;
+                }}
+                #exit-btn {{ width: 100% !important; }}
+
+                /* ───────────────── CHART ───────────────── */
+                #candle-chart, #candle-chart > div, .js-plotly-plot, .plot-container {{
+                    width: 100% !important;
+                    max-width: 100vw !important;
+                    height: 380px !important;
+                }}
+                .js-plotly-plot .plotly {{ width: 100% !important; }}
+
+                /* ───────────────── PATTERN SIDEBAR ───────────────── */
+                /* When open on mobile, it becomes a bottom drawer */
+                #pattern-panel {{
+                    position: fixed !important;
+                    bottom: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    width: 100vw !important;
+                    max-width: 100vw !important;
+                    height: 65vh !important;
+                    z-index: 800 !important;
+                    background: #0a0710 !important;
+                    border-top: 1px solid rgba(147,51,234,0.4) !important;
+                    border-radius: 16px 16px 0 0 !important;
+                    box-shadow: 0 -8px 32px rgba(0,0,0,0.7) !important;
+                    overflow-y: auto !important;
+                }}
+
+                /* ───────────────── BREAKDOWN PANEL ───────────────── */
+                #breakdown-panel {{
+                    width: 100vw !important;
+                    max-width: 100vw !important;
+                    height: auto !important;
+                    border-left: none !important;
+                    border-top: 1px solid rgba(147,51,234,0.3) !important;
+                }}
+
+                /* ───────────────── ALERT FLOATING CARD ───────────────── */
+                #alert-panel {{
+                    position: fixed !important;
+                    top: auto !important;
+                    bottom: 80px !important;
+                    right: 8px !important;
+                    left: 8px !important;
+                    width: auto !important;
+                    max-width: calc(100vw - 16px) !important;
+                }}
+
+                /* ───────────────── ADMIN / NEWS / AI LAB ───────────────── */
+                /* Fullscreen overlays on mobile */
+                #admin-panel, #news-panel, #ailab-panel {{
+                    width: 100vw !important;
+                    max-width: 100vw !important;
+                    height: 100vh !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    border: none !important;
+                }}
+                #admin-panel-content, #ailab-content, #news-content {{
+                    padding: 12px !important;
+                }}
+
+                /* ───────────────── CHAT PANEL ───────────────── */
+                /* Fullscreen drawer when open on mobile */
+                #chat-panel {{
+                    width: 100vw !important;
+                    max-width: 100vw !important;
+                    height: 100vh !important;
+                    max-height: 100vh !important;
+                    position: fixed !important;
+                    top: 0 !important;
+                    left: 0 !important;
+                    right: 0 !important;
+                    bottom: 0 !important;
+                    border-radius: 0 !important;
+                    z-index: 10000 !important;
+                }}
+                #chat-messages-area {{ height: calc(100vh - 130px) !important; }}
+                /* Chat toggle bubble: lift above iOS home indicator */
+                div[style*="position: fixed"][style*="bottom: 24px"][style*="right: 24px"] {{
+                    bottom: 14px !important;
+                    right: 14px !important;
+                }}
+
+                /* ───────────────── TRADE MODAL ───────────────── */
+                #trade-modal > div {{
+                    width: 94vw !important;
+                    max-width: 94vw !important;
+                    margin: 4vh auto !important;
+                    padding: 16px !important;
+                }}
+
+                /* ───────────────── STYLE PICKER MODAL ───────────────── */
+                #style-modal > div > div {{
+                    width: 95vw !important;
+                    max-width: 95vw !important;
+                    max-height: 90vh !important;
+                }}
+
+                /* ───────────────── MARKET PANEL (symbol browser) ───────────────── */
+                #market-panel {{ max-height: 60vh !important; overflow-y: auto !important; }}
+                #market-panel > div {{ flex-direction: column !important; gap: 12px !important; }}
+                .sym-pill {{
+                    padding: 8px 14px !important;
+                    font-size: 0.85em !important;
+                    margin: 3px 4px 3px 0 !important;
+                }}
+
+                /* ───────────────── JOURNAL PANEL ───────────────── */
+                #journal-panel {{ max-height: 70vh !important; overflow-y: auto !important; }}
+                #journal-table {{ overflow-x: auto !important; }}
+                #journal-table table {{ font-size: 0.75em !important; }}
+
+                /* ───────────────── LANDING PAGE (kept from old) ───────────────── */
+                .hero-headline {{
+                    font-size: 2em !important;
+                    line-height: 1.15 !important;
+                    letter-spacing: 1px !important;
+                }}
+                .money-field {{ display: none !important; }}
+                #pricing-grid, .pricing-row {{
+                    flex-direction: column !important;
+                    gap: 16px !important;
+                }}
+                #pricing-grid > div {{ width: 100% !important; }}
+                iframe {{ width: 100% !important; }}
+                div[style*="padding: 120"] {{ padding: 32px 20px !important; }}
+                div[style*="padding: 100"] {{ padding: 28px 20px !important; }}
+                div[style*="padding: 80"]  {{ padding: 24px 18px !important; }}
+                div[style*="padding: 60"]  {{ padding: 20px 18px !important; }}
+                footer, [id*="footer"] {{
+                    flex-direction: column !important;
+                    text-align: center !important;
+                    gap: 18px !important;
+                }}
+                footer > div {{ flex: unset !important; text-align: center !important; }}
+                .social-icon-link {{ width: 50px !important; height: 50px !important; }}
+
+                /* ───────────────── Typography shrink for huge headings ───────────────── */
+                div[style*="font-size: 6"], div[style*="fontSize: 6"] {{ font-size: 2em !important; }}
+                div[style*="font-size: 5"], div[style*="fontSize: 5"] {{ font-size: 1.8em !important; }}
+                div[style*="font-size: 4"], div[style*="fontSize: 4"] {{ font-size: 1.6em !important; }}
+                h1 {{ font-size: 1.8em !important; line-height: 1.2 !important; }}
+                h2 {{ font-size: 1.5em !important; line-height: 1.25 !important; }}
+                h3 {{ font-size: 1.25em !important; }}
+            }}
+
+            /* ═══ EXTRA SMALL — phones under 380px (iPhone SE, etc.) ═══ */
+            @media (max-width: 380px) {{
+                html, body {{ font-size: 13px !important; }}
+                .cta-mega {{ padding: 14px 20px !important; font-size: 0.78em !important; }}
+                #candle-chart, .js-plotly-plot {{ height: 340px !important; }}
+                #rank-badge {{ transform: scale(0.72) !important; }}
+                #signal-text {{ font-size: 2em !important; }}
+                .topbar-pill-btn, .topbar-icon-btn {{ font-size: 0.6em !important; padding: 5px 8px !important; }}
+            }}
+
+            /* ═══ TABLET — 769-1024px ═══════════════════════════════════ */
+            @media (min-width: 769px) and (max-width: 1024px) {{
+                .topbar-pill-btn {{ font-size: 0.75em !important; }}
+                #candle-chart, .js-plotly-plot {{ height: 480px !important; }}
+                #ailab-panel, #news-panel {{ width: 340px !important; }}
+                #admin-panel {{ width: 90vw !important; max-width: 720px !important; }}
+            }}
                     overflow-x: hidden !important;
                     -webkit-text-size-adjust: 100% !important;
                 }}
