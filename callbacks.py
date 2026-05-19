@@ -928,30 +928,29 @@ app.index_string = f"""<!DOCTYPE html>
             .money.m12 {{ right: 14%; animation: moneyUp 32s linear infinite; animation-delay: -16s; font-size: 5em; }}
             /* ── Floating mandarines (white outlines, slow diagonal drift) ── */
             .mandarine-field {{ position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }}
-            .mandarine {{
+.mandarine {{
                 position: absolute; will-change: transform, opacity;
                 pointer-events: none; user-select: none;
                 background-repeat: no-repeat; background-size: contain;
-                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23ffffff' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'><circle cx='50' cy='58' r='32'/><path d='M50 26 Q58 16 72 18 Q66 28 50 26 Z'/><path d='M50 26 L50 22'/></svg>");
-                filter: drop-shadow(0 0 10px rgba(255,255,255,0.35));
+                background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' fill='none' stroke='%23ffffff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'><circle cx='50' cy='58' r='32'/><path d='M50 26 Q58 16 72 18 Q66 28 50 26 Z'/><path d='M50 26 L50 22'/></svg>");
+                filter: drop-shadow(0 0 8px rgba(255,255,255,0.18));
             }}
             @keyframes mandarineDriftA {{
-                0%   {{ transform: translate(0, -25vh) rotate(-8deg); opacity: 0; }}
-                12%  {{ opacity: 0.55; }}
-                88%  {{ opacity: 0.55; }}
-                100% {{ transform: translate(8vw, 115vh) rotate(20deg); opacity: 0; }}
+                0%   {{ transform: translate(-8vw, 115vh) rotate(-8deg); opacity: 0; }}
+                12%  {{ opacity: 0.28; }}
+                88%  {{ opacity: 0.28; }}
+                100% {{ transform: translate(15vw, -25vh) rotate(20deg); opacity: 0; }}
             }}
             @keyframes mandarineDriftB {{
-                0%   {{ transform: translate(0, -25vh) rotate(10deg); opacity: 0; }}
-                12%  {{ opacity: 0.55; }}
-                88%  {{ opacity: 0.55; }}
-                100% {{ transform: translate(-7vw, 115vh) rotate(-15deg); opacity: 0; }}
+                0%   {{ transform: translate(-5vw, 115vh) rotate(10deg); opacity: 0; }}
+                12%  {{ opacity: 0.28; }}
+                88%  {{ opacity: 0.28; }}
+                100% {{ transform: translate(18vw, -25vh) rotate(-15deg); opacity: 0; }}
             }}
-            .mandarine.md1 {{ left: 16%; top: 0; width: 96px;  height: 96px;  animation: mandarineDriftA 38s linear infinite; animation-delay: 0s;   }}
-            .mandarine.md2 {{ left: 66%; top: 0; width: 112px; height: 112px; animation: mandarineDriftB 44s linear infinite; animation-delay: -12s; }}
-            .mandarine.md3 {{ left: 38%; top: 0; width: 78px;  height: 78px;  animation: mandarineDriftA 52s linear infinite; animation-delay: -26s; }}
-            .mandarine.md4 {{ left: 84%; top: 0; width: 88px;  height: 88px;  animation: mandarineDriftB 42s linear infinite; animation-delay: -18s; }}
-            @media (max-width: 768px) {{
+            .mandarine.md1 {{ left:  8%; top: 0; width: 96px;  height: 96px;  animation: mandarineDriftA 38s linear infinite; animation-delay: 0s;   }}
+            .mandarine.md2 {{ left: 30%; top: 0; width: 112px; height: 112px; animation: mandarineDriftB 44s linear infinite; animation-delay: -12s; }}
+            .mandarine.md3 {{ left: 52%; top: 0; width: 78px;  height: 78px;  animation: mandarineDriftA 52s linear infinite; animation-delay: -26s; }}
+            .mandarine.md4 {{ left: 72%; top: 0; width: 88px;  height: 88px;  animation: mandarineDriftB 42s linear infinite; animation-delay: -18s; }}
                 .mandarine-field {{ display: none !important; }}
             }}
             /* ── Live activity tickers — opposite-direction marquees ──── */
