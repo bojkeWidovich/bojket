@@ -1060,7 +1060,6 @@ app.index_string = f"""<!DOCTYPE html>
             /* ── Topbar refinements ── */
             .topbar-icon-btn:hover {{ border-color: rgba(168,85,247,0.45) !important; color:white !important; background-color: rgba(147,51,234,0.08) !important; }}
             .topbar-pill-btn:hover {{ color:white !important; border-color: rgba(168,85,247,0.35) !important; background: rgba(147,51,234,0.06) !important; }}
-            .topbar-pill-btn.discord:hover {{ border-color: rgba(88,101,242,0.7) !important; background: linear-gradient(135deg,rgba(88,101,242,0.25),rgba(88,101,242,0.08)) !important; }}
             /* ── Tool buttons (market/journal/news/ailab/bell) hover ── */
             .tool-btn:hover {{ border-color: rgba(168,85,247,0.45) !important; color:white !important; background: rgba(147,51,234,0.1) !important; transform: translateY(-1px); }}
             /* ── Symbol pills hover ── */

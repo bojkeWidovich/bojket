@@ -310,7 +310,7 @@ def landing_page():
                         ("🇺🇸","Logan A.","closed +€8,900 on BTCUSD"),
                         ("🇬🇧","Oliver E.","just joined Bojket"),
                         ("🇮🇪","Saoirse M.","closed +€2,310 on Gold"),
-                    ]],
+                    ] * 2],
                 ], className="ticker-row-left"),
             ], style={"overflow":"hidden","width":"100%","marginBottom":"14px",
                       "maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
@@ -353,7 +353,7 @@ def landing_page():
                         ("🇩🇪","Henrik B.","closed +€5,470 on Nasdaq"),
                         ("🇺🇸","Sofia D.","closed +€3,180 on Gold"),
                         ("🇮🇪","Conor F.","ranked up to 🦫 Capybara Master"),
-                    ]],
+                    ] * 2],
                 ], className="ticker-row-right"),
             ], style={"overflow":"hidden","width":"100%",
                       "maskImage":"linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
@@ -373,47 +373,6 @@ def landing_page():
                 style={"display":"grid","gridTemplateColumns":"repeat(3,1fr)","gap":"20px","maxWidth":"1100px","margin":"0 auto"}),
         ], style={"padding":"96px 64px","backgroundColor":"#050507","borderTop":"1px solid rgba(255,255,255,0.04)"}),
 
-        # ── Discord Community Section ────────────────────────────────────────
-        html.Div([
-            html.Div([
-                html.Div([
-                    html.Div("PRIVATE COMMUNITY", className="reveal", style={
-                        "color":"rgba(88,101,242,0.9)","fontSize":"0.78em","fontWeight":"800",
-                        "letterSpacing":"4px","marginBottom":"18px",
-                    }),
-                    html.H2("A COMMUNITY BUILT ON\nEXCLUSIVE ACCESS.", className="reveal", style={
-                        "color":"white","fontWeight":"900","fontSize":"2.4em",
-                        "letterSpacing":"-1px","lineHeight":"1.1","margin":"0 0 22px 0",
-                        "whiteSpace":"pre-line","textTransform":"uppercase",
-                    }),
-                    html.P("A PRIVATE DISCORD WITH REAL CLIENTS — MARKET INSIGHTS, LIVE SESSIONS, TRADE REVIEWS. NOT PUBLIC.",
-                        className="reveal",
-                        style={"color":"rgba(255,255,255,0.55)","fontSize":"0.8em","fontWeight":"600",
-                               "letterSpacing":"2.5px","lineHeight":"1.9","maxWidth":"440px","margin":"0"}),
-                ], style={"flex":"1","paddingRight":"48px"}),
-                html.Div([
-                    html.Div([
-                        html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
-                            style={"width":"36px","height":"36px","opacity":"0.9","marginBottom":"20px"}),
-                        html.Div("BOJKET COMMUNITY", style={"color":"white","fontWeight":"900","fontSize":"1.05em","letterSpacing":"3px","marginBottom":"8px"}),
-                        html.Div("PRIVATE · MEMBERS ONLY", style={"color":"rgba(255,255,255,0.4)","fontSize":"0.7em","marginBottom":"24px","letterSpacing":"2.5px","fontWeight":"700"}),
-                        *[html.Div([
-                            html.Span(icon, style={"marginRight":"10px","fontSize":"0.95em"}),
-                            html.Span(text, style={"color":"rgba(255,255,255,0.72)","fontSize":"0.76em","letterSpacing":"1.5px","fontWeight":"600"}),
-                        ], style={"marginBottom":"11px","display":"flex","alignItems":"center"})
-                        for icon, text in [
-                            ("📊","LIVE MARKET INSIGHTS"),
-                            ("🎯","TRADE SETUPS FROM CLIENTS"),
-                            ("📅","EXCLUSIVE EVENTS & SESSIONS"),
-                            ("🧠","EDUCATION & STRATEGIES"),
-                            ("🔔","EARLY SIGNALS & ALERTS"),
-                        ]],
-                    ], style={"backgroundColor":"rgba(88,101,242,0.07)","border":"1px solid rgba(88,101,242,0.25)",
-                              "borderRadius":"18px","padding":"32px","backdropFilter":"blur(10px)"}),
-                ], className="reveal", style={"flex":"1","maxWidth":"360px"}),
-            ], style={"display":"flex","alignItems":"center","maxWidth":"1000px","margin":"0 auto","gap":"24px"}),
-        ], style={"padding":"96px 64px","borderTop":"1px solid rgba(255,255,255,0.04)",
-                  "background":"linear-gradient(180deg, rgba(88,101,242,0.04) 0%, transparent 100%)"}),
 
 # ── WHAT IS BOJKET — click to reveal ──────────────────────────────────
         html.Div([
@@ -2575,21 +2534,6 @@ def dashboard_page(plan="admin"):
             # Right — plan badge + Discord + Sign out + Admin + Refresh
             html.Div([
 
-
-                # Discord
-                html.A([
-                    html.Img(src="https://cdn.simpleicons.org/discord/ffffff",
-                        style={"width":"13px","height":"13px","marginRight":"6px","verticalAlign":"middle","opacity":"0.85"}),
-                    html.Span("Discord", style={"verticalAlign":"middle","letterSpacing":"0.4px"}),
-                ], href="https://discord.gg/e2merC6eFE", target="_blank",
-                className="topbar-pill-btn discord",
-                style={
-                    "color":"rgba(255,255,255,0.8)","fontSize":"0.7em","fontWeight":"600",
-                    "textDecoration":"none","display":"inline-flex","alignItems":"center",
-                    "border":"1px solid rgba(88,101,242,0.45)","borderRadius":"7px",
-                    "padding":"5px 12px","background":"linear-gradient(135deg,rgba(88,101,242,0.14),rgba(88,101,242,0.04))",
-                    "marginRight":"10px","transition":"all 0.18s ease",
-                }),
 
                 # Sign Out
                 html.A("✉  Support", href="mailto:contact@bojket.com", title="Email contact@bojket.com",
