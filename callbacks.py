@@ -952,18 +952,24 @@ app.index_string = f"""<!DOCTYPE html>
             .mandarine.md3 {{ left: 52%; top: 0; width: 78px;  height: 78px;  animation: mandarineDriftA 52s linear infinite; animation-delay: -26s; }}
             .mandarine.md4 {{ left: 72%; top: 0; width: 88px;  height: 88px;  animation: mandarineDriftB 42s linear infinite; animation-delay: -18s; }}
                 .mandarine-field {{ display: none !important; }}
-            }}
+
             /* ── Live activity tickers — opposite-direction marquees ──── */
-            @keyframes tickerScroll {{
+            @keyframes tickerMarquee {{
                 from {{ transform: translateX(-50%); }}
                 to   {{ transform: translateX(0); }}
             }}
             .ticker-row-left, .ticker-row-right {{
-                display: flex; width: max-content; flex-wrap: nowrap;
+                display: flex;
+                flex-wrap: nowrap;
+                width: max-content;
                 will-change: transform;
+                animation-name: tickerMarquee;
+                animation-duration: 90s;
+                animation-timing-function: linear;
+                animation-iteration-count: infinite;
             }}
-            .ticker-row-right {{ animation: tickerScroll 90s linear infinite; }}
-            .ticker-row-left  {{ animation: tickerScroll 90s linear infinite reverse; }}
+            .ticker-row-right {{ animation-direction: normal; }}   /* left → right */
+            .ticker-row-left  {{ animation-direction: reverse; }}  /* right → left */
             .ticker-row-left:hover, .ticker-row-right:hover {{ animation-play-state: paused; }}
             .for-teams-gold:hover {{
                 transform: translateY(-1px);
