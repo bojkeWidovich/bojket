@@ -135,100 +135,171 @@ def superintelligent_signal(df,symbol,interval,patterns,plan="admin",style_key="
     style = get_style(style_key)
     if df is None or len(df)<50: return "WAIT",NEUTRAL,0,{},"neutral"
     limits=PLAN_LIMITS.get(plan,PLAN_LIMITS[None])
-    bull=0; bear=0; reasons={}; cl=df['close']; last=cl.iloc[-1]
+    cl=df['close']; last=cl.iloc[-1]; reasons={}
+
+    # ── Hard gates (unchanged) ─────────────────────────────────────────────
     vol_state=get_volatility_state(df)
     if vol_state=="too_low": return "WAIT",NEUTRAL,0,{"Volatility":"⚠️ Market too quiet — no edge"},"neutral"
     if vol_state=="too_high": return "WAIT",NEUTRAL,0,{"Volatility":"⚠️ Extreme volatility — too risky"},"neutral"
     if not is_good_session(symbol): return "WAIT",NEUTRAL,0,{"Session":"💤 Low liquidity session — skipping"},"neutral"
     if is_spike_candle(df): return "WAIT",NEUTRAL,0,{"Spike":"⚡ Spike candle — likely reversal"},"neutral"
+
+    # ── Detect live regime (already cached by the banner) ──────────────────
+    try:
+        regime = compute_symbol_regime(symbol).get("label","STABLE")
+    except Exception:
+        regime = "STABLE"
+
+    # ── Score into FAMILIES so regime can reweight them ────────────────────
+    # trend_* = trend-following/momentum   mr_* = mean-reversion/exhaustion
+    # conf_*  = regime-neutral confirmation
+    trend_bull=trend_bear=0; mr_bull=mr_bear=0; conf_bull=conf_bear=0
+
+    # EMA stack  (TREND)
     ema_trend=get_ema_trend(df)
-    if ema_trend=="bullish":   bull+=18; reasons["EMA Trend"]="✅ EMA stack bullish"
-    elif ema_trend=="bearish": bear+=18; reasons["EMA Trend"]="✅ EMA stack bearish"
+    if ema_trend=="bullish":   trend_bull+=18; reasons["EMA Trend"]="✅ EMA stack bullish"
+    elif ema_trend=="bearish": trend_bear+=18; reasons["EMA Trend"]="✅ EMA stack bearish"
     else: reasons["EMA Trend"]="↔️ EMA mixed"
+
+    # Higher timeframe  (TREND)
     if limits["htf"]:
         htf_bias=get_htf_bias(symbol,interval)
-        if htf_bias=="bullish":   bull+=20; reasons["Higher TF"]="✅ Higher TF bullish"
-        elif htf_bias=="bearish": bear+=20; reasons["Higher TF"]="✅ Higher TF bearish"
+        if htf_bias=="bullish":   trend_bull+=20; reasons["Higher TF"]="✅ Higher TF bullish"
+        elif htf_bias=="bearish": trend_bear+=20; reasons["Higher TF"]="✅ Higher TF bearish"
         else: reasons["Higher TF"]="↔️ Higher TF neutral"
     else:
         htf_bias="neutral"; reasons["Higher TF"]="🔒 Upgrade for HTF analysis"
+
+    # RSI  (MEAN-REVERSION)
     rsi_val=ta.momentum.RSIIndicator(cl,14).rsi().iloc[-1]
-    if rsi_val<style["rsi_low"]:   bull+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} oversold"
-    elif rsi_val>style["rsi_high"]: bear+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} overbought"
+    if rsi_val<style["rsi_low"]:    mr_bull+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} oversold"
+    elif rsi_val>style["rsi_high"]: mr_bear+=10; reasons["RSI"]=f"✅ RSI {round(rsi_val,1)} overbought"
     else: reasons["RSI"]=f"↔️ RSI {round(rsi_val,1)} neutral"
+
+    # StochRSI  (MEAN-REVERSION)
     sk,sd=get_stoch_rsi(df)
     if sk is not None and sd is not None:
-        if sk<0.2 and sk>sd:   bull+=8; reasons["StochRSI"]="✅ Oversold + K crossing up"
-        elif sk>0.8 and sk<sd: bear+=8; reasons["StochRSI"]="✅ Overbought + K crossing down"
+        if sk<0.2 and sk>sd:   mr_bull+=8; reasons["StochRSI"]="✅ Oversold + K crossing up"
+        elif sk>0.8 and sk<sd: mr_bear+=8; reasons["StochRSI"]="✅ Overbought + K crossing down"
         else: reasons["StochRSI"]=f"↔️ Neutral ({round(sk,2)})"
+
+    # MACD  (TREND)
     m=ta.trend.MACD(cl); mv=m.macd().iloc[-1]; ms=m.macd_signal().iloc[-1]; mh=m.macd_diff().iloc[-1]; prev_mh=m.macd_diff().iloc[-2] if len(df)>2 else 0
-    if mv>ms and mh>0 and mh>prev_mh:   bull+=10; reasons["MACD"]="✅ Bullish + histogram rising"
-    elif mv<ms and mh<0 and mh<prev_mh: bear+=10; reasons["MACD"]="✅ Bearish + histogram falling"
-    elif mv>ms: bull+=5; reasons["MACD"]="✅ Bullish cross"
-    elif mv<ms: bear+=5; reasons["MACD"]="✅ Bearish cross"
+    if mv>ms and mh>0 and mh>prev_mh:   trend_bull+=10; reasons["MACD"]="✅ Bullish + histogram rising"
+    elif mv<ms and mh<0 and mh<prev_mh: trend_bear+=10; reasons["MACD"]="✅ Bearish + histogram falling"
+    elif mv>ms: trend_bull+=5; reasons["MACD"]="✅ Bullish cross"
+    elif mv<ms: trend_bear+=5; reasons["MACD"]="✅ Bearish cross"
     else: reasons["MACD"]="↔️ Flat"
+
+    # VWAP  (TREND)
     vwap_s=get_vwap_series(df)
     if vwap_s is not None:
         vwap_last=vwap_s.iloc[-1]
-        if last>vwap_last*1.001:   bull+=8; reasons["VWAP"]="✅ Price above VWAP"
-        elif last<vwap_last*0.999: bear+=8; reasons["VWAP"]="✅ Price below VWAP"
+        if last>vwap_last*1.001:   trend_bull+=8; reasons["VWAP"]="✅ Price above VWAP"
+        elif last<vwap_last*0.999: trend_bear+=8; reasons["VWAP"]="✅ Price below VWAP"
         else: reasons["VWAP"]="↔️ Price at VWAP"
+
+    # RSI divergence  (MEAN-REVERSION)
     if limits["divergence"]:
         div=get_rsi_divergence(df)
-        if div=="bullish":   bull+=12; reasons["RSI Divergence"]="🔥 Bullish divergence"
-        elif div=="bearish": bear+=12; reasons["RSI Divergence"]="🔥 Bearish divergence"
+        if div=="bullish":   mr_bull+=12; reasons["RSI Divergence"]="🔥 Bullish divergence"
+        elif div=="bearish": mr_bear+=12; reasons["RSI Divergence"]="🔥 Bearish divergence"
         else: reasons["RSI Divergence"]="↔️ No divergence"
     else: reasons["RSI Divergence"]="🔒 Upgrade for divergence"
+
+    # Candlestick patterns  (CONFIRMATION)
     pb=min(sum(1 for _,s,_ in patterns if s=="bullish")*3,12); bb_=min(sum(1 for _,s,_ in patterns if s=="bearish")*3,12)
-    bull+=pb; bear+=bb_
+    conf_bull+=pb; conf_bear+=bb_
     pat_b=sum(1 for _,s,_ in patterns if s=="bullish"); pat_bear=sum(1 for _,s,_ in patterns if s=="bearish")
     if pat_b>0: reasons["Patterns"]=f"✅ {pat_b} bullish pattern(s)"
     elif pat_bear>0: reasons["Patterns"]=f"✅ {pat_bear} bearish pattern(s)"
     else: reasons["Patterns"]="↔️ No strong patterns"
-    direction="BUY" if bull>bear else "SELL"; cb=get_sr_confluence(df,direction)
-    if cb>0:
-        if direction=="BUY":  bull+=cb; reasons["S/R Level"]="🔥 Entry at key support"
-        else:                 bear+=cb; reasons["S/R Level"]="🔥 Entry at key resistance"
-    else: reasons["S/R Level"]="↔️ No S/R confluence"
+
+    # Bollinger band touch  (MEAN-REVERSION)
     if len(df)>=20:
         bm=cl.rolling(20).mean().iloc[-1]; bs=cl.rolling(20).std().iloc[-1]; bu=bm+2*bs; bl=bm-2*bs
-        if last<=bl*1.002:   bull+=6; reasons["Bollinger"]="✅ At lower band"
-        elif last>=bu*0.998: bear+=6; reasons["Bollinger"]="✅ At upper band"
-        elif last>bm: bull+=2; reasons["Bollinger"]="↔️ Above midline"
-        else: bear+=2; reasons["Bollinger"]="↔️ Below midline"
+        if last<=bl*1.002:   mr_bull+=6; reasons["Bollinger"]="✅ At lower band"
+        elif last>=bu*0.998: mr_bear+=6; reasons["Bollinger"]="✅ At upper band"
+        elif last>bm: trend_bull+=2; reasons["Bollinger"]="↔️ Above midline"
+        else: trend_bear+=2; reasons["Bollinger"]="↔️ Below midline"
+
+    # Volume confirmation  (CONFIRMATION)
     if 'volume' in df.columns and len(df)>=10:
         avg_v=df['volume'].iloc[-10:-1].mean(); cur_v=df['volume'].iloc[-1]; vol_ok=cur_v>avg_v*1.2; cur_bull=df['close'].iloc[-1]>df['open'].iloc[-1]
-        if vol_ok and cur_bull:       bull+=6; reasons["Volume"]="✅ High volume bull candle"
-        elif vol_ok and not cur_bull: bear+=6; reasons["Volume"]="✅ High volume bear candle"
+        if vol_ok and cur_bull:       conf_bull+=6; reasons["Volume"]="✅ High volume bull candle"
+        elif vol_ok and not cur_bull: conf_bear+=6; reasons["Volume"]="✅ High volume bear candle"
         else: reasons["Volume"]="↔️ Average volume"
-    htf_ok=htf_bias in ["bullish","neutral"] if bull>bear else htf_bias in ["bearish","neutral"]
 
-    # ── ML boost: if model trained, adjust confidence ──────────────────────
-    ml_note = ""
+    # ── REGIME-ADAPTIVE WEIGHTS — the core upgrade ─────────────────────────
+    # In trends: trust trend signals, mute fades. In chop: the reverse.
+    if regime=="TRENDING":
+        tw,mw=1.35,0.55; reasons["⚙️ Regime"]="🌊 TRENDING — trend signals boosted, fades muted"; gap_req=15
+    elif regime in ("CHOPPY","STABLE"):
+        tw,mw=0.70,1.30; reasons["⚙️ Regime"]=f"{'🌀' if regime=='CHOPPY' else '🎯'} {regime} — fades boosted, trend-chasing muted"; gap_req=15
+    elif regime=="VOLATILE":
+        tw,mw=1.10,1.00; reasons["⚙️ Regime"]="⚡ VOLATILE — balanced, edge bar raised"; gap_req=22
+    elif regime=="QUIET":
+        tw,mw=0.90,0.90; reasons["⚙️ Regime"]="😴 QUIET — conviction reduced"; gap_req=18
+    else:
+        tw,mw=1.0,1.0; reasons["⚙️ Regime"]="🎯 Normal — standard weighting"; gap_req=15
+
+    # S/R confluence  (MEAN-REVERSION) — needs provisional direction first
+    prov_bull = trend_bull*tw + mr_bull*mw + conf_bull
+    prov_bear = trend_bear*tw + mr_bear*mw + conf_bear
+    direction="BUY" if prov_bull>prov_bear else "SELL"
+    cb=get_sr_confluence(df,direction)
+    if cb>0:
+        if direction=="BUY":  mr_bull+=cb; reasons["S/R Level"]="🔥 Entry at key support"
+        else:                 mr_bear+=cb; reasons["S/R Level"]="🔥 Entry at key resistance"
+    else: reasons["S/R Level"]="↔️ No S/R confluence"
+
+    # ── Combine families with regime weights ───────────────────────────────
+    bull = trend_bull*tw + mr_bull*mw + conf_bull
+    bear = trend_bear*tw + mr_bear*mw + conf_bear
+
+    htf_ok = htf_bias in ["bullish","neutral"] if bull>bear else htf_bias in ["bearish","neutral"]
+
+    # ── ML boost (unchanged logic, applied to combined score) ──────────────
+    ml_note=""
     try:
         import ml as _ml_module
         with _ml_module._ML_LOCK:
-            model_ready = (_ml_module._ML_MODEL is not None and _ml_module._ML_SCALER is not None)
+            model_ready=(_ml_module._ML_MODEL is not None and _ml_module._ML_SCALER is not None)
     except Exception:
-        model_ready = False
+        model_ready=False
     if model_ready:
         from ml import ml_predict
-        bull_prob, bear_prob = ml_predict(df)
+        bull_prob,bear_prob=ml_predict(df)
         if bull_prob is not None:
-            if bull > bear:   # manual says BUY
-                boost = int((bull_prob - 50) * 0.18) if bull_prob > 50 else int((bull_prob - 50) * 0.12)
-                bull = max(0, bull + boost)
-                ml_note = f"🧠 ML: Bull {bull_prob}%"
-            else:             # manual says SELL
-                boost = int((bear_prob - 50) * 0.18) if bear_prob > 50 else int((bear_prob - 50) * 0.12)
-                bear = max(0, bear + boost)
-                ml_note = f"🧠 ML: Bear {bear_prob}%"
-            reasons["ML Model"] = ml_note if ml_note else "↔️ ML: neutral"
+            if bull>bear:
+                boost=int((bull_prob-50)*0.18) if bull_prob>50 else int((bull_prob-50)*0.12)
+                bull=max(0,bull+boost); ml_note=f"🧠 ML: Bull {bull_prob}%"
+            else:
+                boost=int((bear_prob-50)*0.18) if bear_prob>50 else int((bear_prob-50)*0.12)
+                bear=max(0,bear+boost); ml_note=f"🧠 ML: Bear {bear_prob}%"
+            reasons["ML Model"]=ml_note if ml_note else "↔️ ML: neutral"
 
-    min_score = style["min_score"]
-    if bull>=min_score and bull-bear>=15 and htf_ok: return "BUY",BULL,min(int((bull/100)*100),99),reasons,ema_trend
-    elif bear>=min_score and bear-bull>=15 and htf_ok: return "SELL",BEAR,min(int((bear/100)*100),99),reasons,ema_trend
-    else: return "WAIT",NEUTRAL,min(int((max(bull,bear)/100)*100),55),reasons,ema_trend
+    # ── Confidence that actually means something ───────────────────────────
+    # Blends absolute score with how lopsided the bull/bear split is.
+    winner=max(bull,bear); loser=min(bull,bear)
+    agreement=winner/(winner+loser+1.0)            # 0..1, how dominant the winning side is
+    conf=int(min(99, agreement*50 + min(winner,100)*0.5))
+
+    min_score=style["min_score"]
+    proposed=None
+    if bull>=min_score and bull-bear>=gap_req and htf_ok:   proposed="BUY"
+    elif bear>=min_score and bear-bull>=gap_req and htf_ok: proposed="SELL"
+
+    if proposed:
+        ok,rr,ev,note=evaluate_trade_quality(df,proposed,conf,style)
+        reasons["Risk/Reward"]=note
+        if ok:
+            return proposed,(BULL if proposed=="BUY" else BEAR),conf,reasons,ema_trend
+        # Directional edge exists but the trade isn't worth taking → stand down
+        return "WAIT",NEUTRAL,min(conf,55),reasons,ema_trend
+
+    reasons["Risk/Reward"]="↔️ No directional edge to assess"
+    return "WAIT",NEUTRAL,min(conf,55),reasons,ema_trend
 
 def get_levels(df, signal, custom_tp=None, custom_sl=None, style_key="day_trader"):
     from trading_styles import get_style
@@ -324,7 +395,50 @@ def get_levels(df, signal, custom_tp=None, custom_sl=None, style_key="day_trader
     tp    = round(float(custom_tp) if custom_tp else tp, 6)
     sl    = round(float(custom_sl) if custom_sl else sl, 6)
     return entry, tp, sl
+def evaluate_trade_quality(df, signal, conf, style):
+    """
+    Expected-value gate. Computes HONEST risk-reward (distance to nearest real
+    S/R wall, not the artificially pushed-out TP) and a conservative EV estimate.
+    Returns (ok, rr, ev, note). Fail-open: never blocks a signal on error.
+    """
+    try:
+        entry, tp, sl = get_levels(df, signal, style_key=style["key"])
+        if entry is None:
+            return True, None, None, "↔️ R:R not assessable"
+        risk = abs(entry - sl)
+        if risk <= 0:
+            return True, None, None, "↔️ R:R not assessable"
 
+        sup, res = get_support_resistance(df)
+        # Nearest REAL structural target on the correct side (the honest reward)
+        if signal == "BUY":
+            walls = [r for r in (res or []) if r > entry]
+            nearest = min(walls) if walls else tp
+        else:
+            walls = [s for s in (sup or []) if s < entry]
+            nearest = max(walls) if walls else tp
+
+        reward = abs(nearest - entry)
+        rr = reward / risk
+
+        # Conservative win-prob from confidence — heuristic, never claims >66%
+        p = max(0.42, min(0.66, 0.45 + (conf / 100.0) * 0.20))
+        ev = p * rr - (1.0 - p)   # expected value in R-multiples (risk = 1R)
+
+        min_rr = style.get("min_rr", 1.5)
+        min_ev = style.get("min_ev", 0.10)
+        ok = (rr >= min_rr) and (ev >= min_ev)
+
+        if ok:
+            note = f"✅ R:R {round(rr,1)}:1 · EV +{round(ev,2)}R — worth the risk"
+        elif rr < min_rr:
+            note = f"⛔ Only {round(rr,1)}:1 to nearest wall — too thin for {style['name']}"
+        else:
+            note = f"⛔ EV {round(ev,2)}R — reward doesn't justify the risk here"
+        return ok, rr, ev, note
+    except Exception:
+        return True, None, None, "↔️ R:R not assessable"
+    
 def get_indicators(df):
     if df is None or len(df)<26: return None,None,None,None
     cl=df['close']; rsi=ta.momentum.RSIIndicator(cl,14).rsi().iloc[-1]; m=ta.trend.MACD(cl)

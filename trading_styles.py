@@ -14,6 +14,8 @@ TRADING_STYLES = {
         "tp_mult": 1.0,
         "sl_mult": 1.0,
         "min_score": 55,
+        "min_rr": 1.3,
+        "min_ev": 0.05,
         "preferred_tfs": ["1m", "5m"],
     },
     "day_trader": {
@@ -27,6 +29,8 @@ TRADING_STYLES = {
         "tp_mult": 1.5,
         "sl_mult": 1.0,
         "min_score": 62,
+        "min_rr": 1.5,
+        "min_ev": 0.12,
         "preferred_tfs": ["5m", "15m", "30m", "1h"],
     },
     "swing_trader": {
@@ -40,6 +44,8 @@ TRADING_STYLES = {
         "tp_mult": 2.5,
         "sl_mult": 1.2,
         "min_score": 70,
+        "min_rr": 2.0,
+        "min_ev": 0.20,
         "preferred_tfs": ["1h", "2h", "4h"],
     },
     "position_trader": {
@@ -53,6 +59,8 @@ TRADING_STYLES = {
         "tp_mult": 4.0,
         "sl_mult": 1.5,
         "min_score": 75,
+        "min_rr": 3.0,
+        "min_ev": 0.30,
         "preferred_tfs": ["4h", "1d"],
     },
 }
