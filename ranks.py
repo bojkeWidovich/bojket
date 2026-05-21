@@ -145,7 +145,7 @@ def render_rank_badge(rank, size="normal"):
                 "marginRight": gap,
             }),
             html.Div([
-                html.Div(rank["tier"], style={
+                html.Div(f"RANK {rank['tier']}", style={
                     "color": rank["text"],
                     "fontSize": name_size,
                     "fontWeight": "800",

@@ -327,6 +327,10 @@ def get_levels(df, signal, custom_tp=None, custom_sl=None, style_key="day_trader
     if atr is None or atr == 0:
         return None, None, None
 
+    # ── Style profile drives stop width + target distance ────────────────────
+    sl_mult = style.get("sl_mult", 1.0)   # scalper 1.0 → position 1.5 (wider stops)
+    tp_mult = style.get("tp_mult", 1.5)   # scalper 1.0 → position 4.0 (fatter targets)
+
     # ── STOP LOSS ────────────────────────────────────────────────────────────
     lookback = min(20, len(df) - 1)
     recent   = df.iloc[-lookback:]
@@ -334,18 +338,18 @@ def get_levels(df, signal, custom_tp=None, custom_sl=None, style_key="day_trader
     if signal == "BUY":
         # Swing low = lowest LOW in the lookback window
         swing_extreme = recent['low'].min()
-        sl_struct     = swing_extreme - atr * 0.25          # buffer below the wick
-        sl_atr        = last - atr * 1.8                    # ATR fallback
+        sl_struct     = swing_extreme - atr * 0.25 * sl_mult   # buffer below the wick
+        sl_atr        = last - atr * 1.8 * sl_mult             # ATR fallback (style-scaled)
         # Use whichever is CLOSER to the current price (tighter, less risk)
         sl = max(sl_struct, sl_atr)
-        # Hard cap: never more than 3.5× ATR away (avoid runaway SL)
-        sl = max(sl, last - atr * 3.5)
+        # Hard cap: never more than 3.5× ATR (style-scaled) away
+        sl = max(sl, last - atr * 3.5 * sl_mult)
     else:  # SELL
         swing_extreme = recent['high'].max()
-        sl_struct     = swing_extreme + atr * 0.25
-        sl_atr        = last + atr * 1.8
+        sl_struct     = swing_extreme + atr * 0.25 * sl_mult
+        sl_atr        = last + atr * 1.8 * sl_mult
         sl = min(sl_struct, sl_atr)
-        sl = min(sl, last + atr * 3.5)
+        sl = min(sl, last + atr * 3.5 * sl_mult)
 
     risk = abs(last - sl)
     if risk == 0:
@@ -354,8 +358,8 @@ def get_levels(df, signal, custom_tp=None, custom_sl=None, style_key="day_trader
     # ── TAKE PROFIT ──────────────────────────────────────────────────────────
     sup_levels, res_levels = get_support_resistance(df)
 
-    # Minimum TP to guarantee 1.5:1 R:R
-    min_tp = last + risk * 1.5 if signal == "BUY" else last - risk * 1.5
+    # Minimum TP to guarantee the style's target R:R (tp_mult)
+    min_tp = last + risk * tp_mult if signal == "BUY" else last - risk * tp_mult
 
     # Fibonacci 0.618 extension of the recent swing range
     swing_range = recent['high'].max() - recent['low'].min()
@@ -382,8 +386,8 @@ def get_levels(df, signal, custom_tp=None, custom_sl=None, style_key="day_trader
     if tp_options:
         tp = min(tp_options) if signal == "BUY" else max(tp_options)
     else:
-        # Pure R:R fallback — 1.8:1
-        tp = last + risk * 1.8 if signal == "BUY" else last - risk * 1.8
+        # Pure R:R fallback — uses the style's target R:R
+        tp = last + risk * tp_mult if signal == "BUY" else last - risk * tp_mult
 
     # Final sanity: enforce minimum 1.5:1 R:R
     if signal == "BUY" and tp < min_tp:

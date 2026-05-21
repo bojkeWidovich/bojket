@@ -117,7 +117,7 @@ _POLLING_JS = """
         if (!badge) return;
         var tierEl = badge.querySelector('div > div:first-child');
         if (!tierEl) return;
-        var tier = (tierEl.textContent || '').trim();
+        var tier = (tierEl.textContent || '').trim().replace('RANK ', '');
         if (!tier) return;
         if (_lastRankTier === null) { _lastRankTier = tier; return; }
         if (tier !== _lastRankTier) {
@@ -954,20 +954,16 @@ app.index_string = f"""<!DOCTYPE html>
                 .mandarine-field {{ display: none !important; }}
             }}
             /* ── Live activity tickers — opposite-direction marquees ──── */
-            @keyframes tickerLeft {{
-                from {{ transform: translateX(0); }}
-                to   {{ transform: translateX(-50%); }}
-            }}
-            @keyframes tickerRight {{
+            @keyframes tickerScroll {{
                 from {{ transform: translateX(-50%); }}
                 to   {{ transform: translateX(0); }}
             }}
             .ticker-row-left, .ticker-row-right {{
-                display: flex; width: max-content;
+                display: flex; width: max-content; flex-wrap: nowrap;
                 will-change: transform;
             }}
-            .ticker-row-left  {{ animation: tickerLeft  90s linear infinite; }}
-            .ticker-row-right {{ animation: tickerRight 90s linear infinite; }}
+            .ticker-row-right {{ animation: tickerScroll 90s linear infinite; }}
+            .ticker-row-left  {{ animation: tickerScroll 90s linear infinite reverse; }}
             .ticker-row-left:hover, .ticker-row-right:hover {{ animation-play-state: paused; }}
             .for-teams-gold:hover {{
                 transform: translateY(-1px);
