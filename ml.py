@@ -59,6 +59,11 @@ def _get_fetch_data():
     from data import fetch_data
     return fetch_data
 
+def _data_fns():
+    """Lazy import of data.py indicators (avoids circular import at load time)."""
+    from data import get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence
+    return get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence
+
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  ML ENGINE — LEVEL 1 (BACKTESTING) + LEVEL 2 (XGBOOST)
@@ -69,6 +74,7 @@ def extract_features(df):
     if df is None or len(df) < 52:
         return None
     try:
+        get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence = _data_fns()
         cl = df['close']
         last = cl.iloc[-1]
         if last == 0: return None
@@ -153,6 +159,7 @@ def build_ml_dataset(symbol, interval="1h", period="2y"):
     Label 0 = price hit SL before TP.
     Ambiguous candles are skipped.
     """
+    get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence = _data_fns()
     YF_MAX_PERIOD = {
         "1m":"7d","2m":"60d","5m":"60d","15m":"60d","30m":"60d",
         "1h":"730d","2h":"730d","4h":"730d","1d":"2y","1wk":"5y",
@@ -358,7 +365,7 @@ def ml_predict(df):
 # ── BACKTESTING ENGINE ────────────────────────────────────────────────────────
 
 def _backtest_thread(symbol, interval, period="2y"):
-    from data import get_ema_trend   # lazy import — avoids circular import
+    get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence = _data_fns()
     with _BT_LOCK:
         _BT_STATE.update({"status": "running", "progress": 5,
                           "message": f"Fetching {symbol} {interval} data…", "results": None})
