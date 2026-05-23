@@ -2126,6 +2126,130 @@ def exit_trade(n, store, journal, status, session):
     return new_store, new_journal
 
 @app.callback(Output("journal-table","children"),Output("streak-display","children"),Input("journal-store","data"))
+def compute_performance(journal):
+    """Honest performance metrics from the trade journal. No hype, no cherry-picking.
+    Wins = result contains 'TP', losses = 'SL'. Manual exits count as closed but neutral."""
+    j = journal or []
+    closed = [t for t in j if any(k in str(t.get("result","")) for k in ("TP","SL","Manual"))]
+    n = len(closed)
+    if n == 0:
+        return {"n":0}
+
+    wins   = [t for t in closed if "TP" in str(t.get("result",""))]
+    losses = [t for t in closed if "SL" in str(t.get("result",""))]
+    nw, nl = len(wins), len(losses)
+    decided = nw + nl
+    win_rate = (nw / decided * 100) if decided else 0.0
+
+    def _r_win(t):
+        try:
+            entry=float(t.get("entry")); tp=float(t.get("tp")); sl=float(t.get("sl"))
+            risk=abs(entry-sl)
+            return abs(tp-entry)/risk if risk>0 else None
+        except Exception:
+            return None
+
+    r_wins = [r for r in (_r_win(t) for t in wins) if r is not None]
+    avg_win_r  = (sum(r_wins)/len(r_wins)) if r_wins else 0.0
+    avg_loss_r = -1.0   # each SL = -1R by definition
+
+    gross_win  = sum(r_wins)
+    gross_loss = float(nl) or 1e-9
+    profit_factor = gross_win / gross_loss if (r_wins or nl) else 0.0
+
+    p_win = nw / decided if decided else 0.0
+    expectancy = (p_win * avg_win_r) + ((1 - p_win) * avg_loss_r) if decided else 0.0
+
+    max_streak = cur = 0
+    for t in closed:
+        if "SL" in str(t.get("result","")):
+            cur += 1; max_streak = max(max_streak, cur)
+        elif "TP" in str(t.get("result","")):
+            cur = 0
+
+    equity = []; running = 0.0
+    for t in closed:
+        if "TP" in str(t.get("result","")):
+            r=_r_win(t); running += (r if r is not None else 1.0)
+        elif "SL" in str(t.get("result","")):
+            running += -1.0
+        equity.append(round(running,2))
+
+    by_day = {}
+    for t in closed:
+        d=str(t.get("date","")); by_day.setdefault(d,{"w":0,"l":0})
+        if "TP" in str(t.get("result","")): by_day[d]["w"]+=1
+        elif "SL" in str(t.get("result","")): by_day[d]["l"]+=1
+    green_days = sum(1 for d in by_day.values() if d["w"]>d["l"])
+    total_days = len(by_day)
+
+    return {"n":n,"wins":nw,"losses":nl,"win_rate":round(win_rate,1),
+            "profit_factor":round(profit_factor,2),"expectancy":round(expectancy,3),
+            "avg_win_r":round(avg_win_r,2),"avg_loss_r":avg_loss_r,
+            "max_losing_streak":max_streak,"equity":equity,
+            "green_days":green_days,"total_days":total_days}
+
+
+def render_performance_panel(journal):
+    """Brutally honest performance dashboard for the AI Lab."""
+    p = compute_performance(journal)
+    if p["n"] == 0:
+        return html.Div([
+            html.Div("📈 YOUR REAL TRACK RECORD", style={"color":TEXT_MAIN,"fontWeight":"900","fontSize":"0.82em","letterSpacing":"1px","marginBottom":"8px"}),
+            html.Div("No closed trades yet. Paper-trade some signals, close them with TP or SL, and your real edge appears here — win rate, profit factor, expectancy, worst losing streak. This is the honest mirror.",
+                     style={"color":TEXT_DIM,"fontSize":"0.72em","lineHeight":"1.5"}),
+            html.Div(style={"height":"1px","backgroundColor":BORDER,"margin":"14px 0 18px 0"}),
+        ], style={"backgroundColor":f"{PURPLE}06","border":f"1px solid {PURPLE}20","borderRadius":"12px","padding":"16px","marginBottom":"18px"})
+
+    pf=p["profit_factor"]; n=p["n"]
+    if n < 20:
+        vc=TEXT_MUTED; verdict=f"⏳ Only {n} trades — too few to judge. Aim for 30+ before trusting these numbers."
+    elif pf >= 1.5:
+        vc=BULL; verdict=f"✅ Profit factor {pf} over {n} trades — a real edge is showing."
+    elif pf >= 1.1:
+        vc="#d4a017"; verdict=f"🟡 Profit factor {pf} — marginally positive. Promising, not proven."
+    else:
+        vc=BEAR; verdict=f"🔴 Profit factor {pf} — no edge yet. Do NOT trade real size on this."
+
+    def stat(label,value,color,sub=""):
+        return html.Div([
+            html.Div(label,style={"color":TEXT_MUTED,"fontSize":"0.52em","letterSpacing":"1px","marginBottom":"3px"}),
+            html.Div(value,style={"color":color,"fontWeight":"800","fontSize":"1.15em"}),
+            *([html.Div(sub,style={"color":TEXT_MUTED,"fontSize":"0.5em","marginTop":"2px"})] if sub else []),
+        ],style={"flex":"1","textAlign":"center","backgroundColor":"rgba(255,255,255,0.02)","borderRadius":"8px","padding":"10px 6px","minWidth":"80px"})
+
+    eq=p["equity"]
+    eq_summary = html.Div([
+        html.Div("EQUITY (cumulative R)",style={"color":TEXT_MUTED,"fontSize":"0.55em","letterSpacing":"1px","marginBottom":"4px"}),
+        html.Div(f"{eq[-1]:+.2f}R" if eq else "0R",style={"color":BULL if (eq and eq[-1]>=0) else BEAR,"fontWeight":"800","fontSize":"1.4em"}),
+        html.Div(f"Peak {max(eq):+.2f}R · Trough {min(eq):+.2f}R" if eq else "",style={"color":TEXT_MUTED,"fontSize":"0.55em","marginTop":"2px"}),
+    ],style={"backgroundColor":"rgba(255,255,255,0.02)","borderRadius":"8px","padding":"12px","marginBottom":"10px","textAlign":"center"})
+
+    return html.Div([
+        html.Div([
+            html.Span("📈",style={"fontSize":"1.4em","marginRight":"10px"}),
+            html.Div([
+                html.Div("YOUR REAL TRACK RECORD",style={"color":TEXT_MAIN,"fontWeight":"900","fontSize":"0.82em","letterSpacing":"1px"}),
+                html.Div("The honest mirror — your closed trades only.",style={"color":TEXT_DIM,"fontSize":"0.68em","marginTop":"2px"}),
+            ]),
+        ],style={"display":"flex","alignItems":"flex-start","marginBottom":"12px"}),
+        html.Div(verdict,style={"color":vc,"fontSize":"0.74em","fontWeight":"700","lineHeight":"1.4","backgroundColor":f"{vc}10","border":f"1px solid {vc}30","borderRadius":"10px","padding":"12px","marginBottom":"12px"}),
+        html.Div([
+            stat("WIN RATE",f"{p['win_rate']}%",BULL if p['win_rate']>=50 else BEAR,f"{p['wins']}W / {p['losses']}L"),
+            stat("PROFIT FACTOR",f"{p['profit_factor']}",BULL if pf>=1.3 else "#d4a017" if pf>=1.0 else BEAR,"win ÷ loss"),
+            stat("EXPECTANCY",f"{p['expectancy']:+.2f}R",BULL if p['expectancy']>0 else BEAR,"per trade"),
+        ],style={"display":"flex","gap":"6px","marginBottom":"8px"}),
+        html.Div([
+            stat("TRADES",f"{p['n']}",TEXT_MAIN),
+            stat("WORST STREAK",f"{p['max_losing_streak']}",BEAR if p['max_losing_streak']>=5 else NEUTRAL,"losses in a row"),
+            stat("GREEN DAYS",f"{p['green_days']}/{p['total_days']}",BULL if p['green_days']>=p['total_days']*0.5 else NEUTRAL,"net positive"),
+        ],style={"display":"flex","gap":"6px","marginBottom":"12px"}),
+        eq_summary,
+        html.Div("⚠️ Real edge needs 30+ trades. A few green days prove nothing; a high profit factor over many trades does.",
+                 style={"color":TEXT_MUTED,"fontSize":"0.62em","lineHeight":"1.45","fontStyle":"italic","marginBottom":"6px"}),
+        html.Div(style={"height":"1px","backgroundColor":BORDER,"margin":"14px 0 18px 0"}),
+    ],style={"backgroundColor":f"{PURPLE}06","border":f"1px solid {PURPLE}20","borderRadius":"12px","padding":"16px","marginBottom":"18px"})
+
 def render_journal(journal):
     streak=get_streak(journal)
     if streak>=3: streak_el=html.Div([html.Span("🔥",style={"marginRight":"6px"}),html.Span(f"{streak} TP streak",style={"color":BULL,"fontWeight":"600","fontSize":"0.82em"}),html.Span(" — signals are running hot",style={"color":TEXT_MUTED,"fontSize":"0.75em","fontStyle":"italic"})],style={"marginBottom":"10px"})
@@ -2345,8 +2469,9 @@ def render_admin(style, tab):
     State("bt-interval-store","data"),
     State("ml-train-symbols-store","data"),
     State("ml-train-interval-store","data"),
+    State("journal-store","data"),
 )
-def update_ailab(n, is_open, bt_sym, bt_int, train_syms, train_int):
+def update_ailab(n, is_open, bt_sym, bt_int, train_syms, train_int, journal):
     if not is_open:
         return dash.no_update
 
@@ -2520,7 +2645,8 @@ def update_ailab(n, is_open, bt_sym, bt_int, train_syms, train_int):
         render_backtest_results(bt_results),
     ])
 
-    return html.Div([ml_section, bt_section])
+    perf_section = render_performance_panel(journal)
+    return html.Div([perf_section, ml_section, bt_section])
 
 
 # Toggle ML training symbols
