@@ -148,7 +148,18 @@ def build_ml_dataset(symbol, interval="1h", period="2y"):
     Label 0 = price hit SL before TP.
     Ambiguous candles are skipped.
     """
-    df = _get_fetch_data()(symbol, interval=interval, period=period)
+    # Yahoo limits history per interval — request only what it will actually serve.
+    # (2y of 1h/4h data does NOT exist on Yahoo; asking for it returns empty.)
+    YF_MAX_PERIOD = {
+        "1m": "7d", "2m": "60d", "5m": "60d", "15m": "60d", "30m": "60d",
+        "1h": "730d", "2h": "730d", "4h": "730d",
+        "1d": "2y", "1wk": "5y",
+    }
+    safe_period = YF_MAX_PERIOD.get(interval, "60d")
+    df = _get_fetch_data()(symbol, interval=interval, period=safe_period)
+    # Fallback chain: if the capped request still came back thin, step down.
+    if (df is None or len(df) < 120) and interval in ("1h", "2h", "4h"):
+        df = _get_fetch_data()(symbol, interval=interval, period="60d")
     if df is None or len(df) < 120:
         return None, None
 
