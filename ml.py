@@ -137,7 +137,12 @@ def extract_features(df):
         # Replace any NaN/inf
         feats = [0.0 if (np.isnan(x) or np.isinf(x)) else x for x in feats]
         return feats
-    except:
+    except Exception as e:
+        if not hasattr(extract_features, "_warned"):
+            import traceback
+            print("⚠️ extract_features failed:", repr(e))
+            traceback.print_exc()
+            extract_features._warned = True
         return None
 
 
@@ -148,17 +153,13 @@ def build_ml_dataset(symbol, interval="1h", period="2y"):
     Label 0 = price hit SL before TP.
     Ambiguous candles are skipped.
     """
-    # Yahoo limits history per interval — request only what it will actually serve.
-    # (2y of 1h/4h data does NOT exist on Yahoo; asking for it returns empty.)
     YF_MAX_PERIOD = {
-        "1m": "7d", "2m": "60d", "5m": "60d", "15m": "60d", "30m": "60d",
-        "1h": "730d", "2h": "730d", "4h": "730d",
-        "1d": "2y", "1wk": "5y",
+        "1m":"7d","2m":"60d","5m":"60d","15m":"60d","30m":"60d",
+        "1h":"730d","2h":"730d","4h":"730d","1d":"2y","1wk":"5y",
     }
     safe_period = YF_MAX_PERIOD.get(interval, "60d")
     df = _get_fetch_data()(symbol, interval=interval, period=safe_period)
-    # Fallback chain: if the capped request still came back thin, step down.
-    if (df is None or len(df) < 120) and interval in ("1h", "2h", "4h"):
+    if (df is None or len(df) < 120) and interval in ("1h","2h","4h"):
         df = _get_fetch_data()(symbol, interval=interval, period="60d")
     if df is None or len(df) < 120:
         return None, None
@@ -357,11 +358,19 @@ def ml_predict(df):
 # ── BACKTESTING ENGINE ────────────────────────────────────────────────────────
 
 def _backtest_thread(symbol, interval, period="2y"):
+    from data import get_ema_trend   # lazy import — avoids circular import
     with _BT_LOCK:
         _BT_STATE.update({"status": "running", "progress": 5,
                           "message": f"Fetching {symbol} {interval} data…", "results": None})
     try:
-        df = _get_fetch_data()(symbol, interval=interval, period=period)
+        YF_MAX_PERIOD = {
+            "1m":"7d","2m":"60d","5m":"60d","15m":"60d","30m":"60d",
+            "1h":"730d","2h":"730d","4h":"730d","1d":"2y","1wk":"5y",
+        }
+        safe_period = YF_MAX_PERIOD.get(interval, "60d")
+        df = _get_fetch_data()(symbol, interval=interval, period=safe_period)
+        if (df is None or len(df) < 120) and interval in ("1h","2h","4h"):
+            df = _get_fetch_data()(symbol, interval=interval, period="60d")
         if df is None or len(df) < 120:
             with _BT_LOCK:
                 _BT_STATE.update({"status": "error",
