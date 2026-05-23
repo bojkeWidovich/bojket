@@ -1516,7 +1516,7 @@ def render_page(path,search,session):
     if path=="/email-sent": return email_sent_page(pending_email)
     if path=="/dashboard":
         if not logged_in: return login_page()
-        if not ob_done: return onboarding_page(ob_step,session.get("ob_answers",[]))
+        # Onboarding interstitial removed — logged-in users go straight to dashboard
         # Handle return from Stripe — plan granted via URL params
         if search and "post_payment=1" in search:
             params = dict(p.split("=",1) for p in search.lstrip("?").split("&") if "=" in p)
@@ -1603,9 +1603,10 @@ def handle_navigation(login_sub,login_enter,signup_link,back_btn,logo_btn,ob_ans
                 sid = secrets.token_urlsafe(16)
                 if not register_session(e, sid):
                     return dash.no_update, s
+                _register_user(e,"veteran","monthly")
                 _mark_login(e)
-                s.update({"logged_in":True,"plan":None,"onboarding_done":False,"ob_step":0,"ob_answers":[],"pending_email":e,"session_id":sid})
-                return "/onboarding",s
+                s.update({"logged_in":True,"plan":"veteran","onboarding_done":True,"pending_email":e,"session_id":sid})
+                return "/dashboard",s
             else:
                 token=secrets.token_urlsafe(32); PENDING_VERIFICATIONS[token]=e
                 send_verification_email(e,token); s["pending_email"]=e
@@ -1613,8 +1614,9 @@ def handle_navigation(login_sub,login_enter,signup_link,back_btn,logo_btn,ob_ans
         return dash.no_update,s
     if "skip-verify-btn" in trig:
         e=s.get("pending_email","demo@bojket.com"); VERIFIED_ACCOUNTS.add(e)
-        s.update({"logged_in":True,"plan":None,"onboarding_done":False,"ob_step":0,"ob_answers":[],"pending_email":e})
-        return "/onboarding",s
+        _register_user(e,"veteran","monthly")
+        s.update({"logged_in":True,"plan":"veteran","onboarding_done":True,"pending_email":e})
+        return "/dashboard",s
     if "ob-answer" in trig:
         step=s.get("ob_step",0); answers=list(s.get("ob_answers",[])); answers.append(step)
         next_step=step+1; s.update({"ob_step":next_step,"ob_answers":answers})
