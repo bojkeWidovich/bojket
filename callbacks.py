@@ -1327,7 +1327,7 @@ def toggle_what_is(n):
 def _tour_screen(num):
     screens = {
         1: {"title":"The system every prop firm wishes their traders used.",
-            "sub":"A 60-second look at how Bojket turns disciplined trading into infrastructure.",
+            "sub":"A quick look at how Bojket turns disciplined trading into infrastructure.",
             "mock":[("🎯","ADAPTIVE SIGNAL","Scalper, Day, Swing or Position — Bojket adjusts."),
                     ("🛡️","FORCED DISCIPLINE","Every entry locked with TP/SL. No moving stops."),
                     ("📊","AUTO-JOURNALED","Every trade. Every reason. Reviewable.")]},
@@ -1338,21 +1338,29 @@ def _tour_screen(num):
             "sub":"Most funded accounts blow because traders widen stops. Bojket prevents that.",
             "mock_guardrails":["✓ TP/SL enforced on every entry","✓ Position size tied to remaining drawdown",
                                 "✓ Cooldown after consecutive losses","✓ Alert when about to break rules"]},
-        4: {"title":"AI coach that talks like a trader.",
+        4: {"title":"A self-training AI brain behind every signal.",
+            "sub":"The AI Lab trains a machine-learning model on 2 years of real market history — then uses it to sharpen every BUY, SELL and WAIT you see. Retrain anytime; the brain gets smarter.",
+            "mock":[("🧠","TRAINED ON 2 YEARS","Learns the patterns that actually preceded winning moves."),
+                    ("⚡","BOOSTS EVERY SIGNAL","ML confidence is blended into the live signal score."),
+                    ("🔮","LEARNS FROM YOUR TRADES","Coming soon — the brain will adapt to YOUR results.")]},
+        5: {"title":"AI coach that talks like a trader.",
             "sub":"Available 24/7. Explains every signal in plain English.",
             "mock_chat":[("user","Should I take this BUY on Gold?"),
                           ("ai","Yes — confluence is strong. Score 81%, RSI bouncing from 32, 4H EMA bullish. TP set at 1.5R for your Day Trader style.")]},
-        5: {"title":"Every trade. Auto-logged. Reviewable.",
+        6: {"title":"Every trade. Auto-logged. Reviewable.",
             "sub":"Your traders' performance, transparent. Pre-payout review built in.",
             "mock_journal":[("BTC-USD","BUY","TP hit","+€2,840","🇩🇪 Lukas M."),
                              ("EURUSD","SELL","TP hit","+€1,920","🇬🇧 Ethan R."),
                              ("Gold","BUY","TP hit","+€4,120","🇦🇹 Felix W."),
                              ("Nasdaq","BUY","SL hit","−€840","🇨🇭 David K.")]},
-        6: {"title":"Built for your firm. Your brand. Your edge.",
-            "sub":"White-label option turns Bojket into YOUR platform. Custom domain, your logo, your name.",
-            "is_close":True},
+        7: {"title":"Climb the Capybara ranks.",
+            "sub":"A bit of fun on top of the discipline — earn your rank through real trading activity and win-rate. From Rookie to Veteran.",
+            "mock_ranks":[("🥉","CAPYBARA ROOKIE","Where everyone starts"),
+                          ("🥈","INTERMEDIATE","5+ trades logged"),
+                          ("🥇","HUSTLER","15+ trades, 50%+ win-rate"),
+                          ("💠","MASTER","40+ trades, staying active"),
+                          ("💎","VETERAN","100+ trades, 60%+ win-rate")]},
     }
-    s = screens.get(num, screens[1])
     blocks = [
         html.Div(s["title"], style={"color":"white","fontSize":"2.4em","fontWeight":"900","letterSpacing":"-1.2px","lineHeight":"1.15","textAlign":"center","marginBottom":"22px"}),
         html.Div(s["sub"], style={"color":"rgba(255,255,255,0.65)","fontSize":"1em","lineHeight":"1.7","textAlign":"center","marginBottom":"50px","maxWidth":"680px","margin":"0 auto 50px auto"}),
@@ -1396,10 +1404,14 @@ def _tour_screen(num):
                 html.Span(pnl, style={"flex":"1","color":"#22c55e" if "+" in pnl else "#ef4444","fontWeight":"900","fontSize":"0.92em","textAlign":"right"}),
             ], style={"display":"flex","alignItems":"center","padding":"14px 20px","borderBottom":"1px solid rgba(255,255,255,0.06)"}) for sym, side, res, pnl, who in s["mock_journal"]],
         ], style={"maxWidth":"720px","margin":"0 auto","backgroundColor":"rgba(20,17,40,0.5)","border":"1px solid rgba(168,85,247,0.2)","borderRadius":"16px","overflow":"hidden"}))
-    if s.get("is_close"):
+    if "mock_ranks" in s:
         blocks.append(html.Div([
-            html.A("Book a 15-min Call →", href="/book-call", style={"display":"inline-block","padding":"22px 56px","background":"linear-gradient(135deg,#B8860B,#FFD700,#DAA520)","color":"#1a1a1a","fontWeight":"900","fontSize":"1em","letterSpacing":"3px","borderRadius":"100px","textDecoration":"none","boxShadow":"0 16px 44px rgba(255,215,0,0.45), inset 0 1px 0 rgba(255,255,255,0.5)","border":"1.5px solid rgba(255,215,0,0.7)"}),
-        ], style={"textAlign":"center","marginTop":"20px"}))
+            *[html.Div([
+                html.Div(emoji, style={"fontSize":"2.2em","marginBottom":"8px"}),
+                html.Div(name, style={"color":"#FFD700","fontWeight":"800","fontSize":"0.7em","letterSpacing":"2px","marginBottom":"6px"}),
+                html.Div(req, style={"color":"rgba(255,255,255,0.6)","fontSize":"0.72em","lineHeight":"1.4"}),
+            ], style={"flex":"1","minWidth":"120px","padding":"22px 14px","backgroundColor":"rgba(255,215,0,0.04)","border":"1px solid rgba(255,215,0,0.2)","borderRadius":"14px","textAlign":"center"}) for emoji, name, req in s["mock_ranks"]],
+        ], style={"display":"flex","gap":"12px","flexWrap":"wrap","justifyContent":"center","maxWidth":"760px","margin":"0 auto"}))
     return blocks
 
 
@@ -1423,13 +1435,13 @@ def tour_handler(open_n, close_n, next_n, prev_n, current):
     if trig == "tour-close-btn":
         return hidden, dash.no_update, dash.no_update, 1
     if trig == "open-tour-btn":
-        return visible, _tour_screen(1), "1 / 6", 1
+        return visible, _tour_screen(1), "1 / 7", 1
     if trig == "tour-next-btn":
-        new = min(current + 1, 6)
-        return visible, _tour_screen(new), f"{new} / 6", new
+        new = min(current + 1, 7)
+        return visible, _tour_screen(new), f"{new} / 7", new
     if trig == "tour-prev-btn":
         new = max(current - 1, 1)
-        return visible, _tour_screen(new), f"{new} / 6", new
+        return visible, _tour_screen(new), f"{new} / 7", new
     return dash.no_update, dash.no_update, dash.no_update, current
 
 # ══════════════════════════════════════════════════════════════════════════════

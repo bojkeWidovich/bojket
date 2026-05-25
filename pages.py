@@ -51,21 +51,21 @@ def landing_page():
         "signin":        "SIGN IN",
         "lp_badge":      "PRIVATE ACCESS",
         "lp_badge_sub":  "BY INVITATION ONLY",
-        "lp_h1":         "EXCLUSIVE TRADING SYSTEM. SERIOUS CAPITAL.",
-        "lp_desc":       "INSTITUTIONAL-GRADE SIGNALS. A CLOSED PROGRAM FOR A LIMITED NUMBER OF CLIENTS. LIFETIME ACCESS TO EVERY UPDATE.",
+        "lp_h1":         "TRADE WITH A SYSTEM. NOT A FEELING.",
+        "lp_desc":       "ADAPTIVE AI SIGNALS · ENFORCED DISCIPLINE · BUILT FOR SERIOUS CAPITAL",
         "lp_cta":        "BOOK A PRIVATE CALL",
         "trust_items":   ["PRIVATE ONBOARDING", "LIFETIME ACCESS", "24/7 DIRECT SUPPORT"],
         "trust_geo":     "TRUSTED BY TRADERS IN GERMANY · SWITZERLAND · AUSTRIA · UK · IRELAND",
         "support_lang":  "🇬🇧 English  ·  🇩🇪 Deutscher Support verfügbar",
         "built_tag":     "THE SYSTEM THAT CHANGED HOW WE TRADE",
         "built_h2":      "BUILT FOR TRADERS WHO ARE DONE GUESSING.",
-        "built_sub":     "A COMPLETE TRADING INTELLIGENCE SUITE. USED BY CAPITAL THAT TAKES ITSELF SERIOUSLY.",
-        "feat":          [("📊", "MULTI-TIMEFRAME ANALYSIS",  "See what the bigger trend is doing before you enter."),
-                          ("🧠", "XGBoost ML ENGINE",          "Trained on 2 years of real data — learns what actually wins."),
-                          ("⚡", "DEFINED ENTRY, TP & SL",     "Every signal comes with a precise entry, target, and stop."),
-                          ("🤖", "AI TRADING MENTOR",          "Available 24/7. Answers like a trader, not a textbook."),
-                          ("🔬", "BACKTESTING ENGINE",         "Validate any strategy against 2 years of market history."),
-                          ("📓", "SMART TRADE JOURNAL",        "Every trade logged. Watch your edge sharpen over time.")],
+        "built_sub":     "ONE PLATFORM FOR EVERYTHING THAT MATTERS — SIGNALS, AI, DISCIPLINE, AND PROOF.",
+        "feat":          [("🎯", "ADAPTIVE SIGNAL ENGINE",     "BUY, SELL or WAIT — tuned to your exact trading style."),
+                          ("🧠", "SELF-TRAINING AI LAB",        "An ML brain trained on 2 years of data, sharpening every signal."),
+                          ("⚡", "DEFINED ENTRY, TP & SL",      "No guessing. Every signal lands with a precise plan."),
+                          ("🤖", "24/7 AI TRADING COACH",       "Explains every setup in plain English, like a real mentor."),
+                          ("📈", "HONEST PERFORMANCE TRACKER",  "Win rate, profit factor, real edge — no vanity metrics."),
+                          ("🦫", "CAPYBARA RANK SYSTEM",        "Earn your rank through real, disciplined trading.")],
         "footer_copy":   "© 2026 BOJKET  ·  NOT FINANCIAL ADVICE.",
         "footer_sub":    "THE FUTURE OF TRADING.",
     }
@@ -134,9 +134,7 @@ def landing_page():
         html.Div([
             html.Div([
                 html.Button([
-                    html.Span("◆  ", style={"color":"#1a1a1a","fontSize":"1em"}),
                     html.Span("SEE HOW BOJKET WORKS", style={"fontWeight":"900","letterSpacing":"3px"}),
-                    html.Span("  →", style={"marginLeft":"6px"}),
                 ], id="open-tour-btn", n_clicks=0, style={
                     "display":"inline-flex","alignItems":"center","padding":"20px 38px",
                     "background":"linear-gradient(135deg,#B8860B 0%,#FFD700 50%,#DAA520 100%)",
@@ -146,9 +144,7 @@ def landing_page():
                     "transition":"all 0.25s ease",
                 }),
                 html.Button([
-                    html.Span("📸  ", style={"fontSize":"1em"}),
                     html.Span("REAL SCREENSHOTS", style={"fontWeight":"900","letterSpacing":"3px"}),
-                    html.Span("  →", style={"marginLeft":"6px"}),
                 ], id="open-gallery-btn", n_clicks=0, style={
                     "display":"inline-flex","alignItems":"center","padding":"20px 38px",
                     "background":"rgba(168,85,247,0.06)","color":"white","fontSize":"0.85em",
@@ -157,10 +153,6 @@ def landing_page():
                     "backdropFilter":"blur(8px)",
                 }),
             ], style={"display":"flex","gap":"20px","justifyContent":"center","flexWrap":"wrap"}),
-            html.Div("60-SECOND WALKTHROUGH  ·  NO SIGNUP REQUIRED  ·  REAL PRODUCT", style={
-                "color":"rgba(255,255,255,0.4)","fontSize":"0.7em","fontWeight":"600",
-                "letterSpacing":"3px","marginTop":"24px","textTransform":"uppercase","textAlign":"center",
-            }),
         ], style={"textAlign":"center","padding":"100px 20px","backgroundColor":"#060608",
                   "borderBottom":"1px solid rgba(255,255,255,0.05)",
                   "background":"radial-gradient(ellipse at center, rgba(168,85,247,0.04), transparent 70%), #060608"}),
@@ -433,37 +425,8 @@ def landing_page():
             "background":"radial-gradient(circle at 50% 50%, rgba(147,51,234,0.06) 0%, transparent 70%)",
         }),
 
-        # ── Bottom CTA — tight & premium ─────────────────────────────────────
-        html.Div([
-            html.Div([
-                html.Div("THE NEXT STEP", className="reveal", style={
-                    "color":PURPLE_LIGHT,"fontSize":"0.82em","fontWeight":"800","letterSpacing":"5px","marginBottom":"24px",
-                }),
-                html.H2("BOOK A PRIVATE CALL.", className="reveal", style={
-                    "color":"white","fontWeight":"900","fontSize":"3.6em","margin":"0 0 22px 0",
-                    "letterSpacing":"-2px","lineHeight":"1.05","textTransform":"uppercase",
-                }),
-                html.Div("ONE CONVERSATION. NO OBLIGATION. WE DECIDE TOGETHER IF IT'S A FIT.",
-                    className="reveal",
-                    style={"color":"rgba(255,255,255,0.55)","fontSize":"0.85em","fontWeight":"600",
-                           "letterSpacing":"3px","marginBottom":"44px","lineHeight":"1.9"}),
-                html.A("BOOK A PRIVATE CALL", href="/book-call", className="reveal cta-mega", style={
-                    "background":"linear-gradient(135deg,#A855F7,#9333EA)",
-                    "color":"white","padding":"22px 52px","borderRadius":"14px",
-                    "fontWeight":"800","fontSize":"1.05em","letterSpacing":"3px",
-                    "textDecoration":"none","display":"inline-block",
-                    "boxShadow":"0 12px 48px rgba(147,51,234,0.55), 0 0 0 1px rgba(168,85,247,0.7) inset",
-                    "whiteSpace":"nowrap",
-                }),
-            ], style={"textAlign":"center"}),
-        ], style={"padding":"120px 64px","borderTop":"1px solid rgba(255,255,255,0.05)"}),
-
         # ── Our socials ──────────────────────────────────────────────────────
         html.Div([
-            html.Div("OUR SOCIALS", className="reveal", style={
-                "color":PURPLE_LIGHT,"fontSize":"0.75em","fontWeight":"800",
-                "letterSpacing":"5px","textAlign":"center","marginBottom":"28px",
-            }),
             html.Div([
                 html.A([
                     html.Img(src="https://cdn.simpleicons.org/instagram/ffffff",
@@ -589,7 +552,7 @@ def landing_page():
                     "zIndex":"10",
                 }),
                 html.Div([
-                    html.Span(id="tour-progress-text", children="1 / 6", style={
+                    html.Span(id="tour-progress-text", children="1 / 7", style={
                         "color":"rgba(255,215,0,0.9)","fontSize":"0.7em","fontWeight":"800",
                         "letterSpacing":"4px",
                     }),
