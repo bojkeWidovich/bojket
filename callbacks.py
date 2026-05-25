@@ -1361,6 +1361,7 @@ def _tour_screen(num):
                           ("💠","MASTER","40+ trades, staying active"),
                           ("💎","VETERAN","100+ trades, 60%+ win-rate")]},
     }
+    s = screens.get(num, screens[1])
     blocks = [
         html.Div(s["title"], style={"color":"white","fontSize":"2.4em","fontWeight":"900","letterSpacing":"-1.2px","lineHeight":"1.15","textAlign":"center","marginBottom":"22px"}),
         html.Div(s["sub"], style={"color":"rgba(255,255,255,0.65)","fontSize":"1em","lineHeight":"1.7","textAlign":"center","marginBottom":"50px","maxWidth":"680px","margin":"0 auto 50px auto"}),
