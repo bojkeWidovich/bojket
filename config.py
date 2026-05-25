@@ -49,6 +49,8 @@ BETA_ACCOUNTS = {
     "beta14@bojket.com": "Bk!Trade14",
     "beta15@bojket.com": "Bk!Trade15",
     "julkic@bojket.com": "smrditidupa",
+    "alvaro1@bojket.com": "Alvaro2026!",
+    "alvaro2@bojket.com": "Alvaro2026!",
 }
 
 # ── Email config ──────────────────────────────────────────────────────────────
@@ -97,7 +99,11 @@ FEATURE_NAMES = [
     "bb_position","vwap_pos",
     "vol_ratio","body_ratio","bull_candle",
     "ret_1","ret_5","ret_10","atr_ratio",
+    # ── Wider-context features ──
+    "htf_trend","regime_code","volatility_code",
+    "dist_to_support","dist_to_resistance","hour_norm",
 ]
+
 
 
 # ── AI system prompt ──────────────────────────────────────────────────────────

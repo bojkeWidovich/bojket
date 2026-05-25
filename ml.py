@@ -61,8 +61,10 @@ def _get_fetch_data():
 
 def _data_fns():
     """Lazy import of data.py indicators (avoids circular import at load time)."""
-    from data import get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence
-    return get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence
+    from data import (get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series,
+                       get_rsi_divergence, get_support_resistance)
+    return (get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series,
+            get_rsi_divergence, get_support_resistance)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -74,7 +76,7 @@ def extract_features(df):
     if df is None or len(df) < 52:
         return None
     try:
-        get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence = _data_fns()
+        get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence, get_support_resistance = _data_fns()
         cl = df['close']
         last = cl.iloc[-1]
         if last == 0: return None
@@ -118,6 +120,40 @@ def extract_features(df):
         atr_val = get_atr(df) or 0
         atr_ratio = atr_val / (last + 1e-10)
 
+        # ── Wider-context features ───────────────────────────────────────
+        # 1) Higher-timeframe trend: slope of EMA50 over the last 10 candles
+        e50_series = cl.ewm(span=50, adjust=False).mean()
+        htf_trend = float(np.clip((e50_series.iloc[-1] / (e50_series.iloc[-10] + 1e-10) - 1) * 20, -1, 1)) if len(df) >= 60 else 0.0
+
+        # 2) Regime: cheap ADX-style trend strength from the data on hand
+        #    (avoids importing the live regime fn which needs a symbol string)
+        rng = (df['high'] - df['low']).rolling(14).mean().iloc[-1]
+        move = abs(cl.iloc[-1] - cl.iloc[-14]) if len(df) >= 14 else 0
+        trend_strength = move / (rng * 14 + 1e-10)
+        regime_code = float(np.clip(trend_strength, 0, 1))   # ~0 choppy, ~1 strong trend
+
+        # 3) Volatility regime: current ATR vs its own 50-candle average
+        atr_avg = (df['high'] - df['low']).rolling(50).mean().iloc[-1] if len(df) >= 50 else rng
+        volatility_code = float(np.clip(atr_val / (atr_avg + 1e-10), 0, 3)) / 3.0
+
+        # 4 & 5) Distance to nearest support / resistance (in ATR units)
+        try:
+            sup, res = get_support_resistance(df)
+            below = [x for x in (sup or []) if x < last]
+            above = [x for x in (res or []) if x > last]
+            d_sup = (last - max(below)) / (atr_val + 1e-10) if below else 3.0
+            d_res = (min(above) - last) / (atr_val + 1e-10) if above else 3.0
+        except Exception:
+            d_sup = d_res = 3.0
+        dist_to_support    = float(np.clip(d_sup, 0, 3)) / 3.0
+        dist_to_resistance = float(np.clip(d_res, 0, 3)) / 3.0
+
+        # 6) Time-of-day (session matters): hour of last candle, normalised 0-1
+        try:
+            hour_norm = float(df.index[-1].hour) / 23.0
+        except Exception:
+            hour_norm = 0.5
+
         feats = [
             last / (e10 + 1e-10) - 1,
             last / (e20 + 1e-10) - 1,
@@ -139,6 +175,8 @@ def extract_features(df):
             float(np.clip(ret5,  -0.2, 0.2)),
             float(np.clip(ret10, -0.3, 0.3)),
             float(np.clip(atr_ratio, 0, 0.1)),
+            htf_trend, regime_code, volatility_code,
+            dist_to_support, dist_to_resistance, hour_norm,
         ]
         # Replace any NaN/inf
         feats = [0.0 if (np.isnan(x) or np.isinf(x)) else x for x in feats]
@@ -159,7 +197,7 @@ def build_ml_dataset(symbol, interval="1h", period="2y"):
     Label 0 = price hit SL before TP.
     Ambiguous candles are skipped.
     """
-    get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence = _data_fns()
+    get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence, get_support_resistance = _data_fns()
     YF_MAX_PERIOD = {
         "1m":"7d","2m":"60d","5m":"60d","15m":"60d","30m":"60d",
         "1h":"730d","2h":"730d","4h":"730d","1d":"2y","1wk":"5y",
@@ -253,12 +291,39 @@ def _training_thread(symbols, interval):
         with _ML_LOCK:
             _ML_STATE.update({"progress": 70, "message": f"Training on {n_samples:,} samples…"})
 
+        # ── Walk-forward validation ──────────────────────────────────────
+        # Train on the past, test on the FUTURE, repeated across time slices.
+        # This is the honest accuracy — no peeking at data the model trained on.
+        # NOTE: data is kept in chronological order (do NOT shuffle for this).
+        wf_accs = []
+        n_folds = 4
+        fold = len(X) // (n_folds + 1)
+        if fold >= 50:
+            for k in range(1, n_folds + 1):
+                tr_end = fold * k
+                te_end = fold * (k + 1)
+                Xtr, ytr = X[:tr_end], y[:tr_end]
+                Xte, yte = X[tr_end:te_end], y[tr_end:te_end]
+                if len(Xte) < 10 or len(np.unique(ytr)) < 2:
+                    continue
+                sc = StandardScaler()
+                Xtr_s = sc.fit_transform(Xtr); Xte_s = sc.transform(Xte)
+                if HAS_XGB:
+                    fm = xgb.XGBClassifier(n_estimators=200, max_depth=5, learning_rate=0.05,
+                                           subsample=0.8, colsample_bytree=0.8, random_state=42,
+                                           eval_metric='logloss', use_label_encoder=False, verbosity=0)
+                else:
+                    fm = GradientBoostingClassifier(n_estimators=150, max_depth=4, learning_rate=0.05,
+                                                    subsample=0.8, random_state=42)
+                fm.fit(Xtr_s, ytr)
+                wf_accs.append(accuracy_score(yte, fm.predict(Xte_s)))
+
+        # Final model trains on ALL data (for live use); split only for the headline number
         X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=42)
 
         scaler = StandardScaler()
         X_tr_s = scaler.fit_transform(X_tr)
         X_te_s = scaler.transform(X_te)
-
         if HAS_XGB:
             model = xgb.XGBClassifier(
                 n_estimators=300, max_depth=5, learning_rate=0.05,
@@ -280,7 +345,10 @@ def _training_thread(symbols, interval):
         with _ML_LOCK:
             _ML_STATE.update({"progress": 90, "message": "Evaluating…"})
 
-        acc = round(accuracy_score(y_te, model.predict(X_te_s)) * 100, 1)
+        insample_acc = round(accuracy_score(y_te, model.predict(X_te_s)) * 100, 1)
+        # Walk-forward accuracy is the HONEST number — what the model scores on unseen future data
+        wf_acc = round(float(np.mean(wf_accs)) * 100, 1) if wf_accs else None
+        acc = wf_acc if wf_acc is not None else insample_acc
 
         # Feature importances
         imp = model.feature_importances_
@@ -295,8 +363,10 @@ def _training_thread(symbols, interval):
             _ML_SCALER = scaler
             _ML_STATE.update({
                 "status": "done", "progress": 100,
-                "message": f"Model trained — {acc}% test accuracy",
-                "accuracy": acc, "n_samples": n_samples,
+                "message": (f"Model trained — {acc}% walk-forward accuracy" if wf_acc is not None
+                            else f"Model trained — {acc}% test accuracy (too little data for walk-forward)"),
+                "accuracy": acc, "insample_accuracy": insample_acc, "wf_accuracy": wf_acc,
+                "n_samples": n_samples,
                 "trained_at": datetime.now().strftime("%Y-%m-%d %H:%M"),
                 "error": None, "feat_imp": fi,
             })
@@ -365,7 +435,7 @@ def ml_predict(df):
 # ── BACKTESTING ENGINE ────────────────────────────────────────────────────────
 
 def _backtest_thread(symbol, interval, period="2y"):
-    get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence = _data_fns()
+    get_atr, get_ema_trend, get_stoch_rsi, get_vwap_series, get_rsi_divergence, get_support_resistance = _data_fns()
     with _BT_LOCK:
         _BT_STATE.update({"status": "running", "progress": 5,
                           "message": f"Fetching {symbol} {interval} data…", "results": None})
