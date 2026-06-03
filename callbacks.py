@@ -1003,7 +1003,22 @@ app.index_string = f"""<!DOCTYPE html>
                     width: 100% !important;
                 }}
                 #tour-screen-content {{
-                    padding: 80px 20px 20px 20px !important;
+                    padding: 70px 16px 130px 16px !important;
+                    max-height: 100vh !important;
+                    overflow-y: auto !important;
+                    -webkit-overflow-scrolling: touch !important;
+                }}
+                /* Stack the card grids vertically on phone so they never overlap nav */
+                #tour-screen-content > div > div[style*="display:flex"],
+                #tour-screen-content > div > div[style*="display: flex"] {{
+                    flex-direction: column !important;
+                    gap: 12px !important;
+                }}
+                #tour-screen-content > div > div[style*="display:flex"] > div,
+                #tour-screen-content > div > div[style*="display: flex"] > div {{
+                    width: 100% !important;
+                    flex: 1 1 100% !important;
+                    max-width: 100% !important;
                 }}
                 /* ── Tour screen content sizing ── */
                 #tour-screen-content > div:first-child {{
@@ -2138,7 +2153,6 @@ def exit_trade(n, store, journal, status, session):
     }
     return new_store, new_journal
 
-@app.callback(Output("journal-table","children"),Output("streak-display","children"),Input("journal-store","data"))
 def compute_performance(journal):
     """Honest performance metrics from the trade journal. No hype, no cherry-picking.
     Wins = result contains 'TP', losses = 'SL'. Manual exits count as closed but neutral."""
@@ -2263,6 +2277,7 @@ def render_performance_panel(journal):
         html.Div(style={"height":"1px","backgroundColor":BORDER,"margin":"14px 0 18px 0"}),
     ],style={"backgroundColor":f"{PURPLE}06","border":f"1px solid {PURPLE}20","borderRadius":"12px","padding":"16px","marginBottom":"18px"})
 
+@app.callback(Output("journal-table","children"),Output("streak-display","children"),Input("journal-store","data"))
 def render_journal(journal):
     streak = get_streak(journal)
     if streak >= 3:
