@@ -1507,7 +1507,7 @@ def render_page(path,search,session):
     ob_done=session.get("onboarding_done",False)
     ob_step=session.get("ob_step",0)
     billing=session.get("billing","monthly")
-    plan=session.get("plan")
+    plan=session.get("plan","veteran")
     pending_email=session.get("pending_email","")
 
     if path=="/verify":
@@ -1998,7 +1998,7 @@ def open_trade_modal(buy_clicks,cancel_clicks,trade_store,symbol,interval,sessio
         df=fetch_data((symbol or "BTC-USD").upper().strip(),interval=interval or "5m",period=period_map.get(interval or "5m","5d"))
         if df is None or df.empty:
             return dash.no_update, dash.no_update, dash.no_update
-        plan=session.get("plan","hustler"); patterns=detect_patterns(df)
+        plan=session.get("plan","veteran"); patterns=detect_patterns(df)
         signal,_,_,_,_=superintelligent_signal(df,symbol or "BTC-USD",interval or "5m",patterns,plan,(session or {}).get("trading_style","day_trader"))
         if signal=="WAIT": signal="BUY"
         entry,default_tp,default_sl=get_levels(df,signal)
@@ -2028,7 +2028,7 @@ def pick_symbol(n):
 def tog_pat(_,active,session):
     tid=ctx.triggered_id
     if not tid: return active,make_toggles(active),make_active_list(active)
-    plan=session.get("plan","hustler"); limits=PLAN_LIMITS.get(plan,PLAN_LIMITS[None])
+    plan=session.get("plan","veteran"); limits=PLAN_LIMITS.get(plan,PLAN_LIMITS[None])
     max_pat=limits["max_patterns"]; name=tid["index"]
     if name in active: active=[x for x in active if x!=name]
     elif len(active)<max_pat: active=active+[name]
