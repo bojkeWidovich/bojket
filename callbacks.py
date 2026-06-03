@@ -2264,14 +2264,39 @@ def render_performance_panel(journal):
     ],style={"backgroundColor":f"{PURPLE}06","border":f"1px solid {PURPLE}20","borderRadius":"12px","padding":"16px","marginBottom":"18px"})
 
 def render_journal(journal):
-    streak=get_streak(journal)
-    if streak>=3: streak_el=html.Div([html.Span("🔥",style={"marginRight":"6px"}),html.Span(f"{streak} TP streak",style={"color":BULL,"fontWeight":"600","fontSize":"0.82em"}),html.Span(" — signals are running hot",style={"color":TEXT_MUTED,"fontSize":"0.75em","fontStyle":"italic"})],style={"marginBottom":"10px"})
-    elif streak>0: streak_el=html.Div(f"✅  {streak} consecutive TP hit{'s' if streak>1 else ''}",style={"color":BULL,"fontSize":"0.78em","marginBottom":"8px"})
-    else: streak_el=html.Div("")
-    if not journal: return html.Div("No trades logged yet.",style={"color":TEXT_MUTED,"fontSize":"0.78em","fontStyle":"italic","padding":"4px 0"}),streak_el
-    headers=["SYMBOL","SIGNAL","SIZE","ENTRY","TP","SL","TIME","RESULT"]
-    rows=[html.Tr([html.Td(t.get("symbol",""),style={"color":TEXT_MAIN,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(t.get("signal",""),style={"color":BULL if "BUY" in str(t.get("signal","")) else BEAR,"fontSize":"0.72em","padding":"5px 8px","fontWeight":"600"}),html.Td(str(t.get("size","")),style={"color":NEUTRAL,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(str(t.get("entry","")),style={"color":TEXT_DIM,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(str(t.get("tp","")),style={"color":BULL,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(str(t.get("sl","")),style={"color":BEAR,"fontSize":"0.72em","padding":"5px 8px"}),html.Td(f"{t.get('in','')} → {t.get('out','')}",style={"color":TEXT_MUTED,"fontSize":"0.65em","padding":"5px 8px"}),html.Td(t.get("result",""),style={"color":BULL if "TP" in str(t.get("result","")) else BEAR if "SL" in str(t.get("result","")) else NEUTRAL,"fontSize":"0.72em","padding":"5px 8px","fontWeight":"600"})],style={"borderBottom":f"1px solid {BORDER}"}) for t in reversed((journal or [])[-20:])]
-    return html.Table([html.Thead(html.Tr([html.Th(h,style={"color":TEXT_MUTED,"fontSize":"0.58em","padding":"4px 8px","fontWeight":"500","letterSpacing":"1px","textAlign":"left"}) for h in headers])),html.Tbody(rows)],style={"width":"100%","borderCollapse":"collapse"}),streak_el
+    streak = get_streak(journal)
+    if streak >= 3:
+        streak_el = html.Div([
+            html.Span("🔥", style={"marginRight":"6px"}),
+            html.Span(f"{streak} TP streak", style={"color":BULL,"fontWeight":"600","fontSize":"0.82em"}),
+            html.Span(" — signals are running hot", style={"color":TEXT_MUTED,"fontSize":"0.75em","fontStyle":"italic"}),
+        ], style={"marginBottom":"10px"})
+    elif streak > 0:
+        streak_el = html.Div(f"✅  {streak} consecutive TP hit{'s' if streak>1 else ''}",
+                             style={"color":BULL,"fontSize":"0.78em","marginBottom":"8px"})
+    else:
+        streak_el = html.Div("")
+
+    if not journal:
+        return html.Div("No trades logged yet.",
+                        style={"color":TEXT_MUTED,"fontSize":"0.78em","fontStyle":"italic","padding":"4px 0"}), streak_el
+
+    headers = ["SYMBOL","SIGNAL","SIZE","ENTRY","TP","SL","TIME","RESULT"]
+    rows = [html.Tr([
+        html.Td(t.get("symbol",""), style={"color":TEXT_MAIN,"fontSize":"0.72em","padding":"5px 8px"}),
+        html.Td(t.get("signal",""), style={"color":BULL if "BUY" in str(t.get("signal","")) else BEAR,"fontSize":"0.72em","padding":"5px 8px","fontWeight":"600"}),
+        html.Td(str(t.get("size","")), style={"color":NEUTRAL,"fontSize":"0.72em","padding":"5px 8px"}),
+        html.Td(str(t.get("entry","")), style={"color":TEXT_DIM,"fontSize":"0.72em","padding":"5px 8px"}),
+        html.Td(str(t.get("tp","")), style={"color":BULL,"fontSize":"0.72em","padding":"5px 8px"}),
+        html.Td(str(t.get("sl","")), style={"color":BEAR,"fontSize":"0.72em","padding":"5px 8px"}),
+        html.Td(f"{t.get('in','')} → {t.get('out','')}", style={"color":TEXT_MUTED,"fontSize":"0.65em","padding":"5px 8px"}),
+        html.Td(t.get("result",""), style={"color":BULL if "TP" in str(t.get("result","")) else BEAR if "SL" in str(t.get("result","")) else NEUTRAL,"fontSize":"0.72em","padding":"5px 8px","fontWeight":"600"}),
+    ], style={"borderBottom":f"1px solid {BORDER}"}) for t in reversed((journal or [])[-20:])]
+
+    return html.Table([
+        html.Thead(html.Tr([html.Th(h, style={"color":TEXT_MUTED,"fontSize":"0.58em","padding":"4px 8px","fontWeight":"500","letterSpacing":"1px","textAlign":"left"}) for h in headers])),
+        html.Tbody(rows),
+    ], style={"width":"100%","borderCollapse":"collapse"}), streak_el
 
 app.clientside_callback(
     """
