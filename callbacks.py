@@ -1020,6 +1020,20 @@ app.index_string = f"""<!DOCTYPE html>
                     flex: 1 1 100% !important;
                     max-width: 100% !important;
                 }}
+                /* Keep PREV + NEXT side-by-side, centered on phone */
+                #tour-modal div[style*="bottom: 40px"][style*="display: flex"],
+                #tour-modal div[style*="bottom:40px"][style*="display: flex"] {{
+                    flex-direction: row !important;
+                    flex-wrap: nowrap !important;
+                    justify-content: center !important;
+                    gap: 10px !important;
+                }}
+                #tour-modal #tour-prev-btn,
+                #tour-modal #tour-next-btn {{
+                    white-space: nowrap !important;
+                    flex: 0 0 auto !important;
+                    width: auto !important;
+                }}
                 /* ── Tour screen content sizing ── */
                 #tour-screen-content > div:first-child {{
                     font-size: 1.5em !important;
