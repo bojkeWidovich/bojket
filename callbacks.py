@@ -1431,11 +1431,20 @@ def _tour_screen(num):
     return blocks
 
 
+PREV_BTN_VISIBLE = {
+    "backgroundColor":"transparent","border":"1px solid rgba(255,255,255,0.2)",
+    "color":"rgba(255,255,255,0.7)","padding":"12px 24px","borderRadius":"100px",
+    "fontSize":"0.72em","fontWeight":"700","letterSpacing":"2px","cursor":"pointer",
+    "marginRight":"14px","whiteSpace":"nowrap",
+}
+PREV_BTN_HIDDEN = {"display":"none"}
+
 @app.callback(
     Output("tour-modal","style"),
     Output("tour-screen-content","children"),
     Output("tour-progress-text","children"),
     Output("tour-screen-store","data"),
+    Output("tour-prev-btn","style"),
     Input("open-tour-btn","n_clicks"),
     Input("tour-close-btn","n_clicks"),
     Input("tour-next-btn","n_clicks"),
@@ -1448,17 +1457,18 @@ def tour_handler(open_n, close_n, next_n, prev_n, current):
     current = current or 1
     hidden = {"display":"none","position":"fixed","top":"0","left":"0","width":"100vw","height":"100vh","backgroundColor":"rgba(0,0,0,0.92)","zIndex":"500","backdropFilter":"blur(12px)"}
     visible = {**hidden, "display":"block"}
+    def _prev_style(screen): return PREV_BTN_HIDDEN if screen == 1 else PREV_BTN_VISIBLE
     if trig == "tour-close-btn":
-        return hidden, dash.no_update, dash.no_update, 1
+        return hidden, dash.no_update, dash.no_update, 1, dash.no_update
     if trig == "open-tour-btn":
-        return visible, _tour_screen(1), "1 / 7", 1
+        return visible, _tour_screen(1), "1 / 7", 1, PREV_BTN_HIDDEN
     if trig == "tour-next-btn":
         new = min(current + 1, 7)
-        return visible, _tour_screen(new), f"{new} / 7", new
+        return visible, _tour_screen(new), f"{new} / 7", new, _prev_style(new)
     if trig == "tour-prev-btn":
         new = max(current - 1, 1)
-        return visible, _tour_screen(new), f"{new} / 7", new
-    return dash.no_update, dash.no_update, dash.no_update, current
+        return visible, _tour_screen(new), f"{new} / 7", new, _prev_style(new)
+    return dash.no_update, dash.no_update, dash.no_update, current, dash.no_update
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  Gallery + Lightbox
