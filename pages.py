@@ -2718,78 +2718,11 @@ def dashboard_page(plan="admin"):
                 ],style={"backgroundColor":BG_CARD2,"border":"1px solid rgba(248,113,113,0.2)","borderRadius":"8px","padding":"11px 15px","flex":"1"}),
                 html.Button("EXIT & LOG TRADE",id="exit-btn",n_clicks=0,className="exit-log-btn",style={"backgroundColor":"rgba(248,113,113,0.08)","border":"1px solid rgba(248,113,113,0.35)","color":BEAR,"fontSize":"0.7em","fontWeight":"700","letterSpacing":"1.2px","padding":"6px 10px","borderRadius":"6px","marginTop":"9px","width":"100%","cursor":"pointer","transition":"all 0.18s ease"})
 ],style={"display":"flex","gap":"8px","marginBottom":"8px"})]),
-            # ── CHART ROW: [pattern sidebar] + [chart card] ──────────────────
-            html.Div([
-                # ── PATTERN SIDEBAR (hidden by default, shown beside chart) ──
-                html.Div(id="pattern-panel",style={"display":"none"},children=[
-                    html.Div([
-                        # Header
-                        html.Div("PATTERNS",style={"color":TEXT_MUTED,"fontSize":"0.52em","letterSpacing":"2px","fontWeight":"700","marginBottom":"10px","paddingBottom":"6px","borderBottom":f"1px solid {BORDER}"}),
-                        # Color legend
-                        html.Div([
-                            html.Span("▮",style={"color":BULL,"marginRight":"4px","fontSize":"0.7em"}),html.Span("Bullish",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginRight":"8px"}),
-                            html.Span("▮",style={"color":BEAR,"marginRight":"4px","fontSize":"0.7em"}),html.Span("Bearish",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginRight":"8px"}),
-                            html.Span("▮",style={"color":NEUTRAL,"marginRight":"4px","fontSize":"0.7em"}),html.Span("Neutral",style={"color":TEXT_MUTED,"fontSize":"0.6em"}),
-                        ],style={"marginBottom":"10px","display":"flex","flexWrap":"wrap","alignItems":"center"}),
-                        # Chips grid
-                        html.Div(id="pattern-toggle-container",children=make_toggles([]),
-                            style={"marginBottom":"14px"}),
-                        # Divider
-                        html.Div(style={"height":"1px","backgroundColor":BORDER,"margin":"6px 0 10px 0"}),
-                        # Active on chart
-                        html.Div("ACTIVE ON CHART",style={"color":TEXT_MUTED,"fontSize":"0.52em","letterSpacing":"2px","fontWeight":"700","marginBottom":"8px"}),
-                        html.Div(id="active-pattern-list",children=make_active_list([])),
-                    ],style={"padding":"12px 10px","overflowY":"auto","height":"100%"}),
-                ]),
 
-                # ── CHART CARD ────────────────────────────────────────────────
-                html.Div([
-                    html.Div(id="alert-triggered-bar",style={"display":"none"},children=[html.Div("🔔  PRICE ALERT TRIGGERED!",style={"backgroundColor":f"{PURPLE}30","border":f"1px solid {PURPLE}","color":NEUTRAL,"padding":"8px 16px","fontSize":"0.82em","fontWeight":"600","textAlign":"center","letterSpacing":"1px"})]),
-                    # Chart toolbar — pattern picker + indicator toggles
-                    html.Div([
-                        tbtn("⊞ Patterns","pattern-btn",tip="Open pattern picker"),
-                        html.Div(style={"width":"1px","height":"18px","backgroundColor":BORDER,"margin":"0 8px","flexShrink":"0"}),
-                        tbtn("〰 Bands","bb-btn",tip="Toggle Bollinger Bands on chart"),
-                        html.Div(style={"width":"4px"}),
-                        tbtn("📏 Pivots","pd-btn",tip="Toggle Pivot / Divergence lines on chart"),
-                        *([html.Div(style={"width":"4px"}),tbtn("📊 Breakdown","breakdown-btn",tip="Open signal breakdown panel")] if limits["breakdown"] else []),
-                    ],style={"display":"flex","alignItems":"center","padding":"6px 10px","borderBottom":f"1px solid {BORDER}","backgroundColor":"#07060f"}),
-                    html.Div([
-                        dcc.Graph(id="candle-chart",style={"height":"620px","flex":"1","minWidth":"0"},config={
-                            "scrollZoom":True,
-                            "displayModeBar":False,   # hide modebar — stops hover reflow jank
-                            "doubleClick":"reset",
-                            "responsive":True,
-                            "showTips":False,
-                        }),
-                        html.Div(id="breakdown-panel",className="breakdown-scroll",style=BREAKDOWN_HIDDEN,children=[html.Div(id="breakdown-content")]),
-                    ],style={"display":"flex"}),
-                ],style={"flex":"1","backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","minWidth":"0"}),
-
-            ],style={"display":"flex","gap":"7px","marginBottom":"7px","alignItems":"flex-start"}),
-
-            html.Div(id="last-updated",style={"color":TEXT_MUTED,"fontSize":"0.6em","textAlign":"right","marginBottom":"10px"}),
-            html.Div([
-                html.Div([html.Div("PATTERNS DETECTED",style={"color":TEXT_MAIN,"fontSize":"0.6em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px","opacity":"0.85"}),html.Div(id="patterns-div")],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 18px","flex":"1"}),
-                html.Div([html.Div("TIPS & LESSONS",style={"color":TEXT_MAIN,"fontSize":"0.6em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px","opacity":"0.85"}),html.Div(id="tips-div")],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 18px","flex":"1"}),
-            ],style={"display":"flex","gap":"7px","marginBottom":"7px"}),
-            html.Div([html.Div("RECENT PATTERN HISTORY",style={"color":TEXT_MAIN,"fontSize":"0.6em","letterSpacing":"1.5px","fontWeight":"600","marginBottom":"10px","opacity":"0.85"}),html.Div(id="pattern-history-div")],style={"backgroundColor":BG_CARD2,"border":f"1px solid {BORDER}","borderRadius":"10px","padding":"16px 18px","marginBottom":"20px"}),
         ],style={"padding":"10px 24px"}),
 
         html.Div([html.Span("BOJKET  ",style={"color":PURPLE,"fontWeight":"700","letterSpacing":"2px","fontSize":"0.7em"}),html.Span("·  The future of trading.  ·  ",style={"color":TEXT_MUTED,"fontSize":"0.62em","fontStyle":"italic"}),html.Span("Not financial advice. Trade responsibly.",style={"color":TEXT_MUTED,"fontSize":"0.6em"})],style={"borderTop":f"1px solid {BORDER}","padding":"14px 24px","display":"flex","alignItems":"center","gap":"4px","backgroundColor":"#050508"}),
-
-        # ── CHAT ─────────────────────────────────────────────────────────────
-        html.Div([
-            html.Div(id="chat-panel",style={"display":"none","width":"380px","backgroundColor":"#0a0912","border":f"1px solid {BORDER}","borderRadius":"14px","overflow":"hidden","boxShadow":"0 8px 40px rgba(0,0,0,0.6)"},children=[
-                html.Div([html.Div([html.Span("✦",style={"color":PURPLE,"marginRight":"8px","fontSize":"1.1em"}),html.Span("Bojket",style={"color":TEXT_MAIN,"fontWeight":"600","fontSize":"0.9em"}),html.Span("●",style={"color":BULL,"fontSize":"0.45em","marginLeft":"8px","verticalAlign":"middle"}),html.Span("online",style={"color":TEXT_MUTED,"fontSize":"0.6em","marginLeft":"4px"})],style={"display":"flex","alignItems":"center","flex":"1"}),html.Span("✕",id="chat-close-btn",n_clicks=0,style={"cursor":"pointer","color":TEXT_MUTED,"fontSize":"1em","padding":"2px 6px","userSelect":"none"})],style={"display":"flex","alignItems":"center","padding":"11px 14px","borderBottom":f"1px solid {BORDER}"}),
-                html.Div(id="chat-messages-area",className="chat-scroll",children=render_chat_messages([]),style={"height":"400px","overflowY":"auto","padding":"12px","display":"flex","flexDirection":"column","gap":"8px"}),
-                html.Div([dcc.Input(id="chat-input",type="text",placeholder="Ask Bojket anything...",debounce=False,n_submit=0,style={"flex":"1","backgroundColor":"transparent","border":"none","color":TEXT_MAIN,"fontSize":"0.82em","outline":"none","padding":"8px 0"}),html.Button("→",id="chat-send-btn",n_clicks=0,style={"backgroundColor":PURPLE,"border":"none","color":"white","padding":"7px 13px","borderRadius":"8px","cursor":"pointer","fontSize":"0.9em","fontWeight":"600"})],style={"display":"flex","alignItems":"center","padding":"8px 14px","borderTop":f"1px solid {BORDER}","gap":"8px"}),
-                html.Div([
-                    html.Button("🎓 Replay Tutorial",id="tutorial-replay-btn",n_clicks=0,style={"backgroundColor":"transparent","border":"none","color":TEXT_MUTED,"fontSize":"0.62em","cursor":"pointer","padding":"4px 8px","textDecoration":"underline"}),
-                ],style={"padding":"0 14px 6px 14px","textAlign":"center"}),
-            ]),
-            html.Div([html.Span("✦",style={"color":"white","marginRight":"7px","fontSize":"1.0em"}),html.Span("Bojket",style={"color":"white","fontWeight":"500","fontSize":"0.82em","letterSpacing":"1px"})],id="chat-toggle-btn",n_clicks=0,style={"display":"flex","alignItems":"center","backgroundColor":PURPLE,"padding":"9px 18px","borderRadius":"20px","cursor":"pointer","userSelect":"none","boxShadow":f"0 4px 20px {PURPLE_GLOW}"}),
-        ],style={"position":"fixed","bottom":"24px","right":"24px","zIndex":"1000","display":"flex","flexDirection":"column","alignItems":"flex-end","gap":"8px"}),
+        
 
         # ── STORES & INTERVALS ───────────────────────────────────────────────
         dcc.Interval(id="auto-refresh",    interval=60*1000, n_intervals=0),
