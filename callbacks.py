@@ -2817,7 +2817,6 @@ def start_backtest_cb(n, symbol, interval):
 # ── MAIN CHART + SIGNAL UPDATE CALLBACK ──────────────────────────────────────
 
 @app.callback(
-    Output("candle-chart","figure"),
     Output("signal-text","children"),Output("signal-text","style"),
     Output("confidence-div","children"),Output("ml-score-div","children"),
     Output("signal-sub","children"),
@@ -2853,7 +2852,7 @@ def update(n,clicks,symbol,interval,trade_store,active_patterns,theme,show_bb,sh
     if df is None or df.empty:
         fig=go.Figure(); fig.update_layout(paper_bgcolor=bg_p,plot_bgcolor=bg_c,font_color=TEXT_MUTED,title=f"No data — {symbol}")
         empty=html.Div("No data.",style={"color":TEXT_MUTED,"fontSize":"0.78em","fontStyle":"italic"})
-        return (fig,"—",{"color":TEXT_MUTED,"fontSize":"2em"},html.Div(),html.Div(),"No data","—",{"color":TEXT_MUTED},"-",{"color":TEXT_MUTED},"","-","",{"color":TEXT_MUTED},"-","-","-","","","","-","-",no,"","Could not load data.",html.Div(),[],[],empty,pat_history,html.Div(),alert_bar_off,"—")
+        return ("—",{"color":TEXT_MUTED,"fontSize":"2em"},html.Div(),html.Div(),"No data","—",{"color":TEXT_MUTED},"-",{"color":TEXT_MUTED},"","-","",{"color":TEXT_MUTED},"-","-","-","","","","-","-",no,"","Could not load data.",html.Div(),[],[],empty,pat_history,html.Div(),alert_bar_off,"—")
 
     fig=make_subplots(rows=2,cols=1,shared_xaxes=True,vertical_spacing=0.01,row_heights=[0.78,0.22])
     fig.add_trace(go.Candlestick(x=df.index,open=df['open'],high=df['high'],low=df['low'],close=df['close'],
@@ -3078,7 +3077,7 @@ def update(n,clicks,symbol,interval,trade_store,active_patterns,theme,show_bb,sh
     forecast_el  = render_forecast_card(forecast)
 
     now=datetime.now().strftime("%H:%M:%S")
-    return (fig,display_signal,{"color":display_color,"fontSize":sig_font_size,"fontWeight":"700","letterSpacing":"-2px","lineHeight":"1"},conf_el,ml_score_el,sig_sub,trend_label,{"color":trend_col,"fontWeight":"600","fontSize":"1.05em"},str(rsi) if rsi else "—",{"color":rsi_color,"fontWeight":"600"},rsi_hint,str(macd) if macd else "—",macd_txt,{"color":macd_col},entry_txt,tp_txt,sl_txt,pos_display,tp_preview,sl_preview,t_status,t_hint,trade_style,buy_btn,summary,breakdown_content,pattern_badges,tips_list,hist_el,new_history,forecast_el,alert_triggered,f"Updated  {now}")
+    return (display_signal,{"color":display_color,"fontSize":sig_font_size,"fontWeight":"700","letterSpacing":"-2px","lineHeight":"1"},conf_el,ml_score_el,sig_sub,trend_label,{"color":trend_col,"fontWeight":"600","fontSize":"1.05em"},str(rsi) if rsi else "—",{"color":rsi_color,"fontWeight":"600"},rsi_hint,str(macd) if macd else "—",macd_txt,{"color":macd_col},entry_txt,tp_txt,sl_txt,pos_display,tp_preview,sl_preview,t_status,t_hint,trade_style,buy_btn,summary,breakdown_content,pattern_badges,tips_list,hist_el,new_history,forecast_el,alert_triggered,f"Updated  {now}")
 
 # ── Show the Bojket loader whenever route changes to /dashboard ──────────────
 app.clientside_callback(
